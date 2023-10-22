@@ -3,9 +3,21 @@ const app=express();
 const adminRouter=express.Router();
 const adminController=require("../controllers/adminController");
 const multer = require('multer');
-
+const cookieParser = require('cookie-parser')
 
 adminRouter.use("/uploads",express.static('uploads'));
+adminRouter.use(cookieParser)
+
+
+
+
+adminRouter.get('',adminController.getAdminRoute);
+
+
+
+adminRouter.post('/product/:productId',adminController.updateProductStatus)
+
+
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -21,8 +33,8 @@ const storage = multer.diskStorage({
 
 
 //route for admin login page
-adminRouter.route('/admin-login-page')
-.get(adminController.getAdminRoute);
+// adminRouter.route('/admin-login-page')
+// .get(adminController.getAdminRoute);
 
 //route for admin dashboard
 

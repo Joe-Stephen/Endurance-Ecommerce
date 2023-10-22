@@ -78,13 +78,12 @@
                             </div>
                         </div>
 
-
                         <div class="col-md-6 col-sm-12 col-xs-12">
                             <div class="detail-info">
-                                <h3 class="title-detail mt-30"><%= product.name %></h3>
+                                <h3 class="title-detail mt-30"><%= products.name %></h3>
                                 <div class="product-detail-rating">
                                     <div class="pro-details-brand">
-                                        <span> Brands: <a href="shop-grid-right.html"><%= product.brand %></a></span>
+                                        <span> Brands: <a href="shop-grid-right.html"><%= products.brand %></a></span>
                                     </div>
                                     <div class="product-rate-cover text-end">
                                         <div class="product-rate d-inline-block">
@@ -96,14 +95,14 @@
                                 </div>
                                 <div class="clearfix product-price-cover">
                                     <div class="product-price primary-color float-left">
-                                        <ins><span class="text-brand"><%= product.selling_price %></span></ins>
-                                        <ins><span class="old-price font-md ml-15"><%= product.regular_price %></span></ins>
+                                        <ins><span class="text-brand"><%= products.selling_price %></span></ins>
+                                        <ins><span class="old-price font-md ml-15"><%= products.regular_price %></span></ins>
                                         <span class="save-price  font-md color3 ml-15">25% Off</span>
                                     </div>
                                 </div>
                                 <div class="bt-1 border-color-1 mt-15 mb-15"></div>
                                 <div class="short-desc mb-30">
-                                    <p class="font-sm"><%= product.description %></p>
+                                    <p class="font-sm"><%= products.description %></p>
                                 </div>
                                 
                                 <!-- <div class="attr-detail attr-color mb-15">
@@ -842,16 +841,16 @@
                                         <div class="product-image-slider">
                                             
                                             <figure class="border-radius-10">
-                                                <img src="/<%= product.photos[0] %>" alt="product image">
+                                                <img src="/<%=products.photos[0] %>" alt="product image">
                                             </figure>
                                             <figure class="border-radius-10">
-                                                <img src="/<%= product.photos[1] %>" alt="product image">
+                                                <img src="/<%= products.photos[1] %>" alt="product image">
                                             </figure>
                                             <figure class="border-radius-10">
-                                                <img src="/<%= product.photos[2] %>" alt="product image">
+                                                <img src="/<%= products.photos[2] %>" alt="product image">
                                             </figure>
                                             <figure class="border-radius-10">
-                                                <img src="/<%= product.photos[3] %>" alt="product image">
+                                                <img src="/<%= products.photos[3] %>" alt="product image">
                                             </figure>
 
                                             <!-- <figure class="border-radius-10">
@@ -863,9 +862,9 @@
                                         </div>
                                         <!-- THUMBNAILS -->
                                         <div class="slider-nav-thumbnails pl-15 pr-15">
-                                            <div><img src="/<%= product.photos[0] %>" alt="product image"></div>
-                                            <div><img src="/<%= product.photos[1] %>" alt="product image"></div>
-                                            <div><img src="/<%= product.photos[2] %>" alt="product image"></div>
+                                            <div><img src="/<%= products.photos[0] %>" alt="product image"></div>
+                                            <div><img src="/<%= products.photos[1] %>" alt="product image"></div>
+                                            <div><img src="/<%= products.photos[2] %>" alt="product image"></div>
                                             <!-- <div><img src="/userAssets/assets/imgs/shop/thumbnail-6.jpg" alt="product image"></div> -->
                                             <!-- <div><img src="/userAssets/assets/imgs/shop/thumbnail-7.jpg" alt="product image"></div> -->
                                             <!-- <div><img src="/userAssets/assets/imgs/shop/thumbnail-8.jpg" alt="product image"></div> -->
@@ -876,10 +875,10 @@
                                 </div>
                                 <div class="col-md-6 col-sm-12 col-xs-12">
                                     <div class="detail-info">
-                                        <h2 class="title-detail"><%= product.name %></h2>
+                                        <h2 class="title-detail"><%= products.name %></h2>
                                         <div class="product-detail-rating">
                                             <div class="pro-details-brand">
-                                                <span> Brands: <a href="shop-grid-right.html"><%= product.brand %></a></span>
+                                                <span> Brands: <a href="shop-grid-right.html"><%= products.brand %></a></span>
                                             </div>
                                             <div class="product-rate-cover text-end">
                                                 <div class="product-rate d-inline-block">
@@ -891,14 +890,14 @@
                                         </div>
                                         <div class="clearfix product-price-cover">
                                             <div class="product-price primary-color float-left">
-                                                <ins><span class="text-brand">₹<%= product.selling_price %></span></ins>
-                                                <ins><span class="old-price font-md ml-15">₹<%= product.regular_price %></span></ins>
+                                                <ins><span class="text-brand">₹<%= products.selling_price %></span></ins>
+                                                <ins><span class="old-price font-md ml-15">₹<%= products.regular_price %></span></ins>
                                                 <span class="save-price  font-md color3 ml-15">25% Off</span>
                                             </div>
                                         </div>
                                         <div class="bt-1 border-color-1 mt-15 mb-15"></div>
                                         <div class="short-desc mb-30">
-                                            <p><%= product.description %></p>
+                                            <p><%= products.description %></p>
                                         </div>
                                         <div class="product_sort_info font-xs mb-30">
                                             <ul>
@@ -955,7 +954,7 @@
                                 <div class="col-lg-10 m-auto entry-main-content">
                                     <h2 class="section-title style-1 mb-30">Description</h2>
                                     <div class="description mb-50">
-                                        <p><%= product.description %></p>
+                                        <p><%= products.description %></p>
                                         <p>
                                         </p>
                                         <!-- <ul class="product-more-infor mt-30">

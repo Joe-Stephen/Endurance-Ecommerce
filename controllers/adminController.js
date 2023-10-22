@@ -3,10 +3,28 @@ const product = require("../model/productModel");
 const user = require("../model/userModel")
 
 //getting admin login page
-module.exports.getAdminRoute = (req, res) => {
+const getAdminRoute = (req, res) => {
     res.render("admin-login-page");
   };
 
+
+
+//getting product details from db
+const updateProductStatus=async (req, res) => {
+    const productId = req.params.productId;
+    const newStatus = req.body.status;
+  
+    try {
+        // Find the product by ID and update the status
+        const updatedProduct = await product.findByIdAndUpdate(productId, { status: newStatus });
+  
+        res.status(200).json({ status: updatedProduct.status });
+  
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error updating product status.');
+    }
+  };
 
 
 //   module.exports.AdminHomePage = async(req, res) =>{
@@ -45,7 +63,7 @@ module.exports.getAdminRoute = (req, res) => {
 //       }
 //     };
 
-module.exports.getAdminHomePage = async (req,res)=>{
+const getAdminHomePage = async (req,res)=>{
     const admindata = await admin.findOne({email:req.body.email});
     console.log(admindata)
     if(!admindata){
@@ -71,7 +89,7 @@ module.exports.getAdminHomePage = async (req,res)=>{
 
 
 //getting user management
-module.exports.getUserManagement = async (req, res) => {
+const getUserManagement = async (req, res) => {
     try {
         const users = await user.find(); // Assuming user is your Mongoose model for users
         res.render("admin-user-management", { users });
@@ -82,7 +100,7 @@ module.exports.getUserManagement = async (req, res) => {
 };
 
 //getting product management
-module.exports.getProductManagement = async (req, res) => {
+const getProductManagement = async (req, res) => {
     try{
         res.render("admin-products-list");
     }catch (error) {
@@ -98,11 +116,8 @@ module.exports.getProductManagement = async (req, res) => {
     //     res.status(500).send("Error retrieving user data");
     // }
 };
-
-
-
 //adding product page
-module.exports.getAddProduct = async (req, res) => {
+const getAddProduct = async (req, res) => {
     try{
         res.render("admin-add-product");
     }catch (error) {
@@ -111,8 +126,6 @@ module.exports.getAddProduct = async (req, res) => {
             res.status(500).send("Error retrieving user data");
         }
     };
-
-
 //storing products to the product collection 
 //posting user details to the database
 // module.exports.postAddProduct = async (req, res) => {
@@ -136,7 +149,6 @@ module.exports.getAddProduct = async (req, res) => {
 //         });
 //       }
 //     };
-
     // module.exports.addProduct = (req, res) => {
     //     // Handle form data, including image file IDs from GridFS
     //     const { name, description, price, category, brand, stock, status } = req.body;
@@ -144,54 +156,44 @@ module.exports.getAddProduct = async (req, res) => {
     //     const photo2Id = req.files['photo2'][0].id;
     //     const photo3Id = req.files['photo3'][0].id;
     //     const photo4Id = req.files['photo4'][0].id;
-    
         // Save the data and image IDs to your product model
         // For example, using Mongoose to create a new product document
     
     //     res.send('Product added successfully.');
     // };
-
 //user status toggler function
 // adminController.js
-
 // Function to update user status
 // module.exports.toggleUserStatus=async (userId, newStatus)=>{
 //     try {
 //         // Find the user by ID and update the status
 //         console.log("hai")
 //         await user.findByIdAndUpdate(userId, { status: newStatus });
-
 //         return 'User status updated successfully.';
 //     } catch (error) {
 //         console.error(error);
 //         throw 'Error updating user status.';
 //     }
 // }
-
-module.exports.addProduct = (req, res) => {
+const addProduct = (req, res) => {
     // Handle other form fields
     const { name, description, regular_price, selling_price, category, brand, stock, status } = req.body;
-  
     // Handle uploaded photos
     const photos = req.files;
     let arr=[];
     photos.forEach(element => {
         arr.push({name:element.filename,
         path:element.path})
-        
     });
     console.log(arr)
-  
     if (!name || !description || !regular_price || !category || !brand || !stock || !status || !photos) {
       // Handle missing form data
       return res.render('admin-add-product', {
         error: 'Please fill out all the required fields and upload at least one photo.',
       });
     }
-  
     // Save the data and image IDs to your 'product' model
     const photoIds = arr.map((photo) => photo.path);
-  
     const newProduct = new product({
       name,
       description,
@@ -203,13 +205,11 @@ module.exports.addProduct = (req, res) => {
       status,
       photos: photoIds, // Assuming you have a 'photos' field in your 'product' schema
     });
-  
     newProduct.save();
     res.redirect('/')
   };
-
   //listing products
-  module.exports.getProducts = async (req, res) => {
+  const getProducts = async (req, res) => {
     try {
         const products = await product.find(); 
         res.render("admin-products-list", {products});
@@ -218,7 +218,6 @@ module.exports.addProduct = (req, res) => {
         res.status(500).send("Error retrieving user data");
     }
 };
-
 // const getProducts = async (req, res) => {
 //     try {
 //       const products = await Product.find();
@@ -228,5 +227,7 @@ module.exports.addProduct = (req, res) => {
 //       res.status(500).send('Error retrieving products');
 //     }
 //   };
-
+module.exports={getProducts, addProduct, getProductManagement,
+     getAddProduct, getUserManagement, getAdminRoute, getAdminHomePage, 
+     updateProductStatus}
   

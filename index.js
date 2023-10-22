@@ -3,33 +3,21 @@ const dburl="mongodb://127.0.0.1:27017/endurance"
 const express=require ("express")
 const app=express();
 const db=mongoose.connect(dburl)
-const user=require('./model/userModel')
-const admin=require('./model/adminModel')
-const userRouter= require('./routers/userRouter');
+const userRouter= require('./routers/userRouter')
 const adminRouter= require('./routers/adminRouter');
-const session = require("express-session");
-const { v4: uuidv4 } = require("uuid"); // Import the uuidv4 function
 const cookieParser = require("cookie-parser");
-const nocache = require("nocache");
-const productCol = require("./model/productModel");
+const products = require("./model/productModel");
 
-app.use(nocache());
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-app.use(
-    session({
-      secret: uuidv4(),
-      resave: false,
-      saveUninitialised: false,
-    })
-  );
   
 //setting folder for serving static files
 app.use(express.static(__dirname+'/public'));
 app.use("/uploads",express.static('uploads'));
 
+//setting default routes
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
 
@@ -56,78 +44,20 @@ app.listen(port,async(req,res)=>{
 });
 
 // route for product page
-// Define a route for viewing a product by its ID
-app.get('/product/:productId', async (req, res) => {
-    const productId = req.params.productId;
-
-    try {
-        // Fetch the product details based on the productId
-        const product = await productCol.findById(productId);
-
-        if (!product) {
-            // Handle the case when the product is not found
-            return res.status(404).send('Product not found');
-        }
-
-        // Render the "product-page" template and pass the product details
-        res.render('product-page', { product });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error fetching product details');
-    }
-});
+// Define a route for viewing a product by its ID\
 
 
-//route for home(user login)
-app.get('/',async (req,res)=>{
-    try{
-        const products= await productCol.find();
-        console.log(products)
-        res.render('index-4',{products:products});
-    }catch(error){
-        console.error(error);
-        res.status(500).send('Error fetching products');
-    }
-});
 
-app.get('/admin',(req,res)=>{
-    res.render('admin-login-page');
-});
 
-// Express route to update user status
-// Update user status and return the updated user data
-app.post('/update-user-status/:userId', async (req, res) => {
-    const userId = req.params.userId;
-    const newStatus = req.body.status;
 
-    try {
-        // Find the user by ID and update the status
-        const updatedUser = await user.findByIdAndUpdate(userId, { status: newStatus });
 
-        res.status(200).json({ status: updatedUser.status });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error updating user status.');
-    }
-});
+
+
+
+
 
 // Express route to update product status
 // Update product status and return the updated product data
-app.post('/update-product-status/:productId', async (req, res) => {
-    const productId = req.params.productId;
-    const newStatus = req.body.status;
-
-    try {
-        // Find the product by ID and update the status
-        const updatedProduct = await productCol.findByIdAndUpdate(productId, { status: newStatus });
-
-        res.status(200).json({ status: updatedProduct.status });
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error updating product status.');
-    }
-});
 
 
 

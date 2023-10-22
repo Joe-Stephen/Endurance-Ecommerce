@@ -1,9 +1,19 @@
 const express=require('express');
 const app=express();
 const userRouter=express.Router();
-const userController=require("../controllers/userController")
+const userController=require("../controllers/userController");
 const product = require("../model/productModel");
+const jwt = require("jsonwebtoken");
+const userMiddleware=require('../middlewares/user/userAuthentication');
+const cookieParser = require('cookie-parser')
 
+userRouter.use(cookieParser())
+userRouter.get('',userMiddleware, userController.getHomePage);
+
+userRouter.get('/logout',userMiddleware, userController.logout)
+
+
+userRouter.get('/product/:productId',userMiddleware,userController.findProduct);
 
 userRouter.route('/loginPage')
 .get(userController.getUserRoute);
@@ -29,9 +39,11 @@ userRouter.post("/verify_otp",userController.getVerifyOtp)
 
 
 //user login
-userRouter.route("/index-4")
-.post(userController.getUserHomePage);
-module.exports = userRouter;
+
+
+userRouter.post("/index-4",userController.getUserHomePage)
+
+
 
 
 
@@ -42,3 +54,4 @@ userRouter.route("/test")
 
 
 
+module.exports = userRouter;

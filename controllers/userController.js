@@ -1,8 +1,36 @@
+require('dotenv').config()
 const user = require("../model/userModel");
 const nodemailer = require("nodemailer");
-const twilio = require('twilio')('AC90b10edd5b6aa7b69d4834d521e5f0ac', '56c2bba00524d602bd7cfc9a500f607a');
+const twilio_account_sid=process.env.twilio_account_sid;
+const twilio_auth_token=process.env.twilio_auth_token;
+const twilio_serviceId=process.env.twilio_serviceId;
+const twilio = require('twilio')(twilio_account_sid, twilio_auth_token);
 const product = require("../model/productModel");
+const jwt=require("jsonwebtoken")
+require('dotenv').config()
+const secretKey=process.env.JWT_SECRET;
 
+console.log(secretKey)
+
+//getting user home page
+const getHomePage = async (req,res)=>{
+  try{
+      const products= await product.find();
+      // console.log(products)
+      res.render('index-4',{products:products});
+  }catch(error){
+      console.error(error);
+      res.send('Error fetching products');
+  }
+};
+
+const logout=(req, res)=>{
+  
+  // console.log(req.user)
+  // console.log(req.cookies.token)
+  res.clearCookie("token")
+  res.redirect('/loginPage')
+}
 
 let isOtpVerified=false;
 
@@ -47,7 +75,7 @@ let isOtpVerified=false;
 //   }
 // };
 
-// module.exports.verifyEmail = async (req, res) => {
+// const verifyEmail = async (req, res) => {
 //   try {
 //     const updateInfo = await user.updateOne(
 //       { _id: req.query.id },
@@ -62,19 +90,21 @@ let isOtpVerified=false;
 //   }
 // };
 
+//getting home page
+
 //getting user login page
-module.exports.getUserRoute = (req, res) => {
+const getUserRoute = (req, res) => {
   res.render("page-login-register");
 };
 
 //getting user signup page
-module.exports.getUserSignup = (req, res) => {
+const getUserSignup = (req, res) => {
   res.render("page-signup");
 };
 let phoneNumber;
 
   //posting user details to the database
-  module.exports.postUserSignup = async (req, res) => {
+  const postUserSignup = async (req, res) => {
     const formData = await user.findOne({
       email: req.body.email,
     });
@@ -117,47 +147,51 @@ let phoneNumber;
   };
 
 //authenticating user credentials
-module.exports.getUserHomePage = async (req, res) => {
+const getUserHomePage = async (req, res) => {
   const verifyStatus = await user.findOne({
     email: req.body.email
   });
   if (!verifyStatus) {
-    res.render("page-login-register", {
+    res.redirect("page-login-register", {
       subreddit: "This email is not registered!",
     });
   } else {
     if (verifyStatus) {
       if (verifyStatus.status=="Blocked"){
-        res.render("page-login-register", { subreddit: "Your account is currently blocked!" });
+        res.redirect("page-login-register", { subreddit: "Your account is currently blocked!" });
       } else if (req.body.password !== verifyStatus.password) {
-        res.render("page-login-register", { subreddit: "Incorrect password!" });
+        res.redirect("page-login-register", { subreddit: "Incorrect password!" });
       } else {
         if (
           req.body.email === verifyStatus.email &&
           req.body.password === verifyStatus.password
         ) {
           try{
+            email = req.body.email;
+            const token = jwt.sign(email, secretKey);
+            res.cookie('token', token);
+            console.log("joe");
+            console.log(req.cookies);            
             const products= await product.find();
-            console.log(products)
-            res.render('index-4',{products:products});
+            res.render('index-4',{products:products,message: "User Logged in Successfully" });
           }catch(error){
             console.error(error);
-            res.status(500).send('Error fetching products');
+            // res.send('Error fetching products');
         }
-
         }
       }
     } else {
+      console.log("hallooo")
       res.redirect("/");
     }
   }
 };
 
-module.exports.getSendOtp = async (req, res) => {
+const getSendOtp = async (req, res) => {
   try {
     console.log("hai")
     phoneNumber = req.query.phoneNumber;
-    await twilio.verify.v2.services('VA0a7643a8b2f3c658965ec15e84a4632c').verifications.create({
+    await twilio.verify.v2.services(twilio_serviceId).verifications.create({
       to: `+91${phoneNumber}`,
       channel: "sms",
     });
@@ -166,14 +200,11 @@ module.exports.getSendOtp = async (req, res) => {
   }
 };
 
-
-
-
-module.exports.getVerifyOtp = async (req, res) => {
+const getVerifyOtp = async (req, res) => {
   try {
     const otp = req.query.otp;
     const verifyOTP = await twilio.verify.v2
-      .services('VA0a7643a8b2f3c658965ec15e84a4632c')
+      .services(twilio_serviceId)
       .verificationChecks.create({
         to: `+91${phoneNumber}`,
         code: otp,
@@ -189,11 +220,35 @@ module.exports.getVerifyOtp = async (req, res) => {
 };
 
 //getting product page
-module.exports.getProductPage = (req, res) => {
+(req, res) => {
   res.render("product-page");
 };
 
-
-module.exports.testmid = (req, res) => {
+// for testing purpose only
+const testmid = (req, res) => {
   res.render("mail-verification-login");
 };
+
+const findProduct= async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    // Fetch the product details based on the productId
+    const products = await product.findById(productId);
+    // console.log(products)
+
+    if (!products) {
+        // Handle the case when the product is not found
+        return res.send('Product not found');
+    }
+
+    // Render the "product-page" template and pass the product details
+    res.render('product-page', { products});
+} catch (error) {
+    console.error(error);
+    res.send('Error fetching product details');
+}
+}
+
+module.exports={findProduct, testmid, getVerifyOtp, 
+  getSendOtp, getUserHomePage, postUserSignup, getUserRoute, getUserSignup,
+   getHomePage,logout}
