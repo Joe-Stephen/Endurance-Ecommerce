@@ -1,81 +1,37 @@
-const express=require('express');
-const app=express();
-const adminRouter=express.Router();
-const adminController=require("../controllers/adminController");
-const multer = require('multer');
-const cookieParser = require('cookie-parser')
+// const express = require("express");
+// const app = express();
+// const adminRouter = express.Router();
+// // const adminRouter = express.Router();
+// const userController = require("../controllers/userController");
 
-adminRouter.use("/uploads",express.static('uploads'));
-adminRouter.use(cookieParser)
+// const adminController = require("../controllers/adminController");
 
-
-
-
-adminRouter.get('',adminController.getAdminRoute);
+// adminRouter.use(express.static("public/adminAssets/assets"));
+// const multer = require("multer");
+// const path = require("path");
+// const cookieParser = require('cookie-parser')
 
 
+// adminRouter.use("/uploads",express.static('uploads'));
+// adminRouter.use(cookieParser)
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, './uploads');
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, file.originalname);
+//   },
+// });
+// const upload=multer({storage:storage})
 
-adminRouter.post('/product/:productId',adminController.updateProductStatus)
+// adminRouter.get("", userController.getAdminLogin);
+// adminRouter.get("/admin-dashboard",userController.getAdminDashboard);
+// adminRouter.post("/admin-dashboard", userController.getAdminDashboard);
+// adminRouter.get("/admin-user-management", userController.getUsers);
+// adminRouter.get("/admin-products-list", userController.getProductsList);
+// adminRouter.get("/admin-add-product", userController.getAddProduct);
+// adminRouter.post("/add-product",upload.array("photo"), userController.postAddProduct);
+// adminRouter.post("/update-user-status/:userId", userController.postUserStatus);
+// adminRouter.post("/product/:productId",userController.postProductStatus)
 
-
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, './uploads'); // Define the destination folder where uploaded files will be stored.
-    },
-    filename: (req, file, cb) => {
-      cb(null, file.originalname); // Use the original file name for the uploaded file.
-    },
-  });
-  const upload=multer({storage:storage})
-
-
-
-
-//route for admin login page
-// adminRouter.route('/admin-login-page')
-// .get(adminController.getAdminRoute);
-
-//route for admin dashboard
-
-
-adminRouter.route('/admin-dashboard')
-.post(adminController.getAdminHomePage)
-.get(adminController.getAdminHomePage)
-
-adminRouter.route('/admin-user-management')
-.get(adminController.getUserManagement)
-
-adminRouter.route('/admin-products-list')
-.get(adminController.getProducts)
-
-adminRouter.route('/admin-add-product')
-.get(adminController.getAddProduct)
-
-// adminRouter.route('/submit-form')
-// .get(adminController.processProductSubmission)
-
-// adminRouter.route('/add-product')
-// .post(adminController.postAddProduct)
-
-// adminRouter.route('/add-product')
-// .post(adminController.addProduct)
-
-
-adminRouter.route('/submit-form')
-.post(upload.array("photo"),adminController.addProduct)
-
-//   adminRouter.post('/add-product', processProductSubmission);
-
-
-
-
-
-
-
-
-
-
-
-module.exports = adminRouter;
-
+// module.exports = adminRouter;

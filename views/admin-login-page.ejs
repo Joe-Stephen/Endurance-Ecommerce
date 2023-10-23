@@ -69,7 +69,9 @@
             <div class="card mx-auto card-login">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Log in</h4>
-                    <form action="/admin/admin-dashboard" method="post">
+                    <h5 class="font-sm" style="color: red;"><%=locals.error%></h5>
+                    <h5 class="font-sm" style="color: rgb(19, 162, 14);"><%=locals.verified%></h5>
+                    <form action="/admin-dashboard" method="post">
                         <div class="mb-3">
                             <input class="form-control" placeholder="Email" type="text" name="email">
                         </div> <!-- form-group// -->

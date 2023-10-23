@@ -1,8 +1,7 @@
 <!DOCTYPE HTML>
-<html lang="en">
+<html lang="en"
 
 
-<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:35 GMT -->
 <head>
     <meta charset="utf-8">
     <title>Evara Dashboard</title>
@@ -27,11 +26,23 @@
         background-color: green;
         color: white; /* You can adjust the text color as needed */
     }
-    
-</style>
-    
-</style>
 
+    /* style for edit link */
+
+    .button-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  font-weight: bold;
+  text-align: center;
+}
+
+    
+</style>
 </head>
 
 <body>
@@ -53,7 +64,7 @@
                     </a>
                 </li>
                 <li class="">
-                    <a class="menu-link" href="/admin/admin-products-list"> <i class="icon material-icons md-shopping_bag"></i>
+                    <a class="menu-link" href="/admin-products-list"> <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Products</span>
                     </a>
                     <!-- <div class="submenu">
@@ -194,9 +205,12 @@
 
                 <div>
                     <h2 class="content-title card-title">Product management</h2>
+                    <h5 class="font-sm" style="color: red;"><%=locals.error%></h5>
+                    <h5 class="font-sm" style="color: rgb(19, 162, 14);"><%=locals.verified%></h5>
+
                 </div>
                 <div>
-                    <a href="/admin/admin-add-product" class="btn btn-primary btn-sm rounded">Add a product</a>
+                    <a href="/admin-add-product" class="btn btn-primary btn-sm rounded">Add a product</a>
                 </div>
 
 
@@ -265,17 +279,19 @@
         <td><%= products[i].brand %></td>
         <td><%= products[i].category %></td>
         <!-- <td><%= products[i].regular_price %></td> -->
-        <td><%= products[i].selling_price %></td>
+        <td>₹<%= products[i].selling_price %></td>
         <td><%= products[i].stock %></td>
         <td><%= products[i].status %></td>
         <td>
             <button class="btn<%= products[i].status === 'Available' ? ' red-button' : (products[i].status === 'Out of stock' ? ' green-button' : '') %>" onclick="toggleProductStatus('<%= products[i]._id %>', '<%= products[i].status %>')">
                 <% if (products[i].status === 'Available') { %>
-                    Block
+                    Unlist
                 <% } else { %>
-                    Unblock
+                    List
                 <% } %>
             </button>
+            <a href="/edit-product/?productId=<%= products[i]._id %>" class="button-link">Edit Product</a>
+
         </td>
       </tr>
       <% } %>
@@ -291,7 +307,7 @@
     
         // Update the product's status in your database (use an API call or Mongoose).
         // For example, using an API call with the Fetch API:
-        fetch(`/update-product-status/${productId}`, {
+        fetch(`/product/${productId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -311,7 +327,7 @@
           
 
             // Reload the page using window.location.reload()
-            window.location.href="/admin/admin-products-list";
+            window.location.href="/admin-products-list";
         })
         .catch(error => {
             console.error(error);

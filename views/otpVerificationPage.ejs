@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>OTP Code Verification Form</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        text-align: center;
+      }
+      form {
+        background-color: #f2f2f2;
+        border-radius: 5px;
+        padding: 20px;
+      }
+      input[type="number"] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      button[type="submit"] {
+        background-color: #4caf50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+      }
+      button[type="submit"]:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>OTP Code Verification</h1>
+      <form id="otpForm" action="/verifyOTPnow" method="post">
+        <label for="otpCode">Enter the OTP code sent to your phone:</label>
+        <input
+          type="number"
+          id="otp"
+          name="otpCode" 
+          maxlength="6"
+          minlength="6"
+          required
+        />
+        <span id="countdown">60</span> seconds remaining.
+        <button class="btn btn-primary" id="resendButton" style="display: none;">Resend OTP</button>
+        <br>
+        <button id="verifyOTPButton" type="submit">Verify OTP</button>
+        <button class="btn btn-primary" type="button" id="resendOTPButton" style="display: none;">
+          Resend OTP
+        </button>
+      </form>
+          </div>
+
+
+
+     <script>
+
+// Get references to the countdown and resend button elements
+const countdownElement = document.getElementById('countdown');
+const resendButton = document.getElementById('resendButton');
+
+// Set the initial time (in seconds)
+let timeRemaining = 0;
+
+// Function to update the countdown
+function updateCountdown() {
+  countdownElement.textContent = timeRemaining;
+}
+
+// Start the countdown
+const countdownInterval = setInterval(function () {
+  timeRemaining -= 1;
+  updateCountdown();
+
+  // If the timer reaches 0, stop the countdown and show the resend button
+  if (timeRemaining <= 0) {
+    clearInterval(countdownInterval);
+    resendButton.style.display = 'block';
+  }
+}, 1000); // Update the timer every 1000 milliseconds (1 second)
+
+// Function to handle the "Resend" button click
+resendButton.addEventListener('click', function () {
+  // Reset the timer and hide the resend button
+  timeRemaining = 60;
+  updateCountdown();
+  resendButton.style.display = 'none';
+
+  // Add your code to resend the OTP here (e.g., sending a new OTP)
+});
+
+
+
+  //      document.addEventListener("DOMContentLoaded", function () {
+  //         const verifyOTPButton = document.getElementById("verifyOTPButton");
+  //         const otpInput = document.getElementById("otp");
+  //         const resendOTPButton = document.getElementById("resendOTPButton");
+  //          const timerElement = document.getElementById("timer");
+
+  //         function startResendTimer(){
+  //             let remaningTime=60;
+  //             timerElement.style.display ="block";
+  //             resendOTPButton.style.display="none"
+
+  //             const countdown =setInterval(()=>{
+  //                 timerElement.textContent=`Resend in ${remaningTime}seconds`;
+  //                 remaningTime--;
+
+  //                 if(remaningTime < 0){
+  //                     clearInterval(countdown);
+  //                     timerElement.style.display="none";
+  //                     resendOTPButton.style.display ="block"
+  //                 }
+  //             },1000)
+  //         }
+
+  //         resendOTPButton.addEventListener("click",function(e){
+  //             e.preventDefault();
+  //             const phoneNumber=document.querySelector('input[name="phoneNumber"]').value
+  //         if(!phoneNumber){
+  //          errSignupPhoneNumber.innerHTML="Phone Number is required.";
+  //          return;   
+  //         }
+
+  //         fetch(`/sent_otp?phoneNumber=${phoneNumber}`)
+  //         .then((response)=>{
+  //             if(!response.ok){
+  //                 throw new Error(`HTTP erroe!Status:${response.status}`);
+  //             }
+  //             return response.json();
+
+  //         })
+  //         .then((data)=>{
+  //             console.log("Resent OTP. Response from server:", data);
+  //             startResendTimer();
+  //         })
+  //         .catch((error)=>{
+  //             console.error("Error resending OTP:", error);
+  //         })
+  //         });
+
+
+  //         verifyOTPButton.addEventListener("click", function (e) {
+  //             e.preventDefault();
+
+  //             const otp = otpInput.value;
+  //             const phoneNumber = document.querySelector('input[name="phoneNumber"]').value;
+
+  //             if (!phoneNumber || !otp) {
+  //                 errSignupOtp.innerHTML = "Phone number and OTP are required."
+  //                 return;
+  //             }
+
+  document.getElementById("otpForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const otpInput = document.getElementById("otp");
+  const otpCode = otpInput.value;
+
+  fetch("/verifyOTPnow", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: `otpCode=${otpCode}`, // Use correct field name
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("OTP verified:", data);
+    })
+    .catch((error) => {
+      console.error("Error verifying OTP:", error);
+    });
+});
+
+
+
+
+  //         // const loginForm = document.querySelector('form[action="/signin"]');
+  //         // const loginEmailInput = document.getElementById("loginEmail");
+  //         // const loginPasswordInput = document.getElementById("loginPassword");
+
+  //         const errEmail = document.getElementById('errEmail')
+  //         const errPassword = document.getElementById('errPassword') 
+  //         const registrationForm = document.querySelector('form[action="/signupsubmit"]');
+  //         const registrationEmailInput = document.querySelector('input[name="email"]');
+  //         const registrationPasswordInput = document.querySelector('input[name="signupPassword"]');
+  //         const registrationConfirmPasswordInput = document.querySelector('input[name="Confirmpassword"]');
+  //         const registrationPhoneNumberInput = document.getElementById("phoneNumber");
+  //         const registrationOTPInput = document.getElementById("otp");
+
+           
+  //         const errSignupEmail = document.getElementById('errSignupEmail');
+  //         const errSignupPassword = document.getElementById('errSignupPassword');
+  //         const errSignupConfirmPassword = document.getElementById('errSignupConfirmPassword');
+  //         const errSignupPhoneNumber = document.getElementById('errSignupPhoneNumber');
+  //         const errSignupOtp = document.getElementById('errSignupOtp');
+  //         const errSignupName = document.getElementById('errSignupName')
+
+  //         registrationForm.addEventListener("submit", function (e) {
+  //             if (registrationForm.querySelector('input[name="username"]').value.trim() === "") {
+  //                 e.preventDefault();
+  //                 errSignupName.innerHTML = "Please enter your Name."
+  //                 return;
+  //             }
+
+  //             // if (registrationForm.querySelector('input[name="lname"]').value.trim() === "") {
+  //             //     e.preventDefault();
+  //             //     errSignupName.innerHTML = "Please enter your Last Name."
+  //             //     return;
+  //             // }
+
+  //             if (!isValidEmail(registrationEmailInput.value)) {
+  //                 e.preventDefault();
+  //                 errSignupEmail.innerHTML = "Please enter a valid email address."
+  //                 return;
+  //             }
+
+  //             if (registrationPasswordInput.value.length < 6) {
+  //                 e.preventDefault();
+  //                 errSignupPassword.innerHTML = "Password must be entered and Must have alteast 6 characters."
+  //                 return;
+  //             }
+
+  //             if (registrationPasswordInput.value !== registrationConfirmPasswordInput.value) {
+  //                 e.preventDefault();
+  //                 errSignupConfirmPassword.innerHTML = "Passwords do not match."
+  //                 return;
+  //             }
+
+  //             if (!isValidPhoneNumber(registrationPhoneNumberInput.value)) {
+  //                 e.preventDefault();
+  //                 errSignupPhoneNumber.innerHTML = "Please enter a valid phone number."
+  //                 return;
+  //             }
+
+  //             if (!isValidOTP(registrationOTPInput.value)) {
+  //                 e.preventDefault();
+  //                 errSignupOtp.innerHTML = "Please enter a valid OTP."
+  //                 return;
+  //             }
+  //         });
+
+  //         function isValidEmail(email) {
+  //             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //             return emailRegex.test(email);
+  //         }
+
+  //         function isValidPhoneNumber(phoneNumber) {
+  //             const phoneNumberRegex = /^[0-9]{10}$/;
+  //             return phoneNumberRegex.test(phoneNumber);
+  //         }
+
+  //         function isValidOTP(otp) {
+  //             const otpRegex = /^[0-9]{6}$/;
+  //             return otpRegex.test(otp);
+  //         }
+
+  //     })
+
+  </script>
+
+
+
+    <!-- <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const verifyOTPButton = document.getElementById("verifyOTPButton");
+        const otpInput = document.getElementById("otp");
+
+        verifyOTPButton.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          const otp = otpInput.value;
+          const phoneNumber = document.querySelector(
+            'input[name="phoneNumber"]'
+          ).value;
+
+          if (!phoneNumber || !otp) {
+            errSignupOtp.innerHTML = "Phone number and OTP are required.";
+            return;
+          }
+
+          fetch(`/verifyOTPnow?phoneNumber=${phoneNumber}&otp=${otp}`)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+              return response.json();
+            })
+            .then((data) => {
+              console.log("OTP verified:", data);
+            })
+            .catch((error) => {
+              console.error("Error verifying OTP:", error);
+            });
+        });
+        function isValidOTP(otp) {
+          const otpRegex = /^[0-9]{6}$/;
+          return otpRegex.test(otp);
+        }
+      });
+    </script> -->
+    <script src="script.js"></script>
+  </body>
+</html>
