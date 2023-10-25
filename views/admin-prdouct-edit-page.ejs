@@ -206,7 +206,7 @@
                             <h4>Details</h4>
                         </div>
                         <div class="card-body">
-                            <form action="/post-edit-product/<%=editProduct._id%>" method="post">
+                            <form action="/admin/post-edit-product/<%=editProduct._id%>" method="post"  enctype="multipart/form-data">
                                 <div class="mb-4">
                                     <label  class="form-label">Product name</label>
                                     <input type="text" name="name" value="<%= editProduct.name %>" class="form-control" id="product_name">
@@ -239,60 +239,34 @@
                                 <div>
                                     <button type="submit" class="btn btn-md rounded font-sm hover-up">Apply Changes</button>
                                 </div>
-                            </form>
+                                
                         </div>
                     </div> <!-- card end// -->
-                    <div class="card mb-4">
 
-
-                    </div> <!-- card end// -->
                 </div>
                 <div class="col-lg-3">
                     <div class="card mb-4">
                         <div class="card-header">
                             <h4>Media</h4>
                         </div>
-                        <div class="card-body">
-                            <div class="input-upload">
-                                <img src="/adminAssets/assets/imgs/theme/upload.svg" alt="">
-                                <input class="form-control" type="file">
+                            <div class="card-body">
+                                <div class="input-upload">
+                                    <img src="/<%= editProduct.photos[0] %>" alt="">
+                                    <input class="form-control" type="file" name="photo">
+                                </div>
+                                <div class="input-upload">
+                                    <img src="/<%= editProduct.photos[1] %>" alt="">
+                                    <input class="form-control" type="file" name="photo">
+                                </div>
+                                <div class="input-upload">
+                                    <img src="/<%= editProduct.photos[2] %>" alt="">
+                                    <input class="form-control" type="file" name="photo">
+                                </div>
                             </div>
-                        </div>
-                    </div> <!-- card end// -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h4>Organization</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="row gx-2">
-                                <div class="col-sm-6 mb-3">
-                                    <label class="form-label">Category</label>
-                                    <select class="form-select">
-                                        <option> Automobiles </option>
-                                        <option> Home items </option>
-                                        <option> Electronics </option>
-                                        <option> Smartphones </option>
-                                        <option> Sport items </option>
-                                        <option> Baby and Tous </option>
-                                    </select>
-                                </div>
-                                <div class="col-sm-6 mb-3">
-                                    <label class="form-label">Sub-category</label>
-                                    <select class="form-select">
-                                        <option> Nissan </option>
-                                        <option> Honda </option>
-                                        <option> Mercedes </option>
-                                        <option> Chevrolet </option>
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="product_name" class="form-label">Tags</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div> <!-- row.// -->
-                        </div>
-                    </div> <!-- card end// -->
+                        </div> <!-- card end// -->
                 </div>
+            </form>
+
             </div>
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">

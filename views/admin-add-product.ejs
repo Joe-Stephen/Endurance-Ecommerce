@@ -99,12 +99,12 @@
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
-                <li class="">
-                    <a class="" href="/admin-products-list"> <i class="icon material-icons md-shopping_bag"></i>
+                <!-- <li class="">
+                    <a class="" > <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Add product</span>
                     </a>
 
-                </li>
+                </li> -->
                 <li class="">
                     <a class="menu-link" href="page-orders-1.html"> <i class="icon material-icons md-shopping_cart"></i>
                         <span class="text">Orders</span>
@@ -118,9 +118,9 @@
                     <a class="menu-link" href="page-form-product-1.html"> <i class="icon material-icons md-add_box"></i>
                         <span class="text">Add product</span>
                     </a>
-                    <div class="submenu">
+                    <!-- <div class="submenu">
                         <a href="page-form-product-1.html">Add product</a>
-                    </div>
+                    </div> -->
                 </li>
                 <li class="">
                     <a class="menu-link" href="page-transactions-1.html"> <i class="icon material-icons md-monetization_on"></i>
@@ -241,7 +241,7 @@
                 <h5 class="font-sm" style="color: rgb(0, 255, 38);"><%=locals.success%></h5>
 
 
-                <form action="/admin/submit-form" method="POST" enctype="multipart/form-data">
+                <form action="/admin/add-product" method="post" enctype="multipart/form-data">
                     <table>
                         <tr>
                             <td>Name:</td>
@@ -290,27 +290,6 @@
                         </tr>
                     </table>
                 </form>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 <div class="card mb-4">
                     <header class="card-header">
                         <!-- <div class="row align-items-center">

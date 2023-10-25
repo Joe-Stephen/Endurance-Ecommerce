@@ -64,7 +64,7 @@
                     </a>
                 </li>
                 <li class="">
-                    <a class="menu-link" href="/admin-products-list"> <i class="icon material-icons md-shopping_bag"></i>
+                    <a class="menu-link" href="/admin/admin-products-list"> <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Products</span>
                     </a>
                     <!-- <div class="submenu">
@@ -210,7 +210,7 @@
 
                 </div>
                 <div>
-                    <a href="/admin-add-product" class="btn btn-primary btn-sm rounded">Add a product</a>
+                    <a href="/admin/admin-add-product" class="btn btn-primary btn-sm rounded">Add a product</a>
                 </div>
 
 
@@ -290,7 +290,7 @@
                     List
                 <% } %>
             </button>
-            <a href="/edit-product/?productId=<%= products[i]._id %>" class="button-link">Edit Product</a>
+            <a href="/admin/edit-product/?productId=<%= products[i]._id %>" class="button-link">Edit Product</a>
 
         </td>
       </tr>
@@ -307,7 +307,7 @@
     
         // Update the product's status in your database (use an API call or Mongoose).
         // For example, using an API call with the Fetch API:
-        fetch(`/product/${productId}`, {
+        fetch(`/admin/product/${productId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -327,7 +327,7 @@
           
 
             // Reload the page using window.location.reload()
-            window.location.href="/admin-products-list";
+            window.location.href="/admin/admin-products-list";
         })
         .catch(error => {
             console.error(error);

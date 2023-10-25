@@ -459,9 +459,6 @@
                             name="phoneNumber"
                             id="phoneNumber"
                           />
-                          <!-- <button class="btn btn-primary" type="button" id="sendOTPButton" data-mdb-ripple-color="dark">
-                                                        <a href="/send_otp" style="color: white;">Send O.T.P</a>
-                                                    </button> -->
                         </div>
                         <div
                           id="errSignupPhoneNumber"
@@ -470,20 +467,6 @@
 
                         <br />
 
-                        <!-- <div class="input-group w-auto">
-                                                    <input
-                                                      type="number"
-                                                      class="form-control"
-                                                      placeholder="Enter your O.T.P"
-                                                      name="otpInput"
-                                                      id="otp"
-                                                      
-                                                    />
-                                                    <button class="btn btn-primary" type="button" id="verifyOTPButton" data-mdb-ripple-color="dark">
-                                                        <a href="/verify_otp"></a>Verify O.T.P
-                                                    </button>
-                                                    <div id="errSignupOtp" class="error-message"></div>
-                                                </div> -->
 
                         <div class="login_footer form-group">
                           <div class="chek-form">
@@ -529,48 +512,56 @@
                       <script>
 
 
-                        document.addEventListener(
-                          "DOMContentLoaded",
-                          function () {
-                            const sendOTPButton =
-                              document.querySelector(".sendOTPButton");
-                            const otpInput = document.getElementById("otp");
+document.addEventListener("DOMContentLoaded", function () {
+  const sendOTPButton = document.querySelector(".sendOTPButton");
 
-                            sendOTPButton.addEventListener(
-                              "click",
-                              function (e) {
-                                e.preventDefault();
+  sendOTPButton.addEventListener("click", function (e) {
+    e.preventDefault();
 
-                                const phoneNumber = document.querySelector(
-                                  'input[name="phoneNumber"]'
-                                ).value;
+    const username = document.querySelector('input[name="username"]').value;
+    const password = document.querySelector('input[name="password"]').value;
+    const confirm_password = document.querySelector('input[name="confirm_password"]').value;
+    const email = document.querySelector('input[name="email"]').value;
+    const phoneNumber = document.querySelector('input[name="phoneNumber"]').value;
 
-                                if (!phoneNumber) {
-                                  errSignupPhoneNumber.innerHTML =
-                                    "Phone number is required.";
-                                  return;
-                                }
-                                fetch(`/send_otp?phoneNumber=${phoneNumber}`)
-                                  .then((response) => {
-                                    if (!response.ok) {
-                                      throw new Error(
-                                        `HTTP error! Status: ${response.status}`
-                                      );
-                                    }
-                                    return response.json();
-                                  })
-                                  .then((data) => {
-                                    console.log("Response from server:", data);
-                                    // res.redirect('/toVerifyPage')
-                                    window.location.href = "/toVerifyPage";
-                                  })
-                                  .catch((error) => {
-                                    console.error("Error sending OTP:", error);
-                                  });
-                              }
-                            );
-                          }
-                        );
+    // Check for required fields
+    if (!username || !password || !confirm_password || !email || !phoneNumber) {
+      // Handle form validation or error messages here
+      // For example, you can display an error message or prevent the fetch if any field is missing.
+      return;
+    }
+
+    const data = {
+      username: username,
+      password: password,
+      confirm_password: confirm_password,
+      email: email,
+      phoneNumber: phoneNumber
+    };
+
+    fetch("/send_otp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Response from server:", data);
+        // Redirect to the OTP verification page
+        window.location.href = "/toVerifyPage";
+      })
+      .catch((error) => {
+        console.error("Error sending OTP:", error);
+      });
+  });
+});
                       </script>
 
                      

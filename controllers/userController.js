@@ -9,6 +9,11 @@ const product = require("../model/productModel");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const secretKey = process.env.JWT_SECRET;
+const cart=require("../model/cartModel")
+
+
+
+
 
 console.log(secretKey);
 //getting user home page
@@ -22,6 +27,11 @@ const getHomePage = async (req, res) => {
     res.send("Error fetching products");
   }
 };
+
+
+const checkUserAuth=(req, res)=>{
+  res.status(200).send('You are authenticated!');
+}
 
 const logout = (req, res) => {
   // console.log(req.user)
@@ -99,9 +109,9 @@ const getUserRoute = (req, res) => {
 const getUserSignup = (req, res) => {
   res.render("page-signup");
 };
-
+let userData;
 //posting user details to the database
-const postUserSignup = async (req, res) => {
+const postUserSignup = async (req, res) => {  
   const formData = await user.findOne({
     email: req.body.email,
   });
@@ -175,13 +185,17 @@ const getUserHomePage = async (req, res) => {
     }
   }
 };
+
+
+
 let phoneNumber;
-let userData;
+
 const getSendOtp = async (req, res) => {
   try {
-    phoneNumber = req.query.phoneNumber;
+    phoneNumber = req.body.phoneNumber;
     userData=req.body;
     console.log(phoneNumber);
+    console.log(userData);
     await twilio.verify.v2.services(twilio_serviceId).verifications.create({
       to: `+91${phoneNumber}`,
       channel: "sms",
@@ -259,17 +273,24 @@ const findProduct = async (req, res) => {
     res.send("Error fetching product details");
   }
 };
+//getting cart
+const getCart= async (req, res)=>{
+  res.render('cart');
+}
+
 module.exports = {
   findProduct,
   testmid,
   getVerifyOtp,
   getSendOtp,
   getUserHomePage,
+  checkUserAuth,
   postUserSignup,
   getUserRoute,
   getUserSignup,
   getHomePage,
-  logout
+  logout,
+  getCart
 };
 
 //route handlers for admin-side
@@ -291,12 +312,13 @@ module.exports = {
 const category=require("../model/categoryModel")
 const admin = require("../model/adminModel");
 
+
 module.exports.getAdminLogin = (req, res) => {
   res.render("admin-login-page");
 };
 
 //chechking deatils aand login admin
-module.exports.getAdminDashboard = async (req, res) => {
+module.exports.postAdminDashboard = async (req, res) => {
   const admindata = await admin.findOne({ email: req.body.email });
   if (!admindata) {
     res.render("admin-login-page", { error: "This email is not registered" });
@@ -375,7 +397,7 @@ module.exports.postAddProduct = (req, res) => {
     !status ||
     !photos
   ) {
-    return res.render("admin-products-list", {
+    return res.redirect("/admin-products-list",{
       error:
         "Please fill out all the required fields and upload at least one photo.",
     });
@@ -387,7 +409,7 @@ module.exports.postAddProduct = (req, res) => {
     name,
     description,
     regular_price,
-    s_price,
+    selling_price,
     category,
     brand,
     stock,
@@ -396,7 +418,7 @@ module.exports.postAddProduct = (req, res) => {
   });
 
   newProduct.save();
-  res.redirect("/admin/admin-products-list");
+  res.redirect("/admin-products-list");
 };
 
 module.exports.postUserStatus = async (req, res) => {
@@ -454,39 +476,95 @@ module.exports.getEditProduct = async (req, res) => {
 
 //saving edited details into the db
 module.exports.postEditProduct = async (req, res) => {
-  try{
-  const editId = req.params.productId;
-  const updatedData=req.body
-  console.log(editId)
-  const updatedProduct = await product.findByIdAndUpdate(editId, updatedData, { new: true });
+  try {
+    const editId = req.params.productId;
+    const existingProduct = await product.findById(editId);
 
-  console.log(updatedData)
-  res.redirect('/admin-products-list');
-  }catch(error){
-    console.log(error)
-    res.render("admin-prdouct-edit-page",{error:"An error occured while updating the product, please try again"});
+    const {
+      name,
+      description,
+      regular_price,
+      selling_price,
+      category,
+      brand,
+      stock,
+    } = req.body;
+
+    // Get newly uploaded photos
+    const photos = req.files;
+    const newPhotos = photos.map((element) => ({ name: element.filename, path: element.path }));
+    const picPaths=newPhotos.map((photo) => photo.path);
+    // Include old photos that weren't edited
+    const updatedPhotos = existingProduct.photos.map((oldPhoto, index) =>
+    picPaths[index] ? picPaths[index] : oldPhoto
+    );
+    const updatedData = {
+      name,
+      description,
+      regular_price,
+      selling_price,
+      category,
+      brand,
+      stock,
+      status: existingProduct.status,
+      photos: updatedPhotos,
+    };
+
+    const updatedProduct = await product.findByIdAndUpdate(editId, updatedData, { new: true });
+    const successMessage = "Product updated successfully";
+    console.log(updatedProduct);
+    res.redirect('/admin-products-list');
+  } catch (error) {
+    console.log(error);
+    res.render("admin-product-edit-page", { error: "An error occurred while updating the product, please try again" });
   }
+};
 
+// Assuming you fetch the categories from your database
+module.exports.getCategories = async (req, res) => {
+  try {
+    const categories = await category.find(); // Replace with your actual Category model
+    console.log(categories)
 
+    res.render('admin-category-management', { categories });
 
-  // const photos = req.files;
-  // let arr = [];
-  // photos.forEach((element) => {
-  //   arr.push({ name: element.filename, path: element.path });
-  // });
+  } catch (error) {
+    // Handle the error
+    console.error(error);
+    res.render('admin-dashboard'); // Render an error page
+  }
+};
 
-
-
-}
-
-//function for getting category management
-module.exports.getCategoryList = async (req, res) => {
- 
-    // Fetch the product details based on categories
-    const categories= await category.find()
-        res.render('admin-category-management', { categories });
-      };
   
+
+module.exports.postAddCategory =async (req, res) => {
+  try {
+      // Retrieve category data from the request body
+      const { name, description, status } = req.body;
+
+      // Get the path of the uploaded image
+      const imagePath = req.file.path;
+
+      // Create a new category using the Category model
+      const newCategory = new category({
+          name,
+          description,
+          icon: imagePath, // Store the image path in the "icon" field
+          status,
+      });
+
+      // Save the new category to the database
+      await newCategory.save();
+
+      // Redirect to a success page or wherever you want
+      res.redirect('/admin-category-management'); // Change this URL as needed
+  } catch (error) {
+      // Handle any errors that occur during category creation
+      console.error(error);
+      // Redirect to an error page or show an error message
+      res.render('admin-category-management'); // Change this URL as needed
+  }
+};
 
 
   
