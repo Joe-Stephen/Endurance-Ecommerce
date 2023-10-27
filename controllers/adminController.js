@@ -204,7 +204,7 @@ module.exports.postEditProduct = async (req, res) => {
     const updatedProduct = await product.findByIdAndUpdate(editId, updatedData, { new: true });
     const successMessage = "Product updated successfully";
     console.log(updatedProduct);
-    res.redirect('/admin-products-list');
+    res.redirect('/admin/admin-products-list');
   } catch (error) {
     console.log(error);
     res.render("admin-product-edit-page", { error: "An error occurred while updating the product, please try again" });
@@ -248,7 +248,7 @@ module.exports.postAddCategory =async (req, res) => {
       await newCategory.save();
 
       // Redirect to a success page or wherever you want
-      res.redirect('/admin-category-management'); // Change this URL as needed
+      res.redirect('/admin/admin-category-management'); // Change this URL as needed
   } catch (error) {
       // Handle any errors that occur during category creation
       console.error(error);

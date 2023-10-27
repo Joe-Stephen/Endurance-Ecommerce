@@ -26,10 +26,6 @@ const userSchema=new mongoose.Schema({
         type:Number,
         required:true
     },
-    otpInput:{
-        type:Number,
-        required:true
-    },
     status:{
         type:String,
     }

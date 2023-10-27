@@ -10,18 +10,20 @@ userRouter.use(cookieParser());
 
 
 userRouter.get("/", userController.getHomePage);
-userRouter.get("/logout", userMiddleware.verifyUser, userController.logout);
+userRouter.get("/logout",userMiddleware.verifyUser,userController.logout);
 userRouter.get("/product/:productId", userController.findProduct);
-userRouter.route("/loginPage").get(userController.getUserRoute);
+userRouter.get("/loginPage",userController.getUserRoute);
 //user signup page
-userRouter.route("/page-signup").get(userController.getUserSignup);
+userRouter.get("/page-signup",userController.getUserSignup);
 //posting user signup details
 userRouter.get("/toVerifyPage",userController.postUserSignup);
 userRouter.post("/send_otp", userController.getSendOtp);
 userRouter.post("/verifyOTPnow", userController.getVerifyOtp);
 userRouter.post("/index-4",userController.getUserHomePage);
-userRouter.get("/cart",userController.getCart);
-userRouter.get("/verify-user-authentication",userMiddleware.isUserAuthentic,userController.checkUserAuth);
+userRouter.get("/cart",userMiddleware.verifyUser,userController.getCart);
+userRouter.post("/addToCart",userMiddleware.verifyUser,userController.addToCartController);
+userRouter.post("/cartQtyChange",userMiddleware.verifyUser,userController.postCartQty);
+userRouter.delete("/removeProductFromCart/:productId", userMiddleware.verifyUser, userController.removeProductFromCart);
 
 
 

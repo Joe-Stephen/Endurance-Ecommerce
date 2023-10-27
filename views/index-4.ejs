@@ -1916,9 +1916,11 @@
                                 data-product-id="<%= product._id %>"
                                 href="javascript:void(0);"
                             >
-                                <i class="fi-rs-shopping-bag-add"></i> Add to Cart
+                                <i class="fi-rs-shopping-bag-add"></i>
                             </a>
                         </div>
+
+
                         </div>
                       </div>
                     </div>
@@ -1926,73 +1928,53 @@
                     <p>No products available.</p>
                              <% } %>
 
-                    <script>
-                        // Assume the initial value is false (user not authenticated)
-                        let isUserAuthenticated = false;
-                        
-                        function checkUserAuthentication() {
-                            // Make an HTTP request to your server to verify the user's JWT token
-                            fetch('/verify-user-authentication', {
-                                method: 'GET',
-                                credentials: 'include', // Include cookies in the request
-                            })
-                            .then((response) => {
-                                if (response.status === 200) {
-                                    // User is authenticated, enable the "Add to Cart" button
-                                    isUserAuthenticated = true;
-                                } else {
-                                    // User is not authenticated, disable the "Add to Cart" button
-                                    isUserAuthenticated = false;
-                                }
-                            })
-                            .catch((error) => {
-                                console.error('Error while checking user authentication:', error);
-                                isUserAuthenticated = false; // Set to false by default in case of an error
-                            });
-                        }
-                        
-                        // Call the function to check user authentication when the page loads
-// Call the function to check user authentication when the page loads
-checkUserAuthentication();
 
-// Add a click event listener to all "Add to Cart" buttons
-const addToCartButtons = document.querySelectorAll(".addToCartButton");
-addToCartButtons.forEach((button) => {
-    button.addEventListener("click", async () => {
-        if (isUserAuthenticated) {
-            const productId = button.getAttribute("data-product-id");
-            const quantity = 1; // You can customize this
-
-            // Send an HTTP POST request to your server to add the product to the cart
-            try {
-                const response = await fetch("/add-to-cart", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ productId, quantity }),
-                });
-
-                if (response.ok) {
-                    // The product was successfully added to the cart
-                    alert("Product added to cart!");
-                } else {
-                    // Handle errors here
-                    console.error("Error adding product to cart.");
-                }
-            } catch (error) {
-                console.error("Network error:", error);
-            }
-        } else {
-            // User is not authenticated, handle this case (e.g., show a message)
-            alert("You must be logged in to add products to the cart.");
-        }
-    });
-});
-                        </script>
                                           </div>
                   <!--End product-grid-4-->
                 </div>
+                <script>
+                  document.addEventListener("DOMContentLoaded", function () {
+                  const addToCartButtons = document.querySelectorAll(".addToCartButton");
+                
+                  addToCartButtons.forEach((button) => {
+                    button.addEventListener("click", function (event) {
+                      event.preventDefault();
+                
+                      const productId = button.getAttribute("data-product-id");
+                
+                      fetch("/addToCart", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ productId: productId }),
+                      })
+                        .then((response) => {
+                          if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                          }
+                          return response.json();
+                        })
+                        .then((data) => {
+                          // Handle the response data as needed
+                          console.log("Added to cart:", data);
+                          Swal.fire({
+                          position: 'top-center',
+                          icon: 'success',
+                          title: 'Product added to cart!',
+                          showConfirmButton: false,
+                          timer: 1500
+                          })
+                
+                        })
+                        .catch((error) => {
+                          window.location.href="/loginPage"
+                          // console.error("Error adding to cart:", error);
+                        });
+                    });
+                  });
+                });
+                </script>
                 <!--En tab one (Featured)-->
                 <div
                   class="tab-pane fade"
@@ -5828,6 +5810,7 @@ addToCartButtons.forEach((button) => {
       </div>
     </div>
     <!-- Vendor JS-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="userAssets/assets/js/vendor/modernizr-3.6.0.min.js"></script>
     <script src="userAssets/assets/js/vendor/jquery-3.6.0.min.js"></script>
     <script src="userAssets/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>

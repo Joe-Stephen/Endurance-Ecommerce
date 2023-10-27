@@ -183,15 +183,11 @@ resendButton.addEventListener('click', function () {
     },
     body: `otpCode=${otpCode}`, // Use correct field name
   })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log("OTP verified:", data);
-    })
+  .then((data) => {
+  console.log("OTP verified:", data);
+  // Assuming you want to redirect to the login page
+  window.location.href = "/loginPage"; // Adjust the URL as needed
+})
     .catch((error) => {
       console.error("Error verifying OTP:", error);
     });
