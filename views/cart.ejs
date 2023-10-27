@@ -391,7 +391,9 @@
                         />
                       </td>
                       <td class="product-des product-name">
-                        <h5 class="product-name"><%= product._id %></h5>
+                        <h5 class="product-name">
+                          <%= product.productId.name %>
+                        </h5>
                       </td>
                       <td class="price" data-title="Price">
                         <span><%= product.productId.selling_price %></span>
@@ -405,7 +407,9 @@
                         >
                           <i class="fi-rs-angle-small-up"></i>
                         </a>
-                        <span class="qty-val quantity-display"><%= Number(product.quantity) %></span>
+                        <span class="qty-val quantity-display"
+                          ><%= Number(product.quantity) %></span
+                        >
 
                         <a
                           href="javascript:void(0);"
@@ -416,131 +420,178 @@
                         </a>
                       </td>
                       <td class="text-right" data-title="Cart">
-                        <span class="price-span "
+                        <span class="price-span"
                           ><%= product.productId.selling_price *
                           product.quantity %></span
                         >
                       </td>
                       <td class="action" data-title="Remove">
-                        <a href="#" class="text-muted " >
-                          <i class="fi-rs-trash delete-product" data-product-id="<%= product._id %>"></i>
+                        <a href="#" class="text-muted">
+                          <i
+                            class="fi-rs-trash delete-product"
+                            data-product-id="<%= product._id %>"
+                          ></i>
                         </a>
                       </td>
-                                          </tr>
+                    </tr>
                     <% }); %>
                   </tbody>
                 </table>
+                <div class="grand-total">
+                  <h3>Grand Total: <span id="grandTotal">0</span></h3>
+                  <a href="#" class="checkout-button">Checkout</a>
+                </div>
               </div>
               <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const qtyUpIcons = document.querySelectorAll(".qty-up");
-  const qtyDownIcons = document.querySelectorAll(".qty-down");
+                document.addEventListener("DOMContentLoaded", function () {
+                  const qtyUpIcons = document.querySelectorAll(".qty-up");
+                  const qtyDownIcons = document.querySelectorAll(".qty-down");
 
-  qtyUpIcons.forEach((icon) => {
-    icon.addEventListener("click", function (event) {
-      event.preventDefault();
+                  function updateGrandTotal() {
+                    const priceSpans = document.querySelectorAll(".price-span");
+                    let total = 0;
 
-      const productId = icon.getAttribute("data-product-id");
+                    priceSpans.forEach((priceSpan) => {
+                      total += parseFloat(priceSpan.textContent);
+                    });
 
-      fetch("/cartQtyChange", {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ productId: productId, action: "increase" }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Quantity increased");
-          console.log(data.updatedSubtotal)
-          // Update the displayed quantity without reloading
-          const quantitySpan = icon.nextElementSibling;
-          console.log("Quantity span: ", quantitySpan);
+                    const grandTotalElement =
+                      document.getElementById("grandTotal");
+                    grandTotalElement.textContent = total;
+                  }
 
-          quantitySpan.textContent = data.updatedQuantity;
+                  qtyUpIcons.forEach((icon) => {
+                    icon.addEventListener("click", function (event) {
+                      event.preventDefault();
 
-          // Update the subtotal
-          const row = icon.closest("tr");
-          const priceSpan = row.querySelector(".text-right .price-span");
-          console.log("Price span: ", priceSpan);
+                      const productId = icon.getAttribute("data-product-id");
 
-          priceSpan.textContent = data.updatedSubtotal;
-        })
-        .catch((error) => {
-          console.log("An error happened during the increase process: " + error);
-        });
-    });
-  });
+                      fetch("/cartQtyChange", {
+                        method: "post",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          productId: productId,
+                          action: "increase",
+                        }),
+                      })
+                        .then((response) => response.json())
+                        .then((data) => {
+                          console.log("Quantity increased");
+                          console.log(data.updatedSubtotal);
 
-  qtyDownIcons.forEach((icon) => {
-    icon.addEventListener("click", function (event) {
-      event.preventDefault();
+                          // Update the displayed quantity without reloading
+                          const quantitySpan = icon.nextElementSibling;
+                          console.log("Quantity span: ", quantitySpan);
+                          quantitySpan.textContent = data.updatedQuantity;
 
-      const productId = icon.getAttribute("data-product-id");
+                          // Update the subtotal
+                          const row = icon.closest("tr");
+                          const priceSpan = row.querySelector(
+                            ".text-right .price-span"
+                          );
+                          console.log("Price span: ", priceSpan);
+                          priceSpan.textContent = data.updatedSubtotal;
 
-      fetch("/cartQtyChange", {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ productId: productId, action: "decrease" }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Quantity decreased");
-          // Update the displayed quantity without reloading
-          const quantitySpan = icon.previousElementSibling;
-          quantitySpan.textContent = data.updatedQuantity;
+                          // Update the grand total
+                          updateGrandTotal();
+                        })
+                        .catch((error) => {
+                          console.log(
+                            "An error happened during the increase process: " +
+                              error
+                          );
+                        });
+                    });
+                  });
 
-          // Update the subtotal
-          const row = icon.closest("tr");
-          const priceSpan = row.querySelector(".text-right .price-span");
-          priceSpan.textContent = data.updatedSubtotal;
-        })
-        .catch((error) => {
-          console.log("An error happened during the decrease process: " + error);
-        });
-    });
-  });
-});
+                  qtyDownIcons.forEach((icon) => {
+                    icon.addEventListener("click", function (event) {
+                      event.preventDefault();
 
+                      const productId = icon.getAttribute("data-product-id");
+
+                      fetch("/cartQtyChange", {
+                        method: "post",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          productId: productId,
+                          action: "decrease",
+                        }),
+                      })
+                        .then((response) => response.json())
+                        .then((data) => {
+                          console.log("Quantity decreased");
+
+                          // Update the displayed quantity without reloading
+                          const quantitySpan = icon.previousElementSibling;
+                          quantitySpan.textContent = data.updatedQuantity;
+
+                          // Update the subtotal
+                          const row = icon.closest("tr");
+                          const priceSpan = row.querySelector(
+                            ".text-right .price-span"
+                          );
+                          priceSpan.textContent = data.updatedSubtotal;
+
+                          // Update the grand total
+                          updateGrandTotal();
+                        })
+                        .catch((error) => {
+                          console.log(
+                            "An error happened during the decrease process: " +
+                              error
+                          );
+                        });
+                    });
+                  });
+
+                  // Call this function initially to set the grand total
+                  updateGrandTotal();
+                });
               </script>
               <script>
                 document.addEventListener("DOMContentLoaded", function () {
-  const deleteIcons = document.querySelectorAll(".delete-product");
+                  const deleteIcons =
+                    document.querySelectorAll(".delete-product");
 
-  deleteIcons.forEach((icon) => {
-    icon.addEventListener("click", function (event) {
-      event.preventDefault();
+                  deleteIcons.forEach((icon) => {
+                    icon.addEventListener("click", function (event) {
+                      event.preventDefault();
 
-      const productId = icon.getAttribute("data-product-id");
+                      const productId = icon.getAttribute("data-product-id");
 
-      // Send a DELETE request to your server
-      fetch(`/removeProductFromCart/${productId}`, {
-        method: "delete",
-      })
-        .then((response) => {
-          if (response.ok) {
-            // Product was successfully removed from the cart
-            // Remove the product's row from the table
-            const row = icon.closest("tr");
-            if (row) {
-              row.remove();
-            }
-          } else {
-            // Handle the case where the deletion was not successful
-            console.log("Product removal failed");
-          }
-        })
-        .catch((error) => {
-          console.error("An error occurred during the deletion process: " + error);
-        });
-    });
-  });
-});
-
+                      // Send a DELETE request to your server
+                      fetch(`/removeProductFromCart/${productId}`, {
+                        method: "delete",
+                      })
+                        .then((response) => {
+                          if (response.ok) {
+                            // Product was successfully removed from the cart
+                            // Remove the product's row from the table
+                            const row = icon.closest("tr");
+                            if (row) {
+                              row.remove();
+                            }
+                          } else {
+                            // Handle the case where the deletion was not successful
+                            console.log("Product removal failed");
+                          }
+                        })
+                        .catch((error) => {
+                          console.error(
+                            "An error occurred during the deletion process: " +
+                              error
+                          );
+                        });
+                    });
+                  });
+                });
               </script>
-                                        </div>
+            </div>
           </div>
         </div>
       </section>

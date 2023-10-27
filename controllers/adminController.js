@@ -203,7 +203,7 @@ module.exports.postEditProduct = async (req, res) => {
 
     const updatedProduct = await product.findByIdAndUpdate(editId, updatedData, { new: true });
     const successMessage = "Product updated successfully";
-    console.log(updatedProduct);
+    // console.log(updatedProduct);
     res.redirect('/admin/admin-products-list');
   } catch (error) {
     console.log(error);

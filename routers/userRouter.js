@@ -8,33 +8,31 @@ const userMiddleware = require("../middlewares/user/userAuthentication");
 const cookieParser = require("cookie-parser");
 userRouter.use(cookieParser());
 
-
 userRouter.get("/", userController.getHomePage);
-userRouter.get("/logout",userMiddleware.verifyUser,userController.logout);
+userRouter.get("/logout", userMiddleware.verifyUser, userController.logout);
 userRouter.get("/product/:productId", userController.findProduct);
-userRouter.get("/loginPage",userController.getUserRoute);
+userRouter.get("/loginPage", userController.getUserRoute);
 //user signup page
-userRouter.get("/page-signup",userController.getUserSignup);
+userRouter.get("/page-signup", userController.getUserSignup);
 //posting user signup details
-userRouter.get("/toVerifyPage",userController.postUserSignup);
+userRouter.get("/toVerifyPage", userController.postUserSignup);
 userRouter.post("/send_otp", userController.getSendOtp);
 userRouter.post("/verifyOTPnow", userController.getVerifyOtp);
-userRouter.post("/index-4",userController.getUserHomePage);
-userRouter.get("/cart",userMiddleware.verifyUser,userController.getCart);
-userRouter.post("/addToCart",userMiddleware.verifyUser,userController.addToCartController);
-userRouter.post("/cartQtyChange",userMiddleware.verifyUser,userController.postCartQty);
+userRouter.post("/index-4", userController.getUserHomePage);
+userRouter.get("/cart", userMiddleware.verifyUser, userController.getCart);
+userRouter.post("/addToCart", userMiddleware.verifyUser, userController.addToCartController);
+userRouter.post("/cartQtyChange", userMiddleware.verifyUser, userController.postCartQty);
 userRouter.delete("/removeProductFromCart/:productId", userMiddleware.verifyUser, userController.removeProductFromCart);
-
+userRouter.get("/forgot_password", userController.getForgotPassword);
+userRouter.post("/sendOTPRoute", userController.getResetPasswordOtp);
+userRouter.post("/verifyOTPRoute", userController.verifyForgotPasswordOtp);
+userRouter.get("/resetPassword/:phoneNumber", userController.getResetPassword);
+userRouter.post("/changePassword", userController.changePassword);
 
 
 
 // test routes
 userRouter.route("/test").get(userController.testmid);
-
-
-
-
-
 
 // adminRouter.use(express.static("public/adminAssets/assets"));
 // const multer = require("multer");
@@ -65,8 +63,5 @@ userRouter.route("/test").get(userController.testmid);
 // userRouter.post("/post-edit-product/:productId",upload.array("photo"),userController.postEditProduct);
 // userRouter.get("/admin-category-management",userController.getCategories);
 // userRouter.post("/add-category",upload.single("icon"),userController.postAddCategory);
-
-
-
 
 module.exports = userRouter;

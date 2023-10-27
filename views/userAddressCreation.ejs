@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Address Form</title>
+</head>
+<body>
+    <h1>User Address Form</h1>
+    <form action="process_address.php" method="post">
+        <!-- Address Type -->
+        <label for="addressType">Address Type:</label>
+        <input type="text" id="addressType" name="addressType" required>
+        <br><br>
+
+        <!-- User Name -->
+        <label for="userName">User Name:</label>
+        <input type="text" id="userName" name="userName" required>
+        <br><br>
+
+        <!-- City -->
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required>
+        <br><br>
+
+        <!-- Landmark -->
+        <label for="landmark">Landmark:</label>
+        <input type="text" id="landmark" name="landmark">
+        <br><br>
+
+        <!-- State -->
+        <label for="state">State:</label>
+        <input type="text" id="state" name="state" required>
+        <br><br>
+
+        <!-- Pin Code -->
+        <label for="pinCode">Pin Code:</label>
+        <input type="number" id="pinCode" name="pinCode" required>
+        <br><br>
+
+        <!-- Alternate Phone Number -->
+        <label for="altPhone">Alternate Phone Number:</label>
+        <input type="number" id="altPhone" name="altPhone">
+        <br><br>
+
+        <!-- Submit Button -->
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

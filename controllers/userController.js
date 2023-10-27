@@ -101,6 +101,84 @@ const getUserRoute = (req, res) => {
   res.render("page-login-register");
 };
 
+//getting forgot password page
+const getForgotPassword=(req, res)=>{
+  res.render('forgot-Password')
+}
+
+//sending forget password otp
+const getResetPasswordOtp = async (req, res) => {
+  try {
+      const userData = await user.findOne({ email: req.body.email });
+      if (!userData) {
+          return res.status(404).json({ error: "User not found" });
+      }
+
+      const phoneNumber = userData.phoneNumber;
+      if (!phoneNumber) {
+          return res.status(400).json({ error: "Phone number not available" });
+      }
+
+      // Assuming you have initialized twilio_serviceId correctly
+      await twilio.verify.v2.services(twilio_serviceId).verifications.create({
+          to: `+91${phoneNumber}`,
+          channel: "sms",
+      });
+
+      const response = {
+          phoneNumber: phoneNumber,
+      };
+      return res.json(response);
+  } catch (error) {
+      console.error("An error happened while sending the OTP: " + error);
+      return res.status(500).json({ error: "Failed to send OTP" });
+  }
+};
+
+//verifying forgot password otp
+const verifyForgotPasswordOtp= async(req, res)=>{
+  try{
+    const phoneNumber=req.body.phoneNumber;
+    const otp=req.body.otpCode;
+    const verifyOTP = await twilio.verify.v2
+    .services(twilio_serviceId)
+    .verificationChecks.create({
+      to: `+91${phoneNumber}`,
+      code: otp,
+    });
+    if (verifyOTP.valid) {
+      console.log("VERIFIED");
+}
+}
+catch(error){
+  console.log("An error occured "+error);
+  res.render("forgot-password");
+}
+};
+const getResetPassword=(req, res)=>{
+  let phoneNumber=req.params.phoneNumber;
+  res.render("resetPassword", { phoneNumber });
+}
+
+    // Update the user's password
+    const changePassword=async(req, res)=>{
+      try{
+        const phoneNumber=req.body.phoneNumber;
+        console.log(phoneNumber)
+        const newPassword=req.body.password1;
+        const userData=await user.findOne({phoneNumber:phoneNumber});
+        if (!userData) {
+          return res.status(404).json({ error: "User not found" });
+        }
+        userData.password = newPassword;
+        await userData.save();
+        res.redirect("/loginPage")
+      } catch (error) {
+    console.log("An error occurred while changing the password: " + error);
+    res.status(500).json({ error: "An error occurred while changing the password" });
+  }
+};
+
 //getting user signup page
 const getUserSignup = (req, res) => {
   res.render("page-signup");
@@ -116,7 +194,6 @@ const postUserSignup = async (req, res) => {
       error: "User with this email Already exists! Try with another email.",
     });
   } else {
-    console.log("kittyaa?");
     res.render("otpVerificationPage");
     // const userData = await user.findOne({
     //   username: req.body.username,
@@ -134,7 +211,6 @@ const postUserSignup = async (req, res) => {
   }
 };
 
-let userEmail;
 //authenticating user credentials
 const getUserHomePage = async (req, res) => {
   const verifyStatus = await user.findOne({
@@ -184,6 +260,7 @@ const getUserHomePage = async (req, res) => {
 
 let phoneNumber;
 
+//displaying otp verification page and sending otp
 const getSendOtp = async (req, res) => {
   try {
     console.log("reached the send otp fun.");
@@ -195,20 +272,19 @@ const getSendOtp = async (req, res) => {
       to: `+91${phoneNumber}`,
       channel: "sms",
     });
-    res.json({ data: "hi" });
+    res.json({ phoneNumber:phoneNumber });
   } catch (err) {
     console.error(err);
   }
 };
 
+//otp verification
 const getVerifyOtp = async (req, res) => {
   try {
     console.log(userData);
     console.log(phoneNumber);
-
     const otp = req.body.otpCode;
     console.log(otp);
-
     const verifyOTP = await twilio.verify.v2
       .services(twilio_serviceId)
       .verificationChecks.create({
@@ -226,12 +302,7 @@ const getVerifyOtp = async (req, res) => {
         status: "Unblocked",
         isVerified: 0,
       });
-      // .then(()=>{
-      // res.render("page-login-register", {
-      //   verified: "The OTP verification is successfull.",
-      // });
       res.redirect("/");
-      // })
     } else {
       res.redirect("/page-signup", {
         error: "Incorrect O.T.P",
@@ -252,18 +323,17 @@ const testmid = (req, res) => {
   res.render("mail-verification-login");
 };
 
+//finding product
 const findProduct = async (req, res) => {
   try {
     const productId = req.params.productId;
     // Fetch the product details based on the productId
     const products = await product.findById(productId);
     // console.log(products)
-
     if (!products) {
       // Handle the case when the product is not found
       return res.send("Product not found");
     }
-
     // Render the "product-page" template and pass the product details
     res.render("product-page", { products });
   } catch (error) {
@@ -327,7 +397,7 @@ const addToCartController = async (req, res) => {
     // res.status(500).json({ error: "Failed to add the product to the cart" });
   }
 };
-
+//updating cart quantity
 const postCartQty = async (req, res) => {
   try {
     const userData = await user.findOne({ email: req.user });
@@ -361,7 +431,8 @@ const postCartQty = async (req, res) => {
     await userCart.save();
 
     // Calculate the updatedSubtotal as a number
-    const updatedSubtotal = Number(productInCart.productId.selling_price) * productInCart.quantity;
+    const updatedSubtotal =
+      Number(productInCart.productId.selling_price) * productInCart.quantity;
 
     // Create a response object with the updated quantity and subtotal
     const response = {
@@ -416,6 +487,11 @@ module.exports = {
   checkUserAuth,
   postUserSignup,
   getUserRoute,
+  getForgotPassword,
+  getResetPasswordOtp,
+  verifyForgotPasswordOtp,
+  getResetPassword,
+  changePassword,
   getUserSignup,
   getHomePage,
   logout,
@@ -424,257 +500,3 @@ module.exports = {
   postCartQty,
   removeProductFromCart,
 };
-
-// const category=require("../model/categoryModel")
-// const admin = require("../model/adminModel");
-
-// module.exports.getAdminLogin = (req, res) => {
-//   res.render("admin-login-page");
-// };
-
-// //chechking deatils aand login admin
-// module.exports.postAdminDashboard = async (req, res) => {
-//   const admindata = await admin.findOne({ email: req.body.email });
-//   if (!admindata) {
-//     res.render("admin-login-page", { error: "This email is not registered" });
-//   } else {
-//     if (admindata) {
-//       if (req.body.email !== admindata.email) {
-//         res.render("admin-login-page", { error: "Incorrect email" });
-//       } else if (req.body.password !== admindata.password) {
-//         res.render("admin-login-page", { error: "Incorrect password" });
-//       } else {
-//         if (
-//           req.body.email == admindata.email &&
-//           req.body.password == admindata.password
-//         ) {
-//           res.render("admin-dashboard");
-//         }
-//       }
-//     } else {
-//       res.redirect("/admin-login-page");
-//     }
-//   }
-// };
-
-// //get users list
-// module.exports.getUsers = async (req, res) => {
-//   try {
-//     const users = await user.find();
-//     res.render("users-list", { users });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send("Error retrieving user data");
-//   }
-// };
-
-// //getting the product list
-// module.exports.getProductsList = async (req, res) => {
-//   try {
-//     const products = await product.find({});
-//     res.render("admin-products-list", { products });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send("Error retrieving user data");
-//   }
-// };
-
-// // get add product
-// module.exports.getAddProduct = (req, res) => {
-//   res.render("admin-add-product");
-// };
-// //post the added product
-// module.exports.postAddProduct = (req, res) => {
-//   const {
-//     name,
-//     description,
-//     regular_price,
-//     selling_price,
-//     category,
-//     brand,
-//     stock,
-//     status,
-//   } = req.body;
-
-//   const photos = req.files;
-//   let arr = [];
-//   photos.forEach((element) => {
-//     arr.push({ name: element.filename, path: element.path });
-//   });
-
-//   if (
-//     !name ||
-//     !description ||
-//     !regular_price ||
-//     !category ||
-//     !brand ||
-//     !stock ||
-//     !status ||
-//     !photos
-//   ) {
-//     return res.redirect("/admin-products-list",{
-//       error:
-//         "Please fill out all the required fields and upload at least one photo.",
-//     });
-//   }
-
-//   const photoIds = arr.map((photo) => photo.path);
-
-//   const newProduct = new product({
-//     name,
-//     description,
-//     regular_price,
-//     selling_price,
-//     category,
-//     brand,
-//     stock,
-//     status,
-//     photos: photoIds,
-//   });
-
-//   newProduct.save();
-//   res.redirect("/admin-products-list");
-// };
-
-// module.exports.postUserStatus = async (req, res) => {
-//   const userId = req.params.userId;
-//   const newStatus = req.body.status;
-
-//   try {
-//     const updatedUser = await user.findByIdAndUpdate(userId, {
-//       status: newStatus,
-//     });
-
-//     res.status(200).json({ status: updatedUser.status });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send("Error updating user status.");
-//   }
-// };
-
-// module.exports.postProductStatus =async(req,res)=>{
-//   const productId =req.params.productId;
-//   const newStatus=req.body.status
-//   try{
-//     const updateProduct =await product.findByIdAndUpdate(productId,{
-//      status:newStatus
-//     });
-//     res.status(200).json({status:updateProduct.status});
-//   }catch(error){
-//     console.error(error);
-//     res.status(500).send("Error updating Product status")
-//   }
-// };
-// //geting edit product
-// module.exports.getEditProduct = async (req, res) => {
-//   try {
-//     const editId = req.query.productId;
-
-//     console.log(editId)
-//     // Fetch the product details based on the productId
-//     const editProduct = await product.findById(editId);
-
-//     // console.log(products)
-
-//     if (!editProduct) {
-//       // Handle the case when the product is not found
-//       return res.send("Product not found");
-//     }
-
-//     // Render the "product-page" template and pass the product details
-//     res.render("admin-prdouct-edit-page", { editProduct });
-//   } catch (error) {
-//     console.error(error);
-//     res.send("Error fetching product details");
-//   }
-// };
-
-// //saving edited details into the db
-// module.exports.postEditProduct = async (req, res) => {
-//   try {
-//     const editId = req.params.productId;
-//     const existingProduct = await product.findById(editId);
-
-//     const {
-//       name,
-//       description,
-//       regular_price,
-//       selling_price,
-//       category,
-//       brand,
-//       stock,
-//     } = req.body;
-
-//     // Get newly uploaded photos
-//     const photos = req.files;
-//     const newPhotos = photos.map((element) => ({ name: element.filename, path: element.path }));
-//     const picPaths=newPhotos.map((photo) => photo.path);
-//     // Include old photos that weren't edited
-//     const updatedPhotos = existingProduct.photos.map((oldPhoto, index) =>
-//     picPaths[index] ? picPaths[index] : oldPhoto
-//     );
-//     const updatedData = {
-//       name,
-//       description,
-//       regular_price,
-//       selling_price,
-//       category,
-//       brand,
-//       stock,
-//       status: existingProduct.status,
-//       photos: updatedPhotos,
-//     };
-
-//     const updatedProduct = await product.findByIdAndUpdate(editId, updatedData, { new: true });
-//     const successMessage = "Product updated successfully";
-//     console.log(updatedProduct);
-//     res.redirect('/admin-products-list');
-//   } catch (error) {
-//     console.log(error);
-//     res.render("admin-product-edit-page", { error: "An error occurred while updating the product, please try again" });
-//   }
-// };
-
-// // Assuming you fetch the categories from your database
-// module.exports.getCategories = async (req, res) => {
-//   try {
-//     const categories = await category.find(); // Replace with your actual Category model
-//     console.log(categories)
-
-//     res.render('admin-category-management', { categories });
-
-//   } catch (error) {
-//     // Handle the error
-//     console.error(error);
-//     res.render('admin-dashboard'); // Render an error page
-//   }
-// };
-
-// module.exports.postAddCategory =async (req, res) => {
-//   try {
-//       // Retrieve category data from the request body
-//       const { name, description, status } = req.body;
-
-//       // Get the path of the uploaded image
-//       const imagePath = req.file.path;
-
-//       // Create a new category using the Category model
-//       const newCategory = new category({
-//           name,
-//           description,
-//           icon: imagePath, // Store the image path in the "icon" field
-//           status,
-//       });
-
-//       // Save the new category to the database
-//       await newCategory.save();
-
-//       // Redirect to a success page or wherever you want
-//       res.redirect('/admin-category-management'); // Change this URL as needed
-//   } catch (error) {
-//       // Handle any errors that occur during category creation
-//       console.error(error);
-//       // Redirect to an error page or show an error message
-//       res.render('admin-category-management'); // Change this URL as needed
-//   }
-// };
