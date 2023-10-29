@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 <html class="no-js" lang="en">
-  <!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/index-4.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 15 Jul 2023 10:10:09 GMT -->
+  <!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/postLogin.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 15 Jul 2023 10:10:09 GMT -->
   <head>
     <meta charset="utf-8" />
     <title>Evara - eCommerce HTML Template</title>
@@ -19,6 +19,14 @@
     />
     <!-- Template CSS -->
     <link rel="stylesheet" href="userAssets/assets/css/maind134.css?v=3.4" />
+    <style>
+      /* product image card */
+      .product-img {
+    max-width: 100%;
+    height: 200px; /* You can adjust this value as needed */
+    object-fit: cover;
+}
+    </style>
   </head>
 
   <body>
@@ -349,48 +357,28 @@
                 </div>
               </div>
             </div>
-            <div class="col-xl-3 col-lg-4">
-              <div class="header-info header-info-right">
-                <ul>
-                  <li>
-                    <a class="language-dropdown-active" href="#">
-                      <i class="fi-rs-world"></i> English
-                      <i class="fi-rs-angle-small-down"></i
-                    ></a>
-                    <ul class="language-dropdown">
+            <div class="header-info header-info-right">
+              <ul>
+                  <% if (loggedIn) { %>
+                      <!-- User is logged in -->
                       <li>
-                        <a href="#"
-                          ><img
-                            src="userAssets/assets/imgs/theme/flag-fr.png"
-                            alt=""
-                          />Français</a
-                        >
+                          <a href="/userAccount">Account</a>
                       </li>
                       <li>
-                        <a href="#"
-                          ><img
-                            src="userAssets/assets/imgs/theme/flag-dt.png"
-                            alt=""
-                          />Deutsch</a
-                        >
+                          <a href="/logout">Logout</a>
+                      </li>
+                  <% } else { %>
+                      <!-- User is not logged in -->
+                      <li>
+                          <a href="/getLogin">Log In</a>
                       </li>
                       <li>
-                        <a href="#"
-                          ><img
-                            src="userAssets/assets/imgs/theme/flag-ru.png"
-                            alt=""
-                          />Pусский</a
-                        >
+                          <a href="/page-signup">Sign Up</a>
                       </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <i class="fi-rs-user"></i
-                    ><a href="/loginPage">Log In / Sign Up</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
+                  <% } %>
+              </ul>
+          </div>
+          
           </div>
         </div>
       </div>
@@ -441,24 +429,11 @@
                       />
                       <span class="pro-count blue">2</span>
                     </a>
-                    <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                    <!-- <div class="cart-dropdown-wrap cart-dropdown-hm2">
                       <ul>
                         <li>
-                          <div class="shopping-cart-img">
-                            <a href="shop-product-right.html"
-                              ><img
-                                alt="Evara"
-                                src="userAssets/assets/imgs/shop/thumbnail-3.jpg"
-                            /></a>
-                          </div>
-                          <div class="shopping-cart-title">
-                            <h4>
-                              <a href="shop-product-right.html"
-                                >Daisy Casual Bag</a
-                              >
-                            </h4>
-                            <h4><span>1 × </span>$800.00</h4>
-                          </div>
+                          
+
                           <div class="shopping-cart-delete">
                             <a href="#"><i class="fi-rs-cross-small"></i></a>
                           </div>
@@ -493,7 +468,7 @@
                           <a href="shop-checkout.html">Checkout</a>
                         </div>
                       </div>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
               </div>
@@ -1589,15 +1564,7 @@
                     <li><a href="page-404.html">404 Page</a></li>
                   </ul>
                 </li>
-                <li class="menu-item-has-children">
-                  <span class="menu-expand"></span><a href="#">Language</a>
-                  <ul class="dropdown">
-                    <li><a href="#">English</a></li>
-                    <li><a href="#">French</a></li>
-                    <li><a href="#">German</a></li>
-                    <li><a href="#">Spanish</a></li>
-                  </ul>
-                </li>
+
               </ul>
             </nav>
             <!-- mobile menu end -->
@@ -1677,7 +1644,7 @@
                       <div class="single-slider-img single-slider-img-1">
                         <img
                           class="animated"
-                          src="userAssets/assets/imgs/slider/slider-6.png"
+                          src="userAssets/assets/cycle_wallpaper2.avif"
                           alt=""
                         />
                       </div>
@@ -1710,8 +1677,8 @@
                     <div class="col-lg-7 col-md-6">
                       <div class="single-slider-img single-slider-img-1">
                         <img
-                          class="animated"
-                          src="userAssets/assets/imgs/slider/slider-7.png"
+                          class=""
+                          src="userAssets/assets/cycle_wallpaper.avif"
                           alt=""
                         />
                       </div>
@@ -1737,7 +1704,6 @@
                 </h5>
                 <ul class="categories">
                   <li><a href="shop-grid-right.html">Mtb</a></li>
-                  <li><a href="shop-grid-right.html">Road bikes</a></li>
                   <li><a href="shop-grid-right.html">Electric bikes</a></li>
                   <li><a href="shop-grid-right.html">Endurance bikes</a></li>
                   <li><a href="shop-grid-right.html">Hybrid bikes</a></li>
@@ -1832,8 +1798,6 @@
                 ></a>
               </div>
               <!--End nav-tabs-->
-
-              <a href="/test">click me</a>
               <div class="tab-content wow fadeIn animated" id="myTabContent">
                 <div
                   class="tab-pane fade show active"
@@ -1849,15 +1813,15 @@
                           <div class="product-img product-img-zoom">
                             <a href="/product/<%=product._id%>">
                               <img
-                                class="default-img"
-                                src="<%=product.photos[0]%>"
-                                alt=""
-                              />
-                              <img
-                                class="hover-img"
-                                src="<%=product.photos[0]%>"
-                                alt=""
-                              />
+                              class="product-img default-img"
+                              src="<%= product.photos[0] %>"
+                              alt=""
+                          />
+                          <img
+                          class="product-img hover-img"
+                          src="<%= product.photos[0] %>"
+                          alt=""
+                      />
                             </a>
                           </div>
                           <div class="product-action-1">
@@ -1968,7 +1932,7 @@
                 
                         })
                         .catch((error) => {
-                          window.location.href="/loginPage"
+                          window.location.href="/getLogin"
                           // console.error("Error adding to cart:", error);
                         });
                     });
@@ -5836,5 +5800,5 @@
     <script src="userAssets/assets/js/shopd134.js?v=3.4"></script>
   </body>
 
-  <!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/index-4.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 15 Jul 2023 10:10:21 GMT -->
+  <!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/postLogin.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 15 Jul 2023 10:10:21 GMT -->
 </html>

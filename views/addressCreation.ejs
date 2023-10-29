@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Address Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            text-align: center;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin: 0 auto;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .error {
+            color: red;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>User Address Details</h2>
+        <form id="addressForm" method="post" action="/postAddress" onsubmit="return validateForm()">
+            <label for="addressType">Address Type:(Home/Office)</label>
+            <input type="text" id="addressType" name="addressType" required>
+            <div id="addressTypeError" class="error"></div>
+
+            <label for="userName">User Name:</label>
+            <input type="text" id="userName" name="userName" required>
+            <div id="userNameError" class="error"></div>
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required>
+            <div id="cityError" class="error"></div>
+
+            <label for="landmark">Landmark:</label>
+            <input type="text" id="landmark" name="landmark">
+            <div id="landmarkError" class="error"></div>
+
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state" required>
+            <div id="stateError" class="error"></div>
+
+            <label for="pincode">Pincode:</label>
+            <input type="number" id="pincode" name="pincode" required>
+            <div id="pincodeError" class="error"></div>
+
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="number" id="phoneNumber" name="phoneNumber" required>
+            <div id="phoneNumberError" class="error"></div>
+
+            <label for="altPhone">Alternate Phone Number:</label>
+            <input type="number" id="altPhone" name="altPhone">
+            <div id="altPhoneError" class="error"></div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        // Function to validate the form
+        function validateForm() {
+          // Get form elements
+          var addressType = document.getElementById("addressType");
+          var userName = document.getElementById("userName");
+          var city = document.getElementById("city");
+          var state = document.getElementById("state");
+          var pincode = document.getElementById("pincode");
+          var phoneNumber = document.getElementById("phoneNumber");
+          var altPhone = document.getElementById("altPhone");
+      
+          // Get error div elements
+          var addressTypeError = document.getElementById("addressTypeError");
+          var userNameError = document.getElementById("userNameError");
+          var cityError = document.getElementById("cityError");
+          var stateError = document.getElementById("stateError");
+          var pincodeError = document.getElementById("pincodeError");
+          var phoneNumberError = document.getElementById("phoneNumberError");
+          var altPhoneError = document.getElementById("altPhoneError");
+      
+          // Regular expression for valid phone numbers (allow only digits)
+          var phonePattern = /^\d+$/;
+      
+          // Flag to track form validity
+          var isValid = true;
+      
+          // Clear previous error messages
+          addressTypeError.textContent = "";
+          userNameError.textContent = "";
+          cityError.textContent = "";
+          stateError.textContent = "";
+          pincodeError.textContent = "";
+          phoneNumberError.textContent = "";
+          altPhoneError.textContent = "";
+      
+          // Validate Address Type
+          if (addressType.value.trim() === "") {
+            addressTypeError.textContent = "Address Type is required.";
+            isValid = false;
+          }
+      
+          // Validate User Name
+          if (userName.value.trim() === "") {
+            userNameError.textContent = "User Name is required.";
+            isValid = false;
+          }
+      
+          // Validate City
+          if (city.value.trim() === "") {
+            cityError.textContent = "City is required.";
+            isValid = false;
+          }
+      
+          // Validate State
+          if (state.value.trim() === "") {
+            stateError.textContent = "State is required.";
+            isValid = false;
+          }
+      
+          // Validate Pincode
+          if (!pincode.value.match(/^\d{6}$/)) {
+            pincodeError.textContent = "Pincode must be a 6-digit number.";
+            isValid = false;
+          }
+      
+          // Validate Phone Number
+          if (!phoneNumber.value.match(phonePattern)) {
+            phoneNumberError.textContent = "Invalid Phone Number. Please enter digits only.";
+            isValid = false;
+          }
+      
+          // Validate Alternate Phone Number
+          if (altPhone.value.trim() !== "" && !altPhone.value.match(phonePattern)) {
+            altPhoneError.textContent = "Invalid Alternate Phone Number. Please enter digits only.";
+            isValid = false;
+          }
+      
+          return isValid;
+        }
+      </script>
+      </body>
+</html>

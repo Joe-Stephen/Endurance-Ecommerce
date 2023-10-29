@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Placed</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .order-placed {
+            margin: 20% auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #36a832;
+        }
+
+        .message {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #36a832;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #2e8927;
+        }
+    </style>
+</head>
+<body>
+    <div class="order-placed">
+        <h1>Order Placed</h1>
+        <p class="message">Thank you for your order!</p>
+        <div class="buttons">
+            <a href="/cart" class="button">Continue Shopping</a>
+            <a href="/userAccount" class="button">Go to Orders</a>
+        </div>
+    </div>
+</body>
+</html>

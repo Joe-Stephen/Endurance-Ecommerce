@@ -5,7 +5,7 @@ module.exports.verifyUser = (req, res, next) => {
   const token = req.cookies.token;
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      return res.redirect("/loginPage");
+      return res.redirect("/getLogin");
     }
     req.user = decoded;
     next();

@@ -249,55 +249,7 @@
                     
                                         
 <!-- Render the table header -->
-<table>
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Product Photo</th>
-        <th>Name</th>
-        <th>Brand</th>
-        <th>Category</th>
-        <!-- <th>Regular Price</th> -->
-        <th>Selling Price</th>
-        <th>Stock</th>
-        <th>Status</th>
-        <th>Actions</th>
-
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Loop through products and display in the table -->
-      <% for (let i = 0; i < products.length; i++) { %>
-      <tr>
-        <td><%= i + 1 %></td>
-        <td>
-            <% if (products[i].photos.length > 0) { %>
-                <img src="<%=products[i].photos[0]%>" alt="Product Photo" height="64">
-          <% } %>
-        </td>
-        <td><%= products[i].name %></td>
-        <td><%= products[i].brand %></td>
-        <td><%= products[i].category %></td>
-        <!-- <td><%= products[i].regular_price %></td> -->
-        <td>₹<%= products[i].selling_price %></td>
-        <td><%= products[i].stock %></td>
-        <td><%= products[i].status %></td>
-        <td>
-            <button class="btn<%= products[i].status === 'Available' ? ' red-button' : (products[i].status === 'Out of stock' ? ' green-button' : '') %>" onclick="toggleProductStatus('<%= products[i]._id %>', '<%= products[i].status %>')">
-                <% if (products[i].status === 'Available') { %>
-                    Unlist
-                <% } else { %>
-                    List
-                <% } %>
-            </button>
-            <a href="/admin/edit-product/?productId=<%= products[i]._id %>" class="button-link">Edit Product</a>
-
-        </td>
-      </tr>
-      <% } %>
-    </tbody>
-  </table>
-
+`
   <script>
     function toggleProductStatus(productId, currentStatus) {
         const statusElement = document.querySelector(`#status-${productId}`);

@@ -241,7 +241,7 @@
                 <h5 class="font-sm" style="color: rgb(0, 255, 38);"><%=locals.success%></h5>
 
 
-                <form action="/admin/add-product" method="post" enctype="multipart/form-data">
+                <form action="/admin/add-product" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
                     <table>
                         <tr>
                             <td>Name:</td>
@@ -292,6 +292,106 @@
                 </form>
                 <div class="card mb-4">
                     <header class="card-header">
+                        <script>
+                            // Function to validate the form
+                            function validateForm() {
+                              // Get form elements
+                              var name = document.querySelector('input[name="name"]');
+                              var description = document.querySelector('textarea[name="description"]');
+                              var regularPrice = document.querySelector('input[name="regular_price"]');
+                              var sellingPrice = document.querySelector('input[name="selling_price"]');
+                              var category = document.querySelector('input[name="category"]');
+                              var brand = document.querySelector('input[name="brand"]');
+                              var photos = document.querySelector('input[name="photo"]');
+                              var stock = document.querySelector('input[name="stock"]');
+                              var status = document.querySelector('select[name="status"]');
+                          
+                              // Get error div elements
+                              var nameError = document.getElementById("nameError");
+                              var descriptionError = document.getElementById("descriptionError");
+                              var regularPriceError = document.getElementById("regularPriceError");
+                              var sellingPriceError = document.getElementById("sellingPriceError");
+                              var categoryError = document.getElementById("categoryError");
+                              var brandError = document.getElementById("brandError");
+                              var photosError = document.getElementById("photosError");
+                              var stockError = document.getElementById("stockError");
+                              var statusError = document.getElementById("statusError");
+                          
+                              // Regular expression for valid prices (positive numbers with 2 decimal places)
+                              var pricePattern = /^\d+(\.\d{1,2})?$/;
+                          
+                              // Flag to track form validity
+                              var isValid = true;
+                          
+                              // Clear previous error messages
+                              nameError.textContent = "";
+                              descriptionError.textContent = "";
+                              regularPriceError.textContent = "";
+                              sellingPriceError.textContent = "";
+                              categoryError.textContent = "";
+                              brandError.textContent = "";
+                              photosError.textContent = "";
+                              stockError.textContent = "";
+                              statusError.textContent = "";
+                          
+                              // Validate Name
+                              if (name.value.trim() === "") {
+                                nameError.textContent = "Name is required.";
+                                isValid = false;
+                              }
+                          
+                              // Validate Description
+                              if (description.value.trim() === "") {
+                                descriptionError.textContent = "Description is required.";
+                                isValid = false;
+                              }
+                          
+                              // Validate Regular Price
+                              if (!regularPrice.value.match(pricePattern)) {
+                                regularPriceError.textContent = "Invalid Regular Price. Please enter a valid positive number with up to 2 decimal places.";
+                                isValid = false;
+                              }
+                          
+                              // Validate Selling Price
+                              if (!sellingPrice.value.match(pricePattern)) {
+                                sellingPriceError.textContent = "Invalid Selling Price. Please enter a valid positive number with up to 2 decimal places.";
+                                isValid = false;
+                              }
+                          
+                              // Validate Category
+                              if (category.value.trim() === "") {
+                                categoryError.textContent = "Category is required.";
+                                isValid = false;
+                              }
+                          
+                              // Validate Brand
+                              if (brand.value.trim() === "") {
+                                brandError.textContent = "Brand is required.";
+                                isValid = false;
+                              }
+                          
+                              // Validate Photos
+                              if (photos.files.length === 0) {
+                                photosError.textContent = "Photos are required.";
+                                isValid = false;
+                              }
+                          
+                              // Validate Stock
+                              if (!stock.value.match(/^\d+$/)) {
+                                stockError.textContent = "Stock must be a positive integer.";
+                                isValid = false;
+                              }
+                          
+                              // Validate Status
+                              if (status.value.trim() === "") {
+                                statusError.textContent = "Status is required.";
+                                isValid = false;
+                              }
+                          
+                              return isValid;
+                            }
+                          </script>
+                          
                         <!-- <div class="row align-items-center">
                             <div class="col col-check flex-grow-0">
                                 <div class="form-check ms-2">

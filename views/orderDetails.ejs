@@ -19,6 +19,8 @@
     />
     <!-- Template CSS -->
     <link rel="stylesheet" href="/userAssets/assets/css/maind134.css?v=3.4" />
+    <!-- Add these links to your HTML file -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   </head>
 
   <body>
@@ -92,23 +94,7 @@
                       </li>
                     </ul>
                   </li>
-                  <% if (loggedIn) { %>
-                    <!-- User is logged in -->
-                    <li>
-                        <a href="/userAccount">Account</a>
-                    </li>
-                    <li>
-                        <a href="/logout">Logout</a>
-                    </li>
-                <% } else { %>
-                    <!-- User is not logged in -->
-                    <li>
-                        <a href="/loginPage">Log In</a>
-                    </li>
-                    <li>
-                        <a href="/page-signup">Sign Up</a>
-                    </li>
-                <% } %>
+
 
                 </ul>
               </div>
@@ -128,70 +114,16 @@
               <div class="header-action-right">
                 <div class="header-action-2">
                   <div class="header-action-icon-2">
-                    <a href="shop-wishlist.html">
+                    <!-- <a href="shop-wishlist.html"> -->
                       <img
                         class="svgInject"
                         alt="Evara"
                         src="/userAssets/assets/imgs/theme/icons/icon-heart.svg"
                       />
-                      <span class="pro-count blue">4</span>
+                      <!-- <span class="pro-count blue">4</span> -->
                     </a>
                   </div>
-                  <div class="header-action-icon-2">
-                    <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                      <ul>
-                        <li>
-                          <div class="shopping-cart-img">
-                            <a href="shop-product-right.html"
-                              ><img
-                                alt="Evara"
-                                src="/userAssets/assets/imgs/shop/thumbnail-3.jpg"
-                            /></a>
-                          </div>
-                          <div class="shopping-cart-title">
-                            <h4>
-                              <a href="shop-product-right.html"
-                                >Daisy Casual Bag</a
-                              >
-                            </h4>
-                            <h4><span>1 × </span>$800.00</h4>
-                          </div>
-                          <div class="shopping-cart-delete">
-                            <a href="#"><i class="fi-rs-cross-small"></i></a>
-                          </div>
-                        </li>
-                        <li>
-                          <div class="shopping-cart-img">
-                            <a href="shop-product-right.html"
-                              ><img
-                                alt="Evara"
-                                src="/userAssets/assets/imgs/shop/thumbnail-2.jpg"
-                            /></a>
-                          </div>
-                          <div class="shopping-cart-title">
-                            <h4>
-                              <a href="shop-product-right.html"
-                                >Corduroy Shirts</a
-                              >
-                            </h4>
-                            <h4><span>1 × </span>$3200.00</h4>
-                          </div>
-                          <div class="shopping-cart-delete">
-                            <a href="#"><i class="fi-rs-cross-small"></i></a>
-                          </div>
-                        </li>
-                      </ul>
-                      <div class="shopping-cart-footer">
-                        <div class="shopping-cart-total">
-                          <h4>Total <span>$4000.00</span></h4>
-                        </div>
-                        <div class="shopping-cart-button">
-                          <a href="shop-cart.html" class="outline">View cart</a>
-                          <a href="shop-checkout.html">Checkout</a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+
                 </div>
               </div>
             </div>
@@ -232,55 +164,7 @@
               </div>
             </div>
 
-            <div class="header-action-right d-block d-lg-none">
-              <div class="header-action-2">
-                <div class="header-action-icon-2">
-                  <a href="shop-wishlist.html">
-                    <img
-                      alt="Evara"
-                      src="/userAssets/assets/imgs/theme/icons/icon-heart.svg"
-                    />
-                    <span class="pro-count white">4</span>
-                  </a>
-                </div>
-                <div class="header-action-icon-2">
-                  <a class="mini-cart-icon" href="shop-cart.html">
-                    <img
-                      alt="Evara"
-                      src="/userAssets/assets/imgs/theme/icons/icon-cart.svg"
-                    />
-                    <span class="pro-count white">2</span>
-                  </a>
-                  <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                    <ul>
-                      <li>
-                        <div class="shopping-cart-img">
-                          <a href="shop-product-right.html"
-                            ><img
-                              alt="Evara"
-                              src="/userAssets/assets/imgs/shop/thumbnail-3.jpg"
-                          /></a>
-                        </div>
-
-                        <div class="shopping-cart-delete">
-                          <a href="#"><i class="fi-rs-cross-small"></i></a>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="header-action-icon-2 d-block d-lg-none">
-                  <div class="burger-icon burger-icon-white">
-                    <span class="burger-icon-top"></span>
-                    <span class="burger-icon-mid"></span>
-                    <span class="burger-icon-bottom"></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            
     </header>
     <div class="mobile-header-active mobile-header-wrapper-style">
       <div class="mobile-header-wrapper-inner">
@@ -371,256 +255,155 @@
       </div>
     </div>
     <main class="main">
-      <div class="page-header breadcrumb-wrap">
-        <div class="container">
-          <div class="breadcrumb">
-            <a href="/index-4" rel="nofollow">Home</a>
-            <span></span> Shop <span></span> Your Cart
-          </div>
-        </div>
-      </div>
+
       <section class="mt-50 mb-50">
-        <div class="container">
-          <div class="row">
-            <div class="col-12">
-              <div class="table-responsive">
-                    <%if(userCart.products.length==0){%>
-<h5>There are no items in the cart..</h5>
-                   <% }else{%>
-                <table class="table shopping-summery text-center clean">
-                  <thead>
-                    <tr class="main-heading">
-                      <th scope="col">Image</th>
-                      <th scope="col">Name</th>
-                      <th scope="col">Price</th>
-                      <th scope="col">Quantity</th>
-                      <th scope="col">Subtotal</th>
-                      <th scope="col">Remove</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% userCart.products.forEach((product) => { %>
+        <div class="d-flex justify-content-center mb-5"><div class="allign items center"><h3>Order details</h3></div></div>
+        <div style="border: 1px solid black; border-radius: 10px;" class="container p-4 ">
+            <table class="table">
+                <thead>
                     <tr>
-                      <td class="image product-thumbnail">
-                        <img
-                          src="<%=product.productId.photos[0] %>"
-                          alt="Product image"
-                        />
-                      </td>
-                      <td class="product-des product-name">
-                        <h5 class="product-name">
-                          <%= product.productId.name %>
-                        </h5>
-                      </td>
-                      <td class="price" data-title="Price">
-                        <span><%= product.productId.selling_price %></span>
-                      </td>
-                      <td class="text-center" data-title="Stock">
-                        <!-- Modify the HTML to include a data attribute for the product index -->
-                        <a
-                          href="javascript:void(0);"
-                          class="qty-up"
-                          data-product-id="<%= product._id %>"
-                        >
-                          <i class="fi-rs-angle-small-up"></i>
-                        </a>
-                        <span class="qty-val quantity-display"
-                          ><%= Number(product.quantity) %></span
-                        >
-
-                        <a
-                          href="javascript:void(0);"
-                          class="qty-down"
-                          data-product-id="<%= product._id %>"
-                        >
-                          <i class="fi-rs-angle-small-down"></i>
-                        </a>
-                      </td>
-                      <td class="text-right" data-title="Cart">
-                        <span class="price-span"
-                          ><%= product.productId.selling_price *
-                          product.quantity %></span
-                        >
-                      </td>
-                      <td class="action" data-title="Remove">
-                        <a href="#" class="text-muted">
-                          <i
-                            class="fi-rs-trash delete-product"
-                            data-product-id="<%= product._id %>"
-                          ></i>
-                        </a>
-                      </td>
+                        <th>Date</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                        <th>Payment method</th>
+                        <th>Payment status</th>
+                        <th>Order status</th>
+                        <th>Actions</th>
                     </tr>
+                </thead>
+                <tbody>
+                    <% orderDetails.products.forEach((product) => { %>
+                        <tr>
+                            <td><%= orderDetails.orderDate %></td>
+                            <td>•<%= product.productId.name %></td>
+                            <td><%= product.price %></td>
+                            <td><%= product.quantity %></td>
+                            <td>₹<%= product.price * product.quantity %></td>
+                            <td><%= orderDetails.paymentMethod %></td>
+                            <td><%= orderDetails.paymentStatus %></td>
+                            <td><%= orderDetails.orderStatus %></td>
+                            <td><a id="returnButton" href="#" class="btn btn-danger" data-toggle="modal" data-target="#returnModal">Return</a>
+                            </td>
+                        </tr>
                     <% }); %>
-                  </tbody>
-                </table>
-                <div class="grand-total">
-                  <h3>Grand Total: <span id="grandTotal">0</span></h3>
-                  <a href="/checkoutFromCart" class="checkout-button">Checkout</a>
+                </tbody>
+            </table>
+            <div  class="d-flex justify-content-center mb-5">
+                <div>
+                    <a id="cancelButton" href="#" class="btn btn-danger" data-toggle="modal" data-target="#cancelModal">Cancel order</a>           
                 </div>
-              </div>
-              <%}%>
-              <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                  const qtyUpIcons = document.querySelectorAll(".qty-up");
-                  const qtyDownIcons = document.querySelectorAll(".qty-down");
-
-                  function updateGrandTotal() {
-                    const priceSpans = document.querySelectorAll(".price-span");
-                    let total = 0;
-
-                    priceSpans.forEach((priceSpan) => {
-                      total += parseFloat(priceSpan.textContent);
-                    });
-
-                    const grandTotalElement =
-                      document.getElementById("grandTotal");
-                    grandTotalElement.textContent = total;
-                  }
-
-                  qtyUpIcons.forEach((icon) => {
-                    icon.addEventListener("click", function (event) {
-                      event.preventDefault();
-
-                      const productId = icon.getAttribute("data-product-id");
-
-                      fetch("/cartQtyChange", {
-                        method: "post",
-                        headers: {
-                          "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                          productId: productId,
-                          action: "increase",
-                        }),
-                      })
-                        .then((response) => response.json())
-                        .then((data) => {
-                          console.log("Quantity increased");
-                          console.log(data.updatedSubtotal);
-
-                          // Update the displayed quantity without reloading
-                          const quantitySpan = icon.nextElementSibling;
-                          console.log("Quantity span: ", quantitySpan);
-                          quantitySpan.textContent = data.updatedQuantity;
-
-                          // Update the subtotal
-                          const row = icon.closest("tr");
-                          const priceSpan = row.querySelector(
-                            ".text-right .price-span"
-                          );
-                          console.log("Price span: ", priceSpan);
-                          priceSpan.textContent = data.updatedSubtotal;
-
-                          // Update the grand total
-                          updateGrandTotal();
-                        })
-                        .catch((error) => {
-                          console.log(
-                            "An error happened during the increase process: " +
-                              error
-                          );
-                        });
-                    });
-                  });
-
-                  qtyDownIcons.forEach((icon) => {
-                    icon.addEventListener("click", function (event) {
-                      event.preventDefault();
-
-                      const productId = icon.getAttribute("data-product-id");
-
-                      fetch("/cartQtyChange", {
-                        method: "post",
-                        headers: {
-                          "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                          productId: productId,
-                          action: "decrease",
-                        }),
-                      })
-                        .then((response) => response.json())
-                        .then((data) => {
-                          console.log("Quantity decreased");
-
-                          // Update the displayed quantity without reloading
-                          const quantitySpan = icon.previousElementSibling;
-                          quantitySpan.textContent = data.updatedQuantity;
-
-                          // Update the subtotal
-                          const row = icon.closest("tr");
-                          const priceSpan = row.querySelector(
-                            ".text-right .price-span"
-                          );
-                          priceSpan.textContent = data.updatedSubtotal;
-
-                          // Update the grand total
-                          updateGrandTotal();
-                        })
-                        .catch((error) => {
-                          console.log(
-                            "An error happened during the decrease process: " +
-                              error
-                          );
-                        });
-                    });
-                  });
-
-                  // Call this function initially to set the grand total
-                  updateGrandTotal();
-                });
-              </script>
-              <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                  const deleteIcons =
-                    document.querySelectorAll(".delete-product");
-
-                  deleteIcons.forEach((icon) => {
-                    icon.addEventListener("click", function (event) {
-                      event.preventDefault();
-
-                      const productId = icon.getAttribute("data-product-id");
-
-                      // Send a DELETE request to your server
-                      fetch(`/removeProductFromCart/${productId}`, {
-                        method: "delete",
-                      })
-                        .then((response) => {
-                          if (response.ok) {
-                            // Product was successfully removed from the cart
-                            // Remove the product's row from the table
-                            const row = icon.closest("tr");
-                            if (row) {
-                              row.remove();
-                            }
-                            window.location.reload()
-                          } else {
-                            // Handle the case where the deletion was not successful
-                            console.log("Product removal failed");
-                          }
-                        })
-                        .catch((error) => {
-                          console.error(
-                            "An error occurred during the deletion process: " +
-                              error
-                          );
-                        });
-                    });
-                  });
-                });
-              </script>
             </div>
-          </div>
         </div>
+
+        <div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="returnModalLabel">Return Order</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/returnOrder" method="post">
+                            <div class="form-group">
+                                <label for="reason">Reason for Returning:</label>
+                                <select class="form-control" id="reason" name="reason">
+                                    <option value="" disabled>Select Reason</option>
+                                    <option value="MISSHIPMENT">Received wrong item</option>
+                                    <option value="DAMAGED_PRODUCT">Received a broken/damaged item</option>
+                                    <option value="MISSING_ITEM">Product is missing in the package</option>
+                                    <option value="ITEM_NOT_AS_DESCRIBED">Product description is wrong on app/website</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-secondary" data-dismiss="modal">No</button>
+                        <button style="background-color: red;" type="submit"  id="confirmReturn">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cancelModalLabel">Cancel Order</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/cancelOrder" method="post">
+                            <div class="form-group">
+                                <label for="reason">Reason for Cancellation:</label>
+                                <select class="form-control" id="reason" name="reason">
+                                    <option value="" disabled="">Select Reason</option>
+                                    <option value="change_contact_number">I want to change the contact details</option>
+                                    <option value="change_payment">I want to change the payment option</option>
+                                    <option value="delivery_time_long">I was hoping for a shorter delivery time</option>
+                                    <option value="change_ship_address">I want to change the delivery address</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-secondary" data-dismiss="modal">No</button>
+                        <button style="background-color: red;" type="submit"  id="confirmcancel">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+    // Get the initial order status
+    var initialOrderStatus = "<%= orderDetails.orderStatus %>";
+
+    if (initialOrderStatus === "Delivered") {
+        // If the order status is "Delivered," hide the "Cancel" button
+        $('#cancelButton').hide();
+    } else if (initialOrderStatus === "Pending") {
+        // If the order status is "Pending," hide the "Return" button
+        $('#returnButton').hide();
+    }
+
+    // Handle the "Return" button click
+    $('#confirmReturn').on('click', function () {
+        // Get the order status
+        var orderStatus = "<%= orderDetails.orderStatus %>";
+        
+        if (orderStatus !== "Delivered") {
+            // Show a SweetAlert for orders with status other than "Delivered"
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'You can only return orders which are delivered!',
+            });
+        } else {
+            // If the order status is "Delivered," open the returnModal
+            $('#returnModal').modal('show');
+        }
+    });
+
+    // Handle the "Cancel" button click
+    $('#confirmcancel').on('click', function () {
+        // Handle the "Cancel" logic here, e.g., send an AJAX request to the server
+        // After successful cancellation, you can show a success SweetAlert
+        // swal("Order Canceled", "Your order has been canceled successfully.", "success");
+    });
+});
+
+        </script>
       </section>
     </main>
+
+
     <footer class="main">
-      <section class="newsletter p-30 text-white wow fadeIn animated">
-        <div class="container">
-          <div class="row align-items-center"></div>
-        </div>
-      </section>
+
       <section class="section-padding footer-mid">
         <div class="container pt-15 pb-20">
           <div class="row">
@@ -696,7 +479,7 @@
               <ul class="footer-list wow fadeIn animated">
                 <li><a href="#">Sign In</a></li>
                 <li><a href="#">View Cart</a></li>
-                <li><a href="#">My Wishlist</a></li>
+                <!-- <li><a href="#">My Wishlist</a></li> -->
                 <li><a href="#">Track My Order</a></li>
                 <li><a href="#">Help</a></li>
                 <li><a href="#">Order</a></li>
@@ -774,6 +557,11 @@
         </div>
       </div>
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <!-- Vendor JS-->
     <script src="/userAssets/assets/js/vendor/modernizr-3.6.0.min.js"></script>
     <script src="/userAssets/assets/js/vendor/jquery-3.6.0.min.js"></script>

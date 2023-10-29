@@ -18,14 +18,18 @@ const addressSchema=new mongoose.Schema({
             type:String,
             required:true,
         },
-        landMark:{
+        landmark:{
             type:String,
         },
         state:{
             type:String,
             required:true,
         },
-        pinCode:{
+        pincode:{
+            type:Number,
+            required:true,
+        },
+        phoneNumber:{
             type:Number,
             required:true,
         },

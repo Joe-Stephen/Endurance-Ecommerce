@@ -1,5 +1,7 @@
 require("dotenv").config();
 const user = require("../model/userModel");
+const address= require("../model/addressModel");
+const order= require("../model/orderModel")
 // const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const twilio_account_sid = process.env.twilio_account_sid;
@@ -12,31 +14,53 @@ require("dotenv").config();
 const secretKey = process.env.JWT_SECRET;
 const cart = require("../model/cartModel");
 
-console.log(secretKey);
+
 //getting user home page
 const getHomePage = async (req, res) => {
   try {
+    const loggedIn=req.cookies.loggedIn;
+    console.log(loggedIn);
     const products = await product.find();
-    // console.log(products)
-    res.render("index-4", { products: products });
+    res.render("index-4",{products,loggedIn});
   } catch (error) {
     console.error(error);
     res.send("Error fetching products");
   }
 };
 
-const checkUserAuth = (req, res) => {
-  res.status(200).send("You are authenticated!");
+//getting user account
+const getUserAccount = async (req, res) => {
+  try {
+    const loggedIn = req.user ? true : false;
+    const userData = await user.findOne({ email: req.user });
+    const userAddress = await address.findOne({ userId: userData._id });
+    
+    const orders = await order.find({ userId: userData._id }).populate({
+      path: "products.productId",
+      model: "product",
+    });
+
+    
+    if (userAddress) {
+      res.render("userDashboard", { userData, userAddress, orders, loggedIn });
+    } else {
+      res.render("userDashboard", { userData, loggedIn, orders, loggedIn });
+    }
+  } catch (error) {
+    console.log("An error happened in fetching user dashboard " + error);
+  }
 };
 
+
+//getting user logout
 const logout = (req, res) => {
   // console.log(req.user)
   // console.log(req.cookies.token)
   res.clearCookie("token");
-  res.redirect("/loginPage");
+  res.clearCookie("loggedIn");
+  res.redirect('/getLogin')
 };
 
-let isOtpVerified = false;
 
 //code for email sending and verification
 
@@ -97,8 +121,12 @@ let isOtpVerified = false;
 //getting home page
 
 //getting user login page
-const getUserRoute = (req, res) => {
-  res.render("page-login-register");
+const getUserLogin = (req, res) => {
+  if(req.cookies.loggedIn){
+    res.redirect('/')
+  }else{
+    res.render("page-login-register");
+  }
 };
 
 //getting forgot password page
@@ -155,6 +183,8 @@ catch(error){
   res.render("forgot-password");
 }
 };
+
+
 const getResetPassword=(req, res)=>{
   let phoneNumber=req.params.phoneNumber;
   res.render("resetPassword", { phoneNumber });
@@ -212,50 +242,49 @@ const postUserSignup = async (req, res) => {
 };
 
 //authenticating user credentials
-const getUserHomePage = async (req, res) => {
-  const verifyStatus = await user.findOne({
-    email: req.body.email,
-  });
-  if (!verifyStatus) {
-    res.render("page-login-register", {
-      subreddit: "This email is not registered!",
+const postLogin = async (req, res) => {
+  console.log("Hello "+req.cookies.loggedIn);
+  
+    const verifyStatus = await user.findOne({
+      email: req.body.email,
     });
-  } else {
-    if (verifyStatus) {
-      if (verifyStatus.status == "Blocked") {
-        res.redirect("page-login-register", {
-          subreddit: "Your account is currently blocked!",
-        });
-      } else if (req.body.password !== verifyStatus.password) {
-        res.render("page-login-register", {
-          subreddit: "Incorrect password!",
-        });
-      } else {
-        if (
-          req.body.email === verifyStatus.email &&
-          req.body.password === verifyStatus.password
-        ) {
-          try {
-            email = req.body.email;
-            const token = jwt.sign(email, secretKey);
-            res.cookie("token", token);
-            const products = await product.find();
-            userEmail = verifyStatus.email;
-            res.render("index-4", {
-              products: products,
-              message: "User Logged in Successfully",
-            });
-          } catch (error) {
-            console.error(error);
-            // res.send('Error fetching products');
+    if (!verifyStatus) {
+      res.render("page-login-register", {
+        subreddit: "This email is not registered!",
+      });
+    } else {
+      if (verifyStatus) {
+        if (verifyStatus.status == "Blocked") {
+          res.render("page-login-register", {
+            subreddit: "Your account is currently blocked!",
+          });
+        } else if (req.body.password !== verifyStatus.password) {
+          res.render("page-login-register", {
+            subreddit: "Incorrect password!",
+          });
+        } else {
+          if (
+            req.body.email === verifyStatus.email &&
+            req.body.password === verifyStatus.password
+          ) {
+            try {
+              email = req.body.email;
+              const token = jwt.sign(email, secretKey);
+              res.cookie("token", token,  { maxAge: 24 * 60 * 60 * 1000 });
+              res.cookie("loggedIn", true,  { maxAge: 24 * 60 * 60 * 1000 });
+              const products = await product.find();
+              userEmail = verifyStatus.email;
+              res.redirect("/");
+            } catch (error) {
+              console.error(error);
+              // res.send('Error fetching products');
+            }
           }
         }
+      } else {
+        res.redirect("/");
       }
-    } else {
-      console.log("hallooo");
-      res.redirect("/");
     }
-  }
 };
 
 let phoneNumber;
@@ -315,13 +344,139 @@ const getVerifyOtp = async (req, res) => {
 
 //getting product page
 (req, res) => {
-  res.render("product-page");
+  const loggedIn=req.user?true:false;
+
+  res.render("product-page",{loggedIn});
 };
 
 // for testing purpose only
 const testmid = (req, res) => {
   res.render("mail-verification-login");
 };
+
+//getting add address
+const getAddAddress= (req, res)=>{
+      res.render("addressCreation")
+}
+
+//saving address
+const postAddAddress = async (req, res) => {
+  try {
+    const userData = await user.findOne({ email: req.user });
+    let userAddress = await address.findOne({ userId: userData._id });
+
+    // Retrieve data from the request body
+    const {
+      addressType,
+      userName,
+      city,
+      landmark,
+      state,
+      pincode,
+      phoneNumber,
+      altPhoneNumber,
+    } = req.body;
+
+    if (userAddress) {
+      userAddress.address.push({
+        addressType,
+        userName,
+        city,
+        landmark,
+        state,
+        pincode,
+        phoneNumber,
+        altPhoneNumber,
+      });
+
+      // Save the updated userAddress document
+      await userAddress.save();
+    } else {
+      // Create a new address document
+      const newAddress = new address({
+        userId: userData._id,
+        address: {
+          addressType,
+          userName,
+          city,
+          landmark,
+          state,
+          pincode,
+          phoneNumber,
+          altPhoneNumber,
+        },
+      });
+
+      // Save the new address document to the database
+      await newAddress.save();
+    }
+
+    // Redirect to a success page or send a success response
+    res.redirect('/userAccount');
+  } catch (error) {
+    console.error('Error while saving address:', error);
+    // Handle the error and send an error response
+    res.status(500).json({ error: 'An error occurred while saving the address.' });
+  }
+};
+
+//placing order with saving order details
+const postCartOrder = async (req, res) => {
+  try {
+    const userData = await user.findOne({ email: req.user });
+    const userCart = await cart.findOne({ userId: userData._id }).populate({
+      path: "products.productId",
+      model: "product",
+    });
+    // let userCart=req.body.userCart;
+    let orderTotal = 0;
+    let orderProducts = [];
+
+    userCart.products.forEach((product) => {
+      const orderProduct = {
+        productId: product.productId._id,
+        price: product.productId.selling_price,
+        quantity: product.quantity,
+      };
+
+      orderTotal += orderProduct.price * orderProduct.quantity;
+      orderProducts.push(orderProduct);
+    });
+
+    const newOrder= await order.create({userId:userCart.userId,
+      products:orderProducts,
+      orderDate:new Date(),
+      totalAmount:orderTotal,
+      paymentMethod:req.body.payment_option,      
+    })
+    // res.status(200).json({ message: "Order placed successfully.", order: userOrder });
+    res.render("orderPlaced")
+  } catch (error) {
+    console.error("An error occurred while placing the order: ", error);
+    res.status(500).json({ error: "An error occurred while placing the order." });
+  }
+};
+
+//getting order details
+const getOrderDetails=async (req, res)=>{
+  try{
+    const orderId=req.params.orderId;
+    const userData = await user.findOne({ email: req.user });
+    const orderDetails = await order.findById({_id:orderId}).populate({
+      path: "products.productId",
+      model: "product",
+    }); 
+    console.log(orderDetails)
+    res.render("orderDetails",{orderDetails})  
+  }
+  catch(error){
+    console.log("An error happened while loading the order details! :"+error);
+  }
+}
+
+
+
+
 
 //finding product
 const findProduct = async (req, res) => {
@@ -335,7 +490,7 @@ const findProduct = async (req, res) => {
       return res.send("Product not found");
     }
     // Render the "product-page" template and pass the product details
-    res.render("product-page", { products });
+    res.render("product-page", { products});
   } catch (error) {
     console.error(error);
     res.send("Error fetching product details");
@@ -345,14 +500,19 @@ const findProduct = async (req, res) => {
 //getting cart
 const getCart = async (req, res) => {
   try {
+    const loggedIn=req.user?true:false;
+
+    console.log("haiiii");
     const userData = await user.findOne({ email: req.user });
+    console.log("joe");
+    console.log("user id is "+userData._id);
     const userCart = await cart.findOne({ userId: userData._id }).populate({
-      path: "products.productId", // Specify the path to the product ID in the cart's products array
-      model: "product", // Reference the 'product' model
+      path: "products.productId",
+      model: "product",
     });
     // The 'userCart' now contains the populated 'products' array with product details
     // You can access these details in your template
-    res.render("cart", { userCart });
+    res.render("cart", { userCart, loggedIn });
   } catch (error) {
     console.error("Error while loading cart:", error);
     // Handle the error as needed
@@ -477,16 +637,33 @@ const removeProductFromCart = async (req, res) => {
   }
 };
 
+//checkout from cart
+const getCartCheckout= async (req, res)=>{
+  try{
+    const loggedIn=req.user?true:false;
+    const userData= await user.findOne({email:req.user});
+    const userCart = await cart.findOne({ userId: userData._id }).populate({
+      path: "products.productId",
+      model: "product",
+    });
+    res.render("checkout",{userCart, loggedIn})
+  }
+  catch(error){
+    console.log("An error happened while loading checkout page."+error);
+  }
+
+}
+
 //exporting functions
 module.exports = {
   findProduct,
   testmid,
   getVerifyOtp,
   getSendOtp,
-  getUserHomePage,
-  checkUserAuth,
+  postLogin,
   postUserSignup,
-  getUserRoute,
+  getUserLogin,
+  getUserAccount,
   getForgotPassword,
   getResetPasswordOtp,
   verifyForgotPasswordOtp,
@@ -499,4 +676,9 @@ module.exports = {
   addToCartController,
   postCartQty,
   removeProductFromCart,
+  getCartCheckout,
+  getAddAddress,
+  postAddAddress,
+  postCartOrder,
+  getOrderDetails,
 };

@@ -331,6 +331,29 @@
                   </div>
                 </form>
               </div>
+              <script>
+                function validateForm() {
+                    const nameInput = document.getElementById('product_name');
+                    const descriptionInput = document.querySelector('textarea[name="description"]');
+            
+                    // Check if the Name input is empty
+                    if (nameInput.value.trim() === "") {
+                        alert("Name is required.");
+                        nameInput.focus();
+                        return false;
+                    }
+            
+                    // Check if the Description input is empty
+                    if (descriptionInput.value.trim() === "") {
+                        alert("Description is required.");
+                        descriptionInput.focus();
+                        return false;
+                    }
+            
+                    return true;
+                }
+            </script>
+            
               <div class="col-md-9">
                 <div class="table-responsive">
                     <table class="table table-hover">
