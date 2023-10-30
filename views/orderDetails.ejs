@@ -270,7 +270,6 @@
                         <th>Payment method</th>
                         <th>Payment status</th>
                         <th>Order status</th>
-                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -278,126 +277,129 @@
                         <tr>
                             <td><%= orderDetails.orderDate %></td>
                             <td>•<%= product.productId.name %></td>
-                            <td><%= product.price %></td>
+                            <td>₹<%= product.price %></td>
                             <td><%= product.quantity %></td>
                             <td>₹<%= product.price * product.quantity %></td>
                             <td><%= orderDetails.paymentMethod %></td>
                             <td><%= orderDetails.paymentStatus %></td>
                             <td><%= orderDetails.orderStatus %></td>
-                            <td><a id="returnButton" href="#" class="btn btn-danger" data-toggle="modal" data-target="#returnModal">Return</a>
-                            </td>
+                          </td>
                         </tr>
-                    <% }); %>
-                </tbody>
-            </table>
-            <div  class="d-flex justify-content-center mb-5">
-                <div>
-                    <a id="cancelButton" href="#" class="btn btn-danger" data-toggle="modal" data-target="#cancelModal">Cancel order</a>           
+                        <% }); %>
+                      </tbody>
+                    </table>
+                    <div  class="d-flex justify-content-center mb-5">
+                      <div>
+                        <a id="cancelButton" href="#" class="btn btn-danger" data-toggle="modal" data-target="#cancelModal">Cancel order</a>           
+                        <td><a id="returnButton" href="#" class="btn btn-danger" data-toggle="modal" data-target="#returnModal">Return</a>
                 </div>
             </div>
         </div>
 
         <div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="returnModalLabel">Return Order</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="/returnOrder" method="post">
-                            <div class="form-group">
-                                <label for="reason">Reason for Returning:</label>
-                                <select class="form-control" id="reason" name="reason">
-                                    <option value="" disabled>Select Reason</option>
-                                    <option value="MISSHIPMENT">Received wrong item</option>
-                                    <option value="DAMAGED_PRODUCT">Received a broken/damaged item</option>
-                                    <option value="MISSING_ITEM">Product is missing in the package</option>
-                                    <option value="ITEM_NOT_AS_DESCRIBED">Product description is wrong on app/website</option>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-secondary" data-dismiss="modal">No</button>
-                        <button style="background-color: red;" type="submit"  id="confirmReturn">Yes</button>
-                    </div>
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="returnModalLabel">Return Order</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      <form action="/returnOrder" method="post" id="returnForm">
+                          <div class="form-group">
+                              <input type="hidden" name="orderID" value="<%= orderDetails._id %>">
+                              <label for="reason">Reason for Returning:</label>
+                              <select class="form-control" id="reason" name="reason">
+                                  <option value="" disabled>Select Reason</option>
+                                  <option value="MISSHIPMENT">Received the wrong item</option>
+                                  <option value="DAMAGED_PRODUCT">Received a broken/damaged item</option>
+                                  <option value="MISSING_ITEM">Product is missing in the package</option>
+                                  <option value="ITEM_NOT_AS_DESCRIBED">Product description is wrong on app/website</option>
+                              </select>
+                          </div>
+                      </form>
+                  </div>
+      
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                      <button style="background-color: red;" type="button" id="confirmReturn">Yes</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelModalLabel">Cancel Order</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="/cancelOrder" method="post" id="cancelForm">
+                        <div class="form-group">
+                          <input type="hidden" name="orderID" value="<%= orderDetails._id %>">
+                            <label for="reason">Reason for Cancellation:</label>
+                            <select class="form-control" id="reason" name="reason">
+                                <option value="" disabled="">Select Reason</option>
+                                <option value="change_contact_number">I want to change the contact details</option>
+                                <option value="change_payment">I want to change the payment option</option>
+                                <option value="delivery_time_long">I was hoping for a shorter delivery time</option>
+                                <option value="change_ship_address">I want to change the delivery address</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                    <button style="background-color: red;" type="button" id="confirmCancel">Yes</button>
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="cancelModalLabel">Cancel Order</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="/cancelOrder" method="post">
-                            <div class="form-group">
-                                <label for="reason">Reason for Cancellation:</label>
-                                <select class="form-control" id="reason" name="reason">
-                                    <option value="" disabled="">Select Reason</option>
-                                    <option value="change_contact_number">I want to change the contact details</option>
-                                    <option value="change_payment">I want to change the payment option</option>
-                                    <option value="delivery_time_long">I was hoping for a shorter delivery time</option>
-                                    <option value="change_ship_address">I want to change the delivery address</option>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-secondary" data-dismiss="modal">No</button>
-                        <button style="background-color: red;" type="submit"  id="confirmcancel">Yes</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <script>
-            $(document).ready(function () {
-    // Get the initial order status
-    var initialOrderStatus = "<%= orderDetails.orderStatus %>";
+    </div>
+    <script>
+const returnButton = document.getElementById('returnButton');
+const cancelButton = document.getElementById('cancelButton');
+const orderStatus = '<%=orderDetails.orderStatus%>';
+if(orderStatus=="Returned"||orderStatus=="Cancelled"){
+  returnButton.style.display='none';
+  cancelButton.style.display='none';
+}
+else{
+  if(orderStatus=="Delivered"){
+  returnButton.style.display='block';
+  cancelButton.style.display='none';
+}else{
+  returnButton.style.display='none';
+  cancelButton.style.display='block';
+}}
+</script>
 
-    if (initialOrderStatus === "Delivered") {
-        // If the order status is "Delivered," hide the "Cancel" button
-        $('#cancelButton').hide();
-    } else if (initialOrderStatus === "Pending") {
-        // If the order status is "Pending," hide the "Return" button
-        $('#returnButton').hide();
-    }
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const confirmCancelButton = document.getElementById("confirmCancel");
+    const cancelForm = document.getElementById("cancelForm");
 
-    // Handle the "Return" button click
-    $('#confirmReturn').on('click', function () {
-        // Get the order status
-        var orderStatus = "<%= orderDetails.orderStatus %>";
-        
-        if (orderStatus !== "Delivered") {
-            // Show a SweetAlert for orders with status other than "Delivered"
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'You can only return orders which are delivered!',
-            });
-        } else {
-            // If the order status is "Delivered," open the returnModal
-            $('#returnModal').modal('show');
-        }
-    });
-
-    // Handle the "Cancel" button click
-    $('#confirmcancel').on('click', function () {
-        // Handle the "Cancel" logic here, e.g., send an AJAX request to the server
-        // After successful cancellation, you can show a success SweetAlert
-        // swal("Order Canceled", "Your order has been canceled successfully.", "success");
+    confirmCancelButton.addEventListener("click", function () {
+        // Submit the form
+        cancelForm.submit();
     });
 });
 
-        </script>
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const confirmReturnButton = document.getElementById("confirmReturn");
+    const returnForm = document.getElementById("returnForm");
+
+    confirmReturnButton.addEventListener("click", function () {
+        // Submit the form
+        returnForm.submit();
+    });
+});
+</script>
       </section>
     </main>
 

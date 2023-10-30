@@ -24,10 +24,13 @@ userRouter.get("/product/:productId", userController.findProduct);
 userRouter.get("/toVerifyPage", userController.postUserSignup);
 userRouter.post("/send_otp", userController.getSendOtp);
 userRouter.post("/verifyOTPnow", userController.getVerifyOtp);
-userRouter.get("/userAccount", userMiddleware.verifyUser, userController.getUserAccount)
-userRouter.get("/addAddress", userMiddleware.verifyUser, userController.getAddAddress)
-userRouter.post("/postAddress", userMiddleware.verifyUser, userController.postAddAddress)
-userRouter.get("/orderDetails/:orderId", userMiddleware.verifyUser, userController.getOrderDetails)
+userRouter.get("/userAccount", userMiddleware.verifyUser, userController.getUserAccount);
+userRouter.get("/addAddress", userMiddleware.verifyUser, userController.getAddAddress);
+userRouter.post("/postAddress", userMiddleware.verifyUser, userController.postAddAddress);
+userRouter.get("/orderDetails/:orderId", userMiddleware.verifyUser, userController.getOrderDetails);
+userRouter.post("/returnOrder",userMiddleware.verifyUser, userController.productReturn);
+userRouter.post("/cancelOrder",userMiddleware.verifyUser, userController.productCancel);
+
 
 
 

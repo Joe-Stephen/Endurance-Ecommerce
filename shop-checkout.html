@@ -6,26 +6,24 @@
     <title>Document</title>
 </head>
 <body>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Product Name</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% order.products.forEach((product) => { %>
-                <tr>
-                    <td><%= product.productId.name %></td>
-                    <td><%= product.price %></td>
-                    <td><%= product.quantity %></td>
-                    <td><%= product.price * product.quantity %></td>
-                </tr>
-            <% }); %>
-        </tbody>
-    </table>
-    
+    <button id="returnButton">Return</button>
+    <button id="cancelButton">Cancel</button>
+    <button onclick="toggleClock()" id="clockButton">Show clock</button>
+
+    <script>
+        function toggleClock(){
+            var myClock=document.getElementById("cancelButton");
+            var displaySetting=myClock.style.display;
+            var clockButton=document.getElementById("clockButton")
+            if (displaySetting=='block'){
+                myClock.style.display='none';
+                clockButton.innerHTML= 'Show clock';
+            }
+            else{
+                myClock.style.display='block';
+                clockButton.innerHTML= 'Show clock';
+            }
+        }
+    </script>
 </body>
 </html>

@@ -799,16 +799,29 @@
                                 <form action="/placeOrder" method="post" id="paymentForm">
                                     <input type="hidden" value="userCart" name="userCart" id="userCart">
                                     <div class="form-group">
-                                        <label for="payment_option">Payment Option:</label>
-                                        <select style="border: 1px rgb(0, 183, 255) solid ;" class="form-control" id="payment_option" name="payment_option" required>
+                                        <label for="selected_address">Select Delivery Address:</label>
+                                        <select style="border: 1px rgb(0, 183, 255) solid;" class="form-control" id="selected_address" name="selected_address" required>
+                                            <% userAddress.address.forEach((item, index) => { %>
+                                                <option value="<%= index %>">
+                                                    Address <%= index + 1 %>:<br>
+                                                    <%= item.userName %>, <br>
+                                                    <%= item.city %>, <%= item.state %>, <br>
+                                                    <%= item.pincode %>, <br>
+                                                    Phone: <%= item.phoneNumber %>
+                                                </option>
+                                            <% }); %>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="payment_option">Payment option:</label>
+                                        <select style="border: 1px rgb(0, 183, 255) solid;" class="form-control" id="payment_option" name="payment_option" required>
                                             <option value="Bank transfer">Direct Bank Transfer</option>
                                             <option value="Cash on delivery">Cash on Delivery</option>
                                             <option value="paypal">Paypal</option>
                                         </select>
                                     </div>
-                                    
                                     <a id="placeOrderButton" class="btn btn-fill-out btn-block mt-30">Place Order</a>
-                                  </form>
+                                </form>                                
                             </div>
                         </div>
                     </div>
@@ -842,7 +855,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Use SweetAlert to display your custom alert with a timer
     Swal.fire({
-      position: 'top-end',
+      position: 'top-center',
       icon: 'success',
       title: 'Order Placed!',
       showConfirmButton: false,

@@ -8,7 +8,7 @@ module.exports.getAdminLogin = (req, res) => {
   res.render("admin-login-page");
 };
 
-//chechking deatils aand login admin
+//chechking deatils and login admin
 module.exports.postAdminDashboard = async (req, res) => {
   const admindata = await admin.findOne({ email: req.body.email });
   if (!admindata) {

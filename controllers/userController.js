@@ -2,6 +2,8 @@ require("dotenv").config();
 const user = require("../model/userModel");
 const address= require("../model/addressModel");
 const order= require("../model/orderModel")
+const returns= require("../model/returnModel")
+const cancels= require("../model/cancelModel")
 // const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const twilio_account_sid = process.env.twilio_account_sid;
@@ -40,7 +42,6 @@ const getUserAccount = async (req, res) => {
       model: "product",
     });
 
-    
     if (userAddress) {
       res.render("userDashboard", { userData, userAddress, orders, loggedIn });
     } else {
@@ -443,13 +444,15 @@ const postCartOrder = async (req, res) => {
       orderProducts.push(orderProduct);
     });
 
-    const newOrder= await order.create({userId:userCart.userId,
+    const newOrder= await order.create({
+      userId:userCart.userId,
       products:orderProducts,
       orderDate:new Date(),
       totalAmount:orderTotal,
       paymentMethod:req.body.payment_option,      
     })
     // res.status(200).json({ message: "Order placed successfully.", order: userOrder });
+    await cart.deleteOne({userId:userData._id});
     res.render("orderPlaced")
   } catch (error) {
     console.error("An error occurred while placing the order: ", error);
@@ -466,7 +469,6 @@ const getOrderDetails=async (req, res)=>{
       path: "products.productId",
       model: "product",
     }); 
-    console.log(orderDetails)
     res.render("orderDetails",{orderDetails})  
   }
   catch(error){
@@ -541,6 +543,7 @@ const addToCartController = async (req, res) => {
     );
     if (existingProduct) {
       // If the product is in the cart, increase its quantity
+      existingProduct.quantity+=1;
       console.log("The product is already inside the cart.");
     } else {
       // If the product is not in the cart, add it with a quantity of 1
@@ -646,12 +649,73 @@ const getCartCheckout= async (req, res)=>{
       path: "products.productId",
       model: "product",
     });
-    res.render("checkout",{userCart, loggedIn})
+    const userAddress= await address.findOne({userId:userData._id});
+    if(!userAddress){
+      res.redirect("/addAddress")
+    }else{
+      res.render("checkout",{userCart, loggedIn, userAddress})
+    }
   }
   catch(error){
     console.log("An error happened while loading checkout page."+error);
   }
+}
 
+//handling returns
+const productReturn=async (req, res)=>{
+  try{
+    const userData= await user.findOne({email:req.user});
+    let userReturn= await returns.findOne({userId:userData._id});
+    if(!userReturn){
+      userReturn= new returns({
+        userId:userData._id,
+        orders:[{
+          orderId:req.body.orderID,
+          reason:req.body.reason,
+        }]
+      })
+    }else{
+      userReturn.orders.push({
+        orderId:req.body.orderID,
+        reason:req.body.reason,
+      })
+    }
+    await userReturn.save();
+    await order.updateOne({ _id: req.body.orderID }, { $set: { orderStatus: "Returned" } });
+    res.redirect("/userAccount");
+  }
+  catch(error){
+    console.log("An error happened while processig return! :"+error);
+  }
+}
+
+//handling cancels
+const productCancel=async (req, res)=>{
+  try{
+    const userData= await user.findOne({email:req.user});
+    let userCancel= await cancels.findOne({userId:userData._id});
+    if(!userCancel){
+      userCancel= new cancels({
+        userId:userData._id,
+        orders:[{
+          orderId:req.body.orderID,
+          reason:req.body.reason,
+        }]
+      })
+    }else{
+      userCancel.orders.push({
+        orderId:req.body.orderID,
+        reason:req.body.reason,
+      })
+    }
+    await userCancel.save();
+    await order.updateOne({ _id: req.body.orderID }, { $set: { orderStatus: "Cancelled" } });
+
+    res.redirect("/userAccount");
+  }
+  catch(error){
+    console.log("An error happened while processig return! :"+error);
+  }
 }
 
 //exporting functions
@@ -681,4 +745,6 @@ module.exports = {
   postAddAddress,
   postCartOrder,
   getOrderDetails,
+  productCancel,
+  productReturn,
 };
