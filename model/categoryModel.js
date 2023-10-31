@@ -11,7 +11,6 @@ const categorySchema = new mongoose.Schema({
     type: String,
     default: 'Active',
   },
-  icon: String, 
 });
 
 const Category = mongoose.model('Category', categorySchema);

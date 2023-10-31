@@ -1,6 +1,7 @@
 const admin = require("../model/adminModel");
 const category=require("../model/categoryModel")
 const product = require("../model/productModel");
+const order  = require("../model/orderModel")
 const user = require("../model/userModel");
 const multer = require("multer");
 
@@ -228,31 +229,116 @@ module.exports.getCategories = async (req, res) => {
 
   
 
-module.exports.postAddCategory =async (req, res) => {
+module.exports.postAddCategory = async (req, res) => {
   try {
       // Retrieve category data from the request body
-      const { name, description, status } = req.body;
-
-      // Get the path of the uploaded image
-      const imagePath = req.file.path;
-
+      const { name, description } = req.body;
+      
       // Create a new category using the Category model
       const newCategory = new category({
           name,
           description,
-          icon: imagePath, // Store the image path in the "icon" field
-          status,
       });
 
       // Save the new category to the database
       await newCategory.save();
 
-      // Redirect to a success page or wherever you want
+      // Redirect to a success page
       res.redirect('/admin/admin-category-management'); // Change this URL as needed
   } catch (error) {
       // Handle any errors that occur during category creation
-      console.error(error);
+      console.error("An error occurred while adding the category: " + error);
+
       // Redirect to an error page or show an error message
-      res.render('admin-category-management'); // Change this URL as needed
+      res.status(500).render('error-page'); // Change this URL to your error page
   }
 };
+
+
+//edit category
+module.exports.editCategory= async (req, res)=>{
+  try{
+  const categoryDetails= await category.findById(req.params.categoryId);
+  res.render("admin-category-edit", {categoryDetails});
+  }
+  catch(error){
+    console.log("An error happened while getting edit category! :"+error);
+  }
+}
+
+// Post edit category
+module.exports.postEditCategory = async (req, res) => {
+  try {
+      const categoryId = req.body.categoryId; // Get the category ID from the form
+      const { name, description } = req.body;
+      let updatedData = {
+          name,
+          description,
+      };
+
+      await category.findByIdAndUpdate(categoryId, updatedData, { new: true });
+      const successMessage = 'Category updated successfully';
+
+      res.redirect('/admin/admin-category-management');
+  } catch (error) {
+      console.log('An error has occurred while editing the category: ' + error);
+      res.status(500).send('An error occurred');
+  }
+};
+
+// Deleting category
+module.exports.deleteCategory = async (req, res) => {
+  try {
+    await category.deleteOne({ _id: req.params.categoryId });
+    res.status(200).json({ message: "Category deleted successfully" });
+  } catch (error) {
+    console.log("An error happened while deleting the category:" + error);
+    res.status(500).json({ message: "An error occurred while deleting the category" });
+  }
+}
+
+
+//getting order list
+module.exports.getOrderList = async (req, res) => {
+  try {
+    const orderList = await order.find();
+    let userData=[];
+
+    // Loop through each order in orderList
+    for (const orderItem of orderList) {
+      const userId = orderItem.userId;
+      let userDoc= await user.findById({ _id: userId });
+      userData.push(userDoc.username);
+    }
+    res.render("admin-order-management", { orderList, userData});
+  } catch (error) {
+    console.log("An error happened while loading order list!:" + error);
+  }
+};
+
+//getting order details and edit
+module.exports.getOrderDetails= async (req, res)=>{
+  try{
+      const orderDetails= await order.findById({_id:req.params.orderId}).populate({
+      path: "products.productId",
+      model: "product",
+    });
+    const userId=orderDetails.userId;
+    const userData=await user.findById(userId);
+    res.render("admin-order-edit", {orderDetails, userData});
+  }
+  catch(error){
+    console.log("An error happened while accessing order details! :"+error);
+  }
+}
+
+//editing order status
+module.exports.editOrderStatus= async(req, res) =>{
+  try{
+    await order.updateOne({_id:req.body.orderId}, {$set:{orderStatus:req.body.orderStatus}});
+    res.redirect("/admin/orderList");
+  }
+  catch(error){
+    console.log("An error happened while editing the order status! :");
+  }
+}

@@ -23,7 +23,7 @@
       rel="stylesheet"
       type="text/css"
     />
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   </head>
 
   <body>
@@ -292,8 +292,10 @@
             <h2 class="content-title card-title">Categories</h2>
             <p>Add, edit or delete a category</p>
           </div>
-          <h5 class="font-sm" style="color: red;"><%=locals.error%></h5>
-          <h5 class="font-sm" style="color: rgb(19, 162, 14);"><%=locals.verified%></h5>
+          <h5 class="font-sm" style="color: red"><%=locals.error%></h5>
+          <h5 class="font-sm" style="color: rgb(19, 162, 14)">
+            <%=locals.verified%>
+          </h5>
 
           <div>
             <input
@@ -308,8 +310,8 @@
           <div class="card-body">
             <div class="row">
               <div class="col-md-3">
-                <form action="/admin/add-category" method="POST" enctype="multipart/form-data">
-                    <div class="mb-4">
+                <form action="/admin/add-category" method="POST">
+                  <div class="mb-4">
                     <label for="product_name" class="form-label">Name</label>
                     <input
                       type="text"
@@ -319,82 +321,149 @@
                       id="product_name"
                     />
                   </div>
-                  <label for="image">Category Image:</label>
-                  <input type="file" name="icon" required>
                   <div class="mb-4">
                     <label class="form-label">Description</label>
-                    <textarea placeholder="Type here" name="description" class="form-control"></textarea>
-                </div>
-                
+                    <textarea
+                      placeholder="Type here"
+                      name="description"
+                      class="form-control"
+                    ></textarea>
+                  </div>
+
                   <div class="d-grid">
-                    <button class="btn btn-primary" >Create category</button>
+                    <button class="btn btn-primary">Create category</button>
                   </div>
                 </form>
               </div>
               <script>
                 function validateForm() {
-                    const nameInput = document.getElementById('product_name');
-                    const descriptionInput = document.querySelector('textarea[name="description"]');
-            
-                    // Check if the Name input is empty
-                    if (nameInput.value.trim() === "") {
-                        alert("Name is required.");
-                        nameInput.focus();
-                        return false;
-                    }
-            
-                    // Check if the Description input is empty
-                    if (descriptionInput.value.trim() === "") {
-                        alert("Description is required.");
-                        descriptionInput.focus();
-                        return false;
-                    }
-            
-                    return true;
+                  const nameInput = document.getElementById("product_name");
+                  const descriptionInput = document.querySelector(
+                    'textarea[name="description"]'
+                  );
+
+                  // Check if the Name input is empty
+                  if (nameInput.value.trim() === "") {
+                    alert("Name is required.");
+                    nameInput.focus();
+                    return false;
+                  }
+
+                  // Check if the Description input is empty
+                  if (descriptionInput.value.trim() === "") {
+                    alert("Description is required.");
+                    descriptionInput.focus();
+                    return false;
+                  }
+
+                  return true;
                 }
-            </script>
-            
+              </script>
+
               <div class="col-md-9">
                 <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th class="text-center">
-                                    <div class="form-check"></div>
-                                </th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Image</th>
-                                <th>Status</th>
-                                <th class="text-end">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% categories.forEach(category => { %>
-                            <tr>  
-                                <td class="text-center">
-                                    <div class="form-check"></div>
-                                </td>
-                                <td><b><%= category.name %></b></td>
-                                <td><%= category.description %></td>
-                                <td><img src="<%=category.icon%>" alt="Category Icon" height="64"></td>
-                                <td><%= category.status %></td>
-                                <td class="text-end">
-                                    <div class="dropdown">
-                                        <div >
-                                            <a class="dropdown-item" href="/view-category/<%= category._id %>">View detail</a>
-                                            <a class="dropdown-item" href="/edit-category/<%= category._id %>">Edit info</a>
-                                            <a class="dropdown-item text-danger" href="/delete-category/<%= category._id %>">Delete</a>
-                                        </div>
-                                    </div>
-                                    <!-- dropdown //end -->
-                                </td>
-                            </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
-                    
-                </div>
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th class="text-center">
+                          <div class="form-check"></div>
+                        </th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% if(!categories){%>
+                      <h3>There is no categories to show...</h3>
+                      <% }else{ %> <% categories.forEach(category => { %>
+                      <tr>
+                        <td class="text-center">
+                          <div class="form-check"></div>
+                        </td>
+                        <td><b><%= category.name %></b></td>
+                        <td><%= category.description %></td>
+                        <td><%= category.status %></td>
+                        <td class="text-end">
+                          <div class="dropdown">
+                            <div>
+                              <a
+                                class="dropdown-item"
+                                href="/admin/view-category/<%= category._id %>"
+                                >View products</a
+                              >
+                              <a
+                                class="dropdown-item"
+                                href="/admin/edit-category/<%= category._id %>"
+                                >Edit category</a
+                              >
+                              <a class="dropdown-item text-danger delete-category-link" href="#" data-category-id="<%= category._id %>">Delete category</a>
+
+                            </div>
+                          </div>
+                          <!-- dropdown //end -->
+                        </td>
+                      </tr>
+                      <% }); }%>
+                    </tbody>
+                  </table>
+                  <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const deleteCategoryLinks = document.querySelectorAll(".delete-category-link");
+
+  deleteCategoryLinks.forEach((deleteCategoryLink) => {
+    deleteCategoryLink.addEventListener("click", function (event) {
+      event.preventDefault(); // Prevent the default link behavior
+
+      const categoryId = deleteCategoryLink.getAttribute("data-category-id");
+
+      if (categoryId) {
+        Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Send a DELETE request to the server
+            fetch(`/admin/delete-category/${categoryId}`, {
+              method: "DELETE",
+            })
+              .then((response) => {
+                if (response.status === 200) {
+                  Swal.fire({
+                    position: "top-center",
+                    icon: "success",
+                    title: "The category has been deleted.",
+                    showConfirmButton: false,
+                    timer: 1500,
+                  }).then(() => {
+                    // Remove the deleted category row from the table
+                    deleteCategoryLink.closest("tr").remove();
+                    // Reload the page after the alert is closed
+                    window.location.reload();
+                  });
+                } else {
+                  // Handle errors, such as displaying an error message.
+                  console.error("Error deleting category.");
+                }
+              })
+              .catch((error) => {
+                console.error("An error occurred:", error);
+              });
+          }
+        });
+      }
+    });
+  });
+});
+
+                  </script>
+                                  </div>
               </div>
               <!-- .col// -->
             </div>
@@ -421,6 +490,8 @@
         </div>
       </footer>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
     <script src="/adminAssets/assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/adminAssets/assets/js/vendors/bootstrap.bundle.min.js"></script>
     <script src="/adminAssets/assets/js/vendors/select2.min.js"></script>

@@ -20,20 +20,31 @@ const storage = multer.diskStorage({
 });
 const upload=multer({storage:storage})
 
-console.log("ADMIN ROUTER CALLED")
-
+//login
 adminRouter.get("/", adminController.getAdminLogin);
-// adminRouter.get("/admin-dashboard",adminController.getAdminDashboard);
 adminRouter.post("/admin-dashboard", adminController.postAdminDashboard);
+
+//user management
 adminRouter.get("/admin-user-management", adminController.getUsers);
+adminRouter.post("/update-user-status/:userId", adminController.postUserStatus);
 adminRouter.get("/admin-products-list", adminController.getProductsList);
 adminRouter.get("/admin-add-product", adminController.getAddProduct);
 adminRouter.post("/add-product",upload.array("photo"), adminController.postAddProduct);
-adminRouter.post("/update-user-status/:userId", adminController.postUserStatus);
 adminRouter.post("/product/:productId",adminController.postProductStatus);
 adminRouter.get("/edit-product",adminController.getEditProduct);
 adminRouter.post("/post-edit-product/:productId",upload.array("photo"),adminController.postEditProduct);
+
+//category management
 adminRouter.get("/admin-category-management",adminController.getCategories);
-adminRouter.post("/add-category",upload.single("icon"),adminController.postAddCategory);
+adminRouter.post("/add-category", adminController.postAddCategory);
+adminRouter.get("/edit-category/:categoryId", adminController.editCategory);
+adminRouter.post("/edit-category",upload.single("icon"), adminController.postEditCategory);
+adminRouter.delete("/delete-category/:categoryId", adminController.deleteCategory);
+
+//order management
+adminRouter.get("/orderList", adminController.getOrderList);
+adminRouter.get("/editOrder/:orderId", adminController.getOrderDetails);
+adminRouter.post("/editOrderStatus", adminController.editOrderStatus);
+
 
 module.exports = adminRouter;

@@ -274,7 +274,7 @@
                 </thead>
                 <tbody>
                     <% orderDetails.products.forEach((product) => { %>
-                        <tr>
+                        <tr style="border-bottom: 1px solid rgb(43, 40, 40);">
                             <td><%= orderDetails.orderDate %></td>
                             <td>•<%= product.productId.name %></td>
                             <td>₹<%= product.price %></td>
@@ -360,25 +360,25 @@
         </div>
     </div>
     <script>
-const returnButton = document.getElementById('returnButton');
-const cancelButton = document.getElementById('cancelButton');
-const orderStatus = '<%=orderDetails.orderStatus%>';
-if(orderStatus=="Returned"||orderStatus=="Cancelled"){
-  returnButton.style.display='none';
-  cancelButton.style.display='none';
-}
-else{
-  if(orderStatus=="Delivered"){
-  returnButton.style.display='block';
-  cancelButton.style.display='none';
-}else{
-  returnButton.style.display='none';
-  cancelButton.style.display='block';
-}}
-</script>
+      const returnButton = document.getElementById('returnButton');
+      const cancelButton = document.getElementById('cancelButton');
+      const orderStatus = '<%=orderDetails.orderStatus%>';
+      
+      if (orderStatus == "Returned" || orderStatus == "Cancelled") {
+          returnButton.style.display = 'none';
+          cancelButton.style.display = 'none';
+      } else if (orderStatus == "Delivered") {
+          returnButton.style.display = 'block';
+          cancelButton.style.display = 'none';
+      } else {
+          returnButton.style.display = 'none';
+          cancelButton.style.display = 'block';
+      }
+      </script>
+     
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
     const confirmCancelButton = document.getElementById("confirmCancel");
     const cancelForm = document.getElementById("cancelForm");
 
@@ -387,7 +387,6 @@ else{
         cancelForm.submit();
     });
 });
-
 </script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
