@@ -417,7 +417,7 @@
                         </h5>
                       </td>
                       <td class="price" data-title="Price">
-                        <span><%= product.productId.selling_price %></span>
+                        <span>₹<%= product.productId.selling_price %></span>
                       </td>
                       <td class="text-center" data-title="Stock">
                         <!-- Modify the HTML to include a data attribute for the product index -->
@@ -442,7 +442,7 @@
                       </td>
                       <td class="text-right" data-title="Cart">
                         <span class="price-span"
-                          ><%= product.productId.selling_price *
+                          ><%=product.productId.selling_price *
                           product.quantity %></span
                         >
                       </td>
@@ -459,7 +459,7 @@
                   </tbody>
                 </table>
                 <div class="grand-total">
-                  <h3>Grand Total: <span id="grandTotal">0</span></h3>
+                  <h3>Grand Total: ₹<span id="grandTotal">0</span></h3>
                   <a href="/checkoutFromCart" class="checkout-button">Checkout</a>
                 </div>
               </div>

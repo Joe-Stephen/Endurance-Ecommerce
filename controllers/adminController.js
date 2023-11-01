@@ -57,8 +57,14 @@ module.exports.getProductsList = async (req, res) => {
 };
 
 // get add product
-module.exports.getAddProduct = (req, res) => {
-  res.render("admin-add-product");
+module.exports.getAddProduct = async (req, res) => {
+  try{
+    const categories= await category.find();
+    res.render("admin-add-product", {categories});
+  }
+  catch(error){
+    console.log("An error happened while loading the add product page!:"+error)
+  }
 };
 //post the added product
 module.exports.postAddProduct = (req, res) => {
@@ -70,7 +76,6 @@ module.exports.postAddProduct = (req, res) => {
     category,
     brand,
     stock,
-    status,
   } = req.body;
 
   const photos = req.files;
@@ -86,7 +91,6 @@ module.exports.postAddProduct = (req, res) => {
     !category ||
     !brand ||
     !stock ||
-    !status ||
     !photos
   ) {
     return res.render("admin-products-list",{
@@ -105,7 +109,6 @@ module.exports.postAddProduct = (req, res) => {
     category,
     brand,
     stock,
-    status,
     photos: photoIds,
   });
 
@@ -145,6 +148,7 @@ module.exports.postProductStatus =async(req,res)=>{
 //geting edit product
 module.exports.getEditProduct = async (req, res) => {
   try {
+    const categories= await category.find();
     const editId = req.query.productId;
 
     console.log(editId)
@@ -159,7 +163,7 @@ module.exports.getEditProduct = async (req, res) => {
     }
 
     // Render the "product-page" template and pass the product details
-    res.render("admin-prdouct-edit-page", { editProduct });
+    res.render("admin-prdouct-edit-page", { editProduct, categories});
   } catch (error) {
     console.error(error);
     res.send("Error fetching product details");
@@ -209,6 +213,27 @@ module.exports.postEditProduct = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.render("admin-product-edit-page", { error: "An error occurred while updating the product, please try again" });
+  }
+};
+
+//deleting a product
+module.exports.deleteProduct = async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    
+    // Use Mongoose to find and delete the product by its ID
+    const deletedProduct = await product.findByIdAndRemove(productId);
+
+    if (!deletedProduct) {
+      // If the product was not found, return an error response
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // If the product was successfully deleted, return a success response
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error("An error occurred while deleting the product:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 

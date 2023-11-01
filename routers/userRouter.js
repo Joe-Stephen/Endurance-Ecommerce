@@ -21,12 +21,20 @@ userRouter.get("/page-signup", userController.getUserSignup);
 userRouter.get("/logout", userController.logout);
 userRouter.get("/product/:productId", userController.findProduct);
 
+//filter by category
+userRouter.get("/filterByMTB",userMiddleware.verifyUser, userController.filterByMTB);
+userRouter.get("/filterByElectric",userMiddleware.verifyUser, userController.filterByElectric);
+userRouter.get("/filterByEndurance",userMiddleware.verifyUser, userController.filterByEndurance);
+
+
+
 userRouter.get("/toVerifyPage", userController.postUserSignup);
 userRouter.post("/send_otp", userController.getSendOtp);
 userRouter.post("/verifyOTPnow", userController.getVerifyOtp);
 userRouter.get("/userAccount", userMiddleware.verifyUser, userController.getUserAccount);
 userRouter.get("/addAddress", userMiddleware.verifyUser, userController.getAddAddress);
 userRouter.post("/postAddress", userMiddleware.verifyUser, userController.postAddAddress);
+
 userRouter.get("/orderDetails/:orderId", userMiddleware.verifyUser, userController.getOrderDetails);
 userRouter.post("/returnOrder",userMiddleware.verifyUser, userController.productReturn);
 userRouter.post("/cancelOrder",userMiddleware.verifyUser, userController.productCancel);

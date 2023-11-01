@@ -140,7 +140,7 @@
                 <div class="card-body">
                     <div class="table-responsive">
         
-                        <form action="/admin/edit-category" method="POST">
+                        <form action="/admin/edit-category" method="POST" onsubmit="return validateForm()">
                             <div class="mb-4">
                                 <input type="hidden" name="categoryId" value="<%= categoryDetails._id %>">
                                 <label for="categoryName" class="form-label">Name</label>
@@ -150,17 +150,73 @@
                                     name="name"
                                     class="form-control"
                                     id="categoryName"
+                                    oninput="validateName(this)"
                                 />
+                                <span id="nameError" style="color: red;"></span>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Description</label>
-                                <input name="description" value="<%= categoryDetails.description %>" style="width: 100%;" type="text" name="" id="">
+                                <input name="description" value="<%= categoryDetails.description %>" style="width: 100%;" type="text" name="" id="description" oninput="validateDescription(this)">
+                                <span id="descriptionError" style="color: red;"></span>
                             </div>
-        
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-primary" >Save changes</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
                             </div>
                         </form>
+                        
+                        <script>
+                            function validateName(input) {
+                                var name = input.value;
+                                var forbiddenChars = /e|E/g;
+                                if (forbiddenChars.test(name)) {
+                                    document.getElementById('nameError').textContent = 'Name cannot contain "e" or "E".';
+                                    input.value = name.replace(forbiddenChars, '');
+                                } else {
+                                    document.getElementById('nameError').textContent = '';
+                                }
+                            }
+                        
+                            function validateDescription(input) {
+                                var description = input.value;
+                                if (description.length < 5) {
+                                    document.getElementById('descriptionError').textContent = 'Description must be at least 5 characters long.';
+                                } else {
+                                    document.getElementById('descriptionError').textContent = '';
+                                }
+                            }
+                        
+                            function validateForm() {
+    var name = document.getElementById('categoryName').value;
+    var description = document.getElementById('description').value;
+
+    // Check for consecutive special characters
+    if (/[\W_]{2,}/.test(name) || /[\W_]{2,}/.test(description)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please avoid consecutive special characters in the fields!',
+        });
+        return false; // Prevent form submission
+    }
+
+    // Your other validation logic here
+    if (name.trim() === '' || description.trim() === '' || description.length < 5) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Name and description are required fields, and description must be at least 5 characters long.',
+        });
+        return false; // Prevent form submission
+    }
+
+    // Additional form validation checks can be added here
+
+    return true; // Submit the form if all validations pass
+}
+
+                        </script>
+                        
+                                                
                     </div>
                 </div>
             </div>
@@ -183,6 +239,8 @@
             </div>
         </footer>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

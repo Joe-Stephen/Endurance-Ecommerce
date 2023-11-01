@@ -27,12 +27,15 @@ adminRouter.post("/admin-dashboard", adminController.postAdminDashboard);
 //user management
 adminRouter.get("/admin-user-management", adminController.getUsers);
 adminRouter.post("/update-user-status/:userId", adminController.postUserStatus);
+
+//product management
 adminRouter.get("/admin-products-list", adminController.getProductsList);
 adminRouter.get("/admin-add-product", adminController.getAddProduct);
 adminRouter.post("/add-product",upload.array("photo"), adminController.postAddProduct);
 adminRouter.post("/product/:productId",adminController.postProductStatus);
 adminRouter.get("/edit-product",adminController.getEditProduct);
 adminRouter.post("/post-edit-product/:productId",upload.array("photo"),adminController.postEditProduct);
+adminRouter.delete("/delete-product/:productId",adminController.deleteProduct);
 
 //category management
 adminRouter.get("/admin-category-management",adminController.getCategories);

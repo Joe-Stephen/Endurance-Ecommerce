@@ -17,6 +17,8 @@
       type="image/x-icon"
       href="userAssets/assets/imgs/theme/favicon.svg"
     />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <!-- Template CSS -->
     <link rel="stylesheet" href="userAssets/assets/css/maind134.css?v=3.4" />
     <style>
@@ -1700,17 +1702,16 @@
             <div class="col-lg-3">
               <div class="widget-category mb-30">
                 <h5 class="section-title style-1 mb-30 wow fadeIn animated">
-                  Category
+                    Category
                 </h5>
                 <ul class="categories">
-                  <li><a href="shop-grid-right.html">Mtb</a></li>
-                  <li><a href="shop-grid-right.html">Electric bikes</a></li>
-                  <li><a href="shop-grid-right.html">Endurance bikes</a></li>
-                  <li><a href="shop-grid-right.html">Hybrid bikes</a></li>
-                  <!-- <li><a href="shop-grid-right.html">Kids bikes</a></li> -->
-                  <!-- <li><a href="shop-grid-right.html">Accessories</a></li> -->
+                    <li><a href="/" class="" data-category="All">All</a></li>
+                    <li><a href="/filterByMTB" class="" data-category="MTB">MTB</a></li>
+                    <li><a href="/filterByElectric" class="" data-category="E- bikes">E- bikes</a></li>
+                    <li><a href="/filterByEndurance" class="" data-category="Endurance bikes">Endurance bikes</a></li>
                 </ul>
-              </div>
+            </div>
+            
               <div class="widget-category mb-30">
                 <h5 class="section-title style-1 mb-30 wow fadeIn animated">
                   Sort by
@@ -1896,6 +1897,15 @@
                                           </div>
                   <!--End product-grid-4-->
                 </div>
+
+
+                  
+          
+
+
+
+
+
                 <script>
                   document.addEventListener("DOMContentLoaded", function () {
                   const addToCartButtons = document.querySelectorAll(".addToCartButton");

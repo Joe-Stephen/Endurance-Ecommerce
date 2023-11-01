@@ -71,24 +71,45 @@
                     <h4 class="card-title mb-4">Log in</h4>
                     <h5 class="font-sm" style="color: red;"><%=locals.error%></h5>
                     <h5 class="font-sm" style="color: rgb(19, 162, 14);"><%=locals.verified%></h5>
-                    <form action="/admin/admin-dashboard" method="post">
+                    <form action="/admin/admin-dashboard" method="post" onsubmit="return validateForm()">
                         <div class="mb-3">
-                            <input class="form-control" placeholder="Email" type="text" name="email">
-                        </div> <!-- form-group// -->
+                            <input class="form-control" placeholder="Email" type="text" name="email" id="email">
+                        </div>
                         <div class="mb-3">
-                            <input class="form-control" placeholder="Password" type="password" name="password">
-                        </div> <!-- form-group// -->
+                            <input class="form-control" placeholder="Password" type="password" name="password" id="password">
+                        </div>
                         <div class="mb-3">
                             <a href="#" class="float-end font-sm text-muted">Forgot password?</a>
                             <label class="form-check">
                                 <input type="checkbox" class="form-check-input" checked="">
                                 <span class="form-check-label">Remember</span>
                             </label>
-                        </div> <!-- form-group form-check .// -->
+                        </div>
                         <div class="mb-4">
-                            <button type="submit" class="btn btn-primary w-100"> Login </button>
-                        </div> <!-- form-group// -->
+                            <button type="submit" class="btn btn-primary w-100">Login</button>
+                        </div>
                     </form>
+                    
+                    <script>
+                        function validateForm() {
+                            var email = document.getElementById('email').value;
+                            var password = document.getElementById('password').value;
+                    
+                            if (email.trim() === '' || password.trim() === '') {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Email and password are required fields.',
+                                });
+                                return false;
+                            }
+                    
+                            // Additional form validation checks can be added here
+                    
+                            return true; // Submit the form if all validations pass
+                        }
+                    </script>
+                    
                     <p class="text-center small text-muted mb-15">or sign up with</p>
                     <div class="d-grid gap-3 mb-4">
                         <a href="#" class="btn w-100 btn-light font-sm">
@@ -118,6 +139,7 @@
             <p class="font-xs mb-30">All rights reserved</p>
         </footer>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="/adminAssets/assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/adminAssets/assets/js/vendors/bootstrap.bundle.min.js"></script>
     <script src="/adminAssets/assets/js/vendors/jquery.fullscreen.min.js"></script>

@@ -228,10 +228,13 @@
                                     <label  class="form-label">Product price(selling)</label>
                                     <input type="text" name="selling_price" value="<%= editProduct.selling_price %>" class="form-control" id="product_name">
                                 </div>
-                                <div class="mb-4">
-                                    <label  class="form-label">Product category</label>
-                                    <input type="text" name="category" value="<%= editProduct.category %>" class="form-control" id="product_name">
-                                </div>
+                                <select name="category" required>
+                                    <option value="" disabled="">Select one</option>
+                                    <%categories.forEach((category)=>{ %>
+                                        <option value="<%=category.name%>"><%=category.name%></option>
+                                        <%})%>
+                                    <!-- Add more options as needed -->
+                                </select>
                                 <div class="mb-4">
                                     <label  class="form-label">Product stock</label>
                                     <input type="text" name="stock" value="<%= editProduct.stock %>" class="form-control" id="product_name">

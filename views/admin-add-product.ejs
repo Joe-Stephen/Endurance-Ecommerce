@@ -179,20 +179,7 @@
     </aside>
     <main class="main-wrap">
         <header class="main-header navbar">
-            <div class="col-search">
-                <form class="searchform">
-                    <div class="input-group">
-                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
-                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
-                    </div>
-                    <datalist id="search_terms">
-                        <option value="Products">
-                        <option value="New orders">
-                        <option value="Apple iphone">
-                        <option value="Ahmed Hassan">
-                    </datalist>
-                </form>
-            </div>
+            
             <div class="col-nav">
                 <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
                 <ul class="nav">
@@ -261,8 +248,17 @@
                         </tr>
                         <tr>
                             <td>Category:</td>
-                            <td><input type="text" name="category" required></td>
+                            <td>
+                                <select name="category" required>
+                                    <option value="" disabled="">Select one</option>
+                                    <%categories.forEach((category)=>{ %>
+                                        <option value="<%=category.name%>"><%=category.name%></option>
+                                        <%})%>
+                                    <!-- Add more options as needed -->
+                                </select>
+                            </td>
                         </tr>
+                        
                         <tr>
                             <td>Brand:</td>
                             <td><input type="text" name="brand" required></td>
@@ -276,13 +272,13 @@
                             <td><input type="number" name="stock" required></td>
                         </tr>
                         <tr>
-                            <td>Status:</td>
+                            <!-- <td>Status:</td>
                             <td>
                                 <select name="status" required>
                                     <option value="Available">Active</option>
                                     <option value="Out of Stock">Inactive</option>
                                 </select>
-                            </td>
+                            </td> -->
                         </tr>
                         <tr>
                             <td></td>

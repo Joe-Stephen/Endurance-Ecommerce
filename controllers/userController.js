@@ -22,13 +22,50 @@ const getHomePage = async (req, res) => {
   try {
     const loggedIn=req.cookies.loggedIn;
     console.log(loggedIn);
-    const products = await product.find();
+    const products = await product.find({ status: { $ne: "hide" } });
     res.render("index-4",{products,loggedIn});
   } catch (error) {
     console.error(error);
     res.send("Error fetching products");
   }
 };
+
+//filter by category
+const filterByMTB= async (req, res)=>{
+  try{
+    const loggedIn=req.cookies.loggedIn;
+    const products= await product.find({category:"MTB"})
+    res.render("index-4",{products,loggedIn});
+  }
+  catch(error){
+    console.log("An error occured while applying filter! "+error);
+  }
+}
+
+const filterByElectric= async (req, res)=>{
+  try{
+    const loggedIn=req.cookies.loggedIn;
+    const products= await product.find({category:"E- bikes"})
+    res.render("index-4",{products,loggedIn});
+  }
+  catch(error){
+    console.log("An error occured while applying filter! "+error);
+  }
+}
+
+const filterByEndurance= async (req, res)=>{
+  try{
+    const loggedIn=req.cookies.loggedIn;
+    const products= await product.find({category:"Endurance bikes"})
+    res.render("index-4",{products,loggedIn});
+  }
+  catch(error){
+    console.log("An error occured while applying filter! "+error);
+  }
+}
+
+
+
 
 //getting user account
 const getUserAccount = async (req, res) => {
@@ -326,7 +363,6 @@ const getVerifyOtp = async (req, res) => {
       await user.create({
         username: userData.username,
         password: userData.password,
-        confirm_password: userData.confirm_password,
         email: userData.email,
         phoneNumber: userData.phoneNumber,
         status: "Unblocked",
@@ -512,6 +548,7 @@ const getCart = async (req, res) => {
       path: "products.productId",
       model: "product",
     });
+    console.log(userCart);
     // The 'userCart' now contains the populated 'products' array with product details
     // You can access these details in your template
     res.render("cart", { userCart, loggedIn });
@@ -561,7 +598,7 @@ const addToCartController = async (req, res) => {
   }
 };
 //updating cart quantity
-const postCartQty = async (req, res) => {
+const   postCartQty = async (req, res) => {
   try {
     const userData = await user.findOne({ email: req.user });
     const userCart = await cart.findOne({ userId: userData._id }).populate({
@@ -649,6 +686,7 @@ const getCartCheckout= async (req, res)=>{
       path: "products.productId",
       model: "product",
     });
+
     const userAddress= await address.findOne({userId:userData._id});
     if(!userAddress){
       res.redirect("/addAddress")
@@ -747,4 +785,7 @@ module.exports = {
   getOrderDetails,
   productCancel,
   productReturn,
+  filterByEndurance,
+  filterByElectric,
+  filterByMTB,
 };
