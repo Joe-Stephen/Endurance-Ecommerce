@@ -16,6 +16,60 @@
     <link rel="shortcut icon" type="image/x-icon" href="/userAssets/assets/imgs/theme/favicon.svg">
     <!-- Template CSS -->
     <link rel="stylesheet" href="/userAssets/assets/css/maind134.css?v=3.4">
+    <style>
+        .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    cursor: pointer;
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modal-dialog {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+}
+
+
+    </style>
 
 </head>
 
@@ -335,7 +389,9 @@
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
-                                                    
+                                                        <% if(!orders){%>
+                                                            <h3>No orders placed yet.<h3>
+                                                        <%}else{%>
                                                         <tbody>
                                                             <% orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate)); %>
                                                             <% orders.forEach((order) => { %>
@@ -353,7 +409,7 @@
                                                                     <td style="border-bottom: 1px black solid;"><%= order.paymentStatus %></td>
                                                                     <td style="border-bottom: 1px black solid;"><a href="/orderDetails/<%= order._id %>" class="btn btn-primary">View details</a></td>
                                                                 </tr>
-                                                            <% }); %>
+                                                            <% }); }%>
                                                         </tbody>
                                                     </table>
                                                     
@@ -441,28 +497,189 @@
                                                 });
                                             }
                                         });
-                                    </script>
-                                    
-
-
-
-
+                                    </script>                                
                                     <div class="tab-pane fade" id="account-detail" role="tabpanel" aria-labelledby="account-detail-tab">
                                         <div class="card">
-                                            <div class="card-header">
-                                                <h5>Account Details</h5>
-                                            </div>
+
                                             <div class="card-body">
-                                                <p>Already have an account? <a href="page-login-register.html">Log in instead!</a></p>
-                                                <form method="post" name="enq">
+                                                <!-- Inside your user profile page HTML -->
+
+                                                <div class="user-profile">
+                                                    <h2><%= userData.username %></h2>
+                                                    <div class="user-details">
+                                                        <p><strong>Username:</strong> <%= userData.username %></p>
+                                                        <p><strong>Email:</strong> <%= userData.email %></p>
+                                                    </div>
+                                                    <a href="#" id="editDetailsLink">Edit details</a>
+                                                </div>
+                                                <p><strong>Phone Number:</strong> <%= userData.phoneNumber %> <button id="changeNumber">Change number</button></p>
+                                                <a href="/forgot_password">Change password</a>
+
+
+                                                <div id="changeNumberModal" class="modal">
+                                                    <div class="modal-content">
+                                                        <span class="close" id="closeModal">&times;</span>
+                                                        <form action="/getOtpPhoneNumChange" method="POST" id="changeNumberForm" >
+                                                            <div class="form-group">
+                                                                <label for="phoneNumber">Phone number:</label>
+                                                                <input style="border: 1px solid green;" type="number" name="phoneNumber" id="phoneNumber" value="<%= userData.phoneNumber %>" required>
+                                                            </div>
+
+                                                            <button type="submit">Save Changes</button>
+                                                            <!-- Your form fields here -->
+                                                        </form>
+                                                    </div>
+                                                </div>
+
+                                                <SCript>
+var numberModal = document.getElementById('changeNumberModal');
+var changeNumber = document.getElementById('changeNumber');
+var closeModal = document.getElementById('closeModal');
+
+// Function to open the modal
+function openModal() {
+    numberModal.style.display = 'block';
+}
+
+// Function to close the modal
+function closeModal() {
+    numberModal.style.display = 'none';
+}
+
+// Attach event listeners
+changeNumber.addEventListener('click', openModal);
+closeModal.addEventListener('click', closeModal);
+
+// Close the modal if the user clicks outside the modal content
+window.addEventListener('click', function (event) {
+    if (event.target === numberModal) {
+        numberModal.style.display = 'none';
+    }
+});
+                                                </SCript>
+                                                
+
+                                                
+
+
+
+                                                
+
+
+
+
+
+
+
+                                                
+                                                <div id="editDetailsModal" class="modal">
+                                                    <div class="modal-content">
+                                                        <span class="close" id="closeModal">&times;</span>
+                                                        <form action="/editUserDetails" method="POST" id="editUserDetailsForm" >
+                                                            <div class="form-group">
+                                                                <label for="username">Username:</label>
+                                                                <input style="border: 1px solid green;" type="text" name="username" id="username" value="<%= userData.username %>" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="email">Email:</label>
+                                                                <input style="border: 1px solid green;" type="email" name="email" id="email" value="<%= userData.email %>" required>
+                                                            </div>
+                                                            <button type="submit">Save Changes</button>
+                                                            <!-- Your form fields here -->
+                                                        </form>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Add this script to open and close the modal -->
+<script>
+// Get the modal and the link that opens it
+var modal = document.getElementById('editDetailsModal');
+var editDetailsLink = document.getElementById('editDetailsLink');
+var closeModal = document.getElementById('closeModal');
+
+// Function to open the modal
+function openModal() {
+    modal.style.display = 'block';
+}
+
+// Function to close the modal
+function closeModal() {
+    modal.style.display = 'none';
+}
+
+// Attach event listeners
+editDetailsLink.addEventListener('click', openModal);
+closeModal.addEventListener('click', closeModal);
+
+// Close the modal if the user clicks outside the modal content
+window.addEventListener('click', function (event) {
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+});
+function validateForm() {
+    let username = document.getElementById('username').value;
+    let email = document.getElementById('email').value;
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (namePattern.test(username)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Name cannot contain numbers.'
+        });
+        return false;
+    }
+
+    if (!username) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please enter a username.'
+        });
+        return false;
+    }
+
+    if (!emailPattern.test(email)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please enter a valid email address.'
+        });
+        return false;
+    }
+    return true;
+}
+
+
+
+
+</script>
+
+<script>
+
+</script>
+
+                                                  
+                                                  
+                                                                                                    
+                                                  
+
+
+
+
+
+                                                
+
+                                                <!-- <form method="post" name="userAccoutEdit">
                                                     <div class="row">
                                                         <div class="form-group col-md-6">
-                                                            <label>First Name <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="name" type="text">
+                                                            <label>Username <span class="required">*</span></label>
+                                                            <input required="" class="form-control square" value="<%=userData.userName%>" name="userName" type="text">
                                                         </div>
                                                         <div class="form-group col-md-6">
-                                                            <label>Last Name <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="phone">
+                                                            <label>Email<span class="required">*</span></label>
+                                                            <input required="" value="<%=userData.userName%>" class="form-control square" name="phone">
                                                         </div>
                                                         <div class="form-group col-md-12">
                                                             <label>Display Name <span class="required">*</span></label>
@@ -488,7 +705,7 @@
                                                             <button type="submit" class="btn btn-fill-out submit" name="submit" value="Submit">Save</button>
                                                         </div>
                                                     </div>
-                                                </form>
+                                                </form> -->
                                             </div>
                                         </div>
                                     </div>
@@ -637,7 +854,7 @@
     })
 </script>
     <!-- sweet alert -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Vendor JS-->
     <script src="/userAssets/assets/js/vendor/modernizr-3.6.0.min.js"></script>
     <script src="/userAssets/assets/js/vendor/jquery-3.6.0.min.js"></script>

@@ -64,30 +64,30 @@ const filterByEndurance= async (req, res)=>{
   }
 }
 
-
-
-
 //getting user account
 const getUserAccount = async (req, res) => {
   try {
     const loggedIn = req.user ? true : false;
+    console.log("User data IN REQ   "+req.user)
     const userData = await user.findOne({ email: req.user });
-    const userAddress = await address.findOne({ userId: userData._id });
-    
+    console.log("User data   "+userData)
+    const userAddress = await address.findOne({ userId: userData._id });    
     const orders = await order.find({ userId: userData._id }).populate({
       path: "products.productId",
       model: "product",
     });
-
     if (userAddress) {
       res.render("userDashboard", { userData, userAddress, orders, loggedIn });
     } else {
-      res.render("userDashboard", { userData, loggedIn, orders, loggedIn });
+      res.render("userDashboard", { userData, loggedIn, orders,});
     }
   } catch (error) {
     console.log("An error happened in fetching user dashboard " + error);
   }
 };
+
+
+
 
 
 //getting user logout
@@ -98,7 +98,6 @@ const logout = (req, res) => {
   res.clearCookie("loggedIn");
   res.redirect('/getLogin')
 };
-
 
 //code for email sending and verification
 
@@ -240,7 +239,7 @@ const getResetPassword=(req, res)=>{
         }
         userData.password = newPassword;
         await userData.save();
-        res.redirect("/loginPage")
+        res.redirect("/getLogin")
       } catch (error) {
     console.log("An error occurred while changing the password: " + error);
     res.status(500).json({ error: "An error occurred while changing the password" });
@@ -252,6 +251,7 @@ const getUserSignup = (req, res) => {
   res.render("page-signup");
 };
 let userData;
+
 //posting user details to the database
 const postUserSignup = async (req, res) => {
   const formData = await user.findOne({
@@ -276,6 +276,49 @@ const postUserSignup = async (req, res) => {
     //   subreddit:
     //     "The verification mail has been send, please check your inbox for the same.",
     // });
+  }
+};
+
+// Editing user details
+const editUserDetails = async (req, res) => {
+  try {
+    const existingData = await user.findOne({ email: req.user });
+    const updatedData = {
+      username: req.body.username,
+      email: req.body.email,
+      phoneNumber: req.body.phoneNumber,
+    };
+
+    console.log("Old one " + existingData);
+    console.log("New " + updatedData.username + updatedData.email + updatedData.phoneNumber);
+
+    const changedData = {};
+
+    if (existingData.username !== updatedData.username) {
+      changedData.username = updatedData.username;
+    }
+
+    if (existingData.email !== updatedData.email) {
+      changedData.email = updatedData.email;
+    }
+
+    console.log("Changed " + changedData.username + " " + changedData.email);
+
+    if (Object.keys(changedData).length > 0) {
+      console.log("Changes detected");
+
+      // Update the user's data in the database if there are changes
+      await user.updateOne({ _id: existingData._id }, { $set: changedData });
+      res.redirect("/logout");
+    } else if (updatedData.phoneNumber !== existingData.phoneNumber) {
+      const phoneNumber=updatedData.phoneNumber;
+      console.log("updatedData.phoneNumber "+updatedData.phoneNumber);
+      res.render("otpVerificationPage", {phoneNumber});
+    } else {
+      res.redirect("/userAccount");
+    }
+  } catch (error) {
+    console.log("An error occurred while updating the user details: " + error);
   }
 };
 
@@ -378,6 +421,53 @@ const getVerifyOtp = async (req, res) => {
     console.error(err);
   }
 };
+
+const getPhoneNumberChange= async (req, res) => {
+  try {
+    console.log("reached the send otp fun.");
+   const newNumber = req.body.phoneNumber;
+    console.log(newNumber);
+    await twilio.verify.v2.services(twilio_serviceId).verifications.create({
+      to: `+91${newNumber}`,
+      channel: "sms",
+    });
+    res.render("phoneNumberChange", { newNumber });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+
+
+
+const phoneNumberChange=async (req, res)=>{
+  try{
+    const newNumber = req.body.phoneNumber;
+    console.log(newNumber);
+    const otp = req.body.otpCode;
+    console.log(otp);
+    const verifyOTP = await twilio.verify.v2
+      .services(twilio_serviceId)
+      .verificationChecks.create({
+        to: `+91${newNumber}`,
+        code: otp,
+      });
+      if (verifyOTP.valid) {
+        console.log("VERIFIED "+newNumber);
+        console.log("emial "+req.user);
+
+        await user.updateOne({email:req.user},{$set:{phoneNumber:newNumber}});
+        res.redirect("/userAccount")
+  }else {
+    res.redirect("/userAccount");
+  }
+}
+catch (err) {
+  console.error(err);
+}
+};
+
+
 
 //getting product page
 (req, res) => {
@@ -766,6 +856,7 @@ module.exports = {
   postUserSignup,
   getUserLogin,
   getUserAccount,
+  editUserDetails,
   getForgotPassword,
   getResetPasswordOtp,
   verifyForgotPasswordOtp,
@@ -788,4 +879,6 @@ module.exports = {
   filterByEndurance,
   filterByElectric,
   filterByMTB,
+  phoneNumberChange,
+  getPhoneNumberChange,
 };

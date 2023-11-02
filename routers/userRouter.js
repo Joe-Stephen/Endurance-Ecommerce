@@ -30,8 +30,11 @@ userRouter.get("/filterByEndurance",userMiddleware.verifyUser, userController.fi
 
 userRouter.get("/toVerifyPage", userController.postUserSignup);
 userRouter.post("/send_otp", userController.getSendOtp);
+userRouter.post("/getOtpPhoneNumChange", userMiddleware.verifyUser,  userController.getPhoneNumberChange);
+userRouter.post("/verifyOtpPhoneNumChange", userMiddleware.verifyUser,  userController.phoneNumberChange);
 userRouter.post("/verifyOTPnow", userController.getVerifyOtp);
 userRouter.get("/userAccount", userMiddleware.verifyUser, userController.getUserAccount);
+userRouter.post("/editUserDetails", userMiddleware.verifyUser, userController.editUserDetails);
 userRouter.get("/addAddress", userMiddleware.verifyUser, userController.getAddAddress);
 userRouter.post("/postAddress", userMiddleware.verifyUser, userController.postAddAddress);
 

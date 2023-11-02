@@ -326,21 +326,27 @@ module.exports.deleteCategory = async (req, res) => {
 //getting order list
 module.exports.getOrderList = async (req, res) => {
   try {
-    const orderList = await order.find();
+    const orderList = await order.find().sort({orderDate:-1});
+    // console.log("An error happened while loading order list!: "+orderList );
     let userData=[];
 
     // Loop through each order in orderList
     for (const orderItem of orderList) {
       const userId = orderItem.userId;
+      console.log("uswer id: "+userId );
+
       let userDoc= await user.findById({ _id: userId });
+      console.log("uswer doc: "+userDoc );
       userData.push(userDoc.username);
+
     }
+    console.log("user data: "+userData[0] );
+
     res.render("admin-order-management", { orderList, userData});
   } catch (error) {
     console.log("An error happened while loading order list!:" + error);
   }
 };
-
 //getting order details and edit
 module.exports.getOrderDetails= async (req, res)=>{
   try{
