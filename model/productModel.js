@@ -34,7 +34,7 @@ const productSchema = new mongoose.Schema({
     },
     status: {
         type: String, // You can use 'Available', 'Out of Stock', etc.
-        default:"unblocked",
+        default:"show",
         required: true,
 
     },

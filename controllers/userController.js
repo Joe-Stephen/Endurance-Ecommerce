@@ -4,6 +4,7 @@ const address= require("../model/addressModel");
 const order= require("../model/orderModel")
 const returns= require("../model/returnModel")
 const cancels= require("../model/cancelModel")
+const bcrypt = require('bcrypt')
 // const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const twilio_account_sid = process.env.twilio_account_sid;
@@ -17,18 +18,35 @@ const secretKey = process.env.JWT_SECRET;
 const cart = require("../model/cartModel");
 
 
-//getting user home page
 const getHomePage = async (req, res) => {
   try {
-    const loggedIn=req.cookies.loggedIn;
-    console.log(loggedIn);
-    const products = await product.find({ status: { $ne: "hide" } });
-    res.render("index-4",{products,loggedIn});
+    const loggedIn = req.cookies.loggedIn;
+
+
+    const page = req.query.page ?? 1; // Default to page 1 if pageNo is not provided
+    const no_of_docs_each_page = 6;
+    console.log(page)
+    const totalProducts = await product.countDocuments({ status: { $ne: "hide" } });
+    const totalPages = Math.ceil(totalProducts / no_of_docs_each_page);
+
+    const skip = (page - 1) * no_of_docs_each_page;
+
+    const products = await product
+      .find({ status: { $ne: "hide" } })
+      .skip(skip)
+      .limit(no_of_docs_each_page);
+
+      console.log(products)
+
+    res.render("index-4", { products, loggedIn, page, totalPages }); // Pass the 'totalPages' variable to the template
   } catch (error) {
     console.error(error);
     res.send("Error fetching products");
   }
 };
+
+
+
 
 //filter by category
 const filterByMTB= async (req, res)=>{
@@ -64,6 +82,29 @@ const filterByEndurance= async (req, res)=>{
   }
 }
 
+//search results in the home page
+const searchResults= async (req, res)=>{
+  try{
+    const loggedIn = req.cookies.loggedIn;
+    const searchQuery = req.query.searchHomeValue;
+    const regex = new RegExp(searchQuery, "i");
+    const products = await product.find({ name: regex });
+    let result="";
+    if (products.length === 0) {
+      result="No products found...";
+
+    } else {
+      result="We found these...";
+    }
+    res.render("index-4", { result, products, loggedIn });
+  }
+  catch (error) {
+    console.log(error);
+  }
+};
+
+
+
 //getting user account
 const getUserAccount = async (req, res) => {
   try {
@@ -72,15 +113,14 @@ const getUserAccount = async (req, res) => {
     const userData = await user.findOne({ email: req.user });
     console.log("User data   "+userData)
     const userAddress = await address.findOne({ userId: userData._id });    
+    console.log("Address    "+userAddress);
     const orders = await order.find({ userId: userData._id }).populate({
       path: "products.productId",
       model: "product",
     });
-    if (userAddress) {
+
       res.render("userDashboard", { userData, userAddress, orders, loggedIn });
-    } else {
-      res.render("userDashboard", { userData, loggedIn, orders,});
-    }
+
   } catch (error) {
     console.log("An error happened in fetching user dashboard " + error);
   }
@@ -184,7 +224,6 @@ const getResetPasswordOtp = async (req, res) => {
           return res.status(400).json({ error: "Phone number not available" });
       }
 
-      // Assuming you have initialized twilio_serviceId correctly
       await twilio.verify.v2.services(twilio_serviceId).verifications.create({
           to: `+91${phoneNumber}`,
           channel: "sms",
@@ -227,21 +266,27 @@ const getResetPassword=(req, res)=>{
   res.render("resetPassword", { phoneNumber });
 }
 
-    // Update the user's password
-    const changePassword=async(req, res)=>{
-      try{
-        const phoneNumber=req.body.phoneNumber;
-        console.log(phoneNumber)
-        const newPassword=req.body.password1;
-        const userData=await user.findOne({phoneNumber:phoneNumber});
-        if (!userData) {
-          return res.status(404).json({ error: "User not found" });
-        }
-        userData.password = newPassword;
-        await userData.save();
-        res.redirect("/getLogin")
-      } catch (error) {
-    console.log("An error occurred while changing the password: " + error);
+// Update the user's password
+const changePassword = async (req, res) => {
+  try {
+    const phoneNumber = req.body.phoneNumber;
+    console.log("number " + phoneNumber);
+    console.log("new pass " + req.body.password1);
+
+    // Hash the new password
+    bcrypt.hash(req.body.password1, 10, async (err, hash) => {
+      if (err) {
+        console.error("Error hashing the password: " + err);
+        res.status(500).json({ error: "An error occurred while changing the password" });
+      } else {
+        // Update the user's password with the hashed value using findOneAndUpdate
+        await user.findOneAndUpdate({ phoneNumber: phoneNumber }, { $set: { password: hash } });
+        console.log("Password updated successfully");
+        res.redirect("/getLogin");
+      }
+    });
+  } catch (error) {
+    console.error("An error occurred while changing the password: " + error);
     res.status(500).json({ error: "An error occurred while changing the password" });
   }
 };
@@ -324,7 +369,7 @@ const editUserDetails = async (req, res) => {
 
 //authenticating user credentials
 const postLogin = async (req, res) => {
-  console.log("Hello "+req.cookies.loggedIn);
+  console.log("Hello "+req.body.password);
   
     const verifyStatus = await user.findOne({
       email: req.body.email,
@@ -339,36 +384,38 @@ const postLogin = async (req, res) => {
           res.render("page-login-register", {
             subreddit: "Your account is currently blocked!",
           });
-        } else if (req.body.password !== verifyStatus.password) {
-          res.render("page-login-register", {
-            subreddit: "Incorrect password!",
-          });
         } else {
-          if (
+          console.log(verifyStatus.password)
+          const password=req.body.password;
+          console.log(password)
+          bcrypt.compare(password,verifyStatus.password, (err, result) => {
+            console.log(result);
+           if (result!==true) {
+             res.render("page-login-register", {
+               subreddit: "Incorrect password!",
+             });      
+          } else if (
             req.body.email === verifyStatus.email &&
-            req.body.password === verifyStatus.password
-          ) {
-            try {
+            result==true
+            ) {
+              try {
               email = req.body.email;
               const token = jwt.sign(email, secretKey);
               res.cookie("token", token,  { maxAge: 24 * 60 * 60 * 1000 });
               res.cookie("loggedIn", true,  { maxAge: 24 * 60 * 60 * 1000 });
-              const products = await product.find();
               userEmail = verifyStatus.email;
               res.redirect("/");
             } catch (error) {
               console.error(error);
-              // res.send('Error fetching products');
             }
           }
-        }
-      } else {
-        res.redirect("/");
+        });
       }
-    }
-};
+    }}
+  };
+  
+  let phoneNumber;
 
-let phoneNumber;
 
 //displaying otp verification page and sending otp
 const getSendOtp = async (req, res) => {
@@ -392,7 +439,7 @@ const getSendOtp = async (req, res) => {
 const getVerifyOtp = async (req, res) => {
   try {
     console.log(userData);
-    console.log(phoneNumber);
+    console.log(typeof phoneNumber);
     const otp = req.body.otpCode;
     console.log(otp);
     const verifyOTP = await twilio.verify.v2
@@ -403,15 +450,20 @@ const getVerifyOtp = async (req, res) => {
       });
     if (verifyOTP.valid) {
       console.log("VERIFIED");
-      await user.create({
+      bcrypt.hash(userData.password, 10, async (error, hash)=>{
+        await user.create({
         username: userData.username,
-        password: userData.password,
+        password: hash,
         email: userData.email,
         phoneNumber: userData.phoneNumber,
         status: "Unblocked",
         isVerified: 0,
+      }).then((data)=>{
+        if(data){
+          res.redirect("/");
+        }
+      })
       });
-      res.redirect("/");
     } else {
       res.redirect("/page-signup", {
         error: "Incorrect O.T.P",
@@ -629,16 +681,11 @@ const findProduct = async (req, res) => {
 const getCart = async (req, res) => {
   try {
     const loggedIn=req.user?true:false;
-
-    console.log("haiiii");
     const userData = await user.findOne({ email: req.user });
-    console.log("joe");
-    console.log("user id is "+userData._id);
     const userCart = await cart.findOne({ userId: userData._id }).populate({
       path: "products.productId",
       model: "product",
     });
-    console.log(userCart);
     // The 'userCart' now contains the populated 'products' array with product details
     // You can access these details in your template
     res.render("cart", { userCart, loggedIn });
@@ -881,4 +928,5 @@ module.exports = {
   filterByMTB,
   phoneNumberChange,
   getPhoneNumberChange,
+  searchResults,
 };

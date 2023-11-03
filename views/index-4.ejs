@@ -27,7 +27,7 @@
     max-width: 100%;
     height: 200px; /* You can adjust this value as needed */
     object-fit: cover;
-}
+      }
     </style>
   </head>
 
@@ -394,21 +394,9 @@
             </div>
             <div class="header-right">
               <div class="search-style-2">
-                <form action="#">
-                  <select class="select-active">
-                    <option>All Categories</option>
-                    <option>Women's</option>
-                    <option>Men's</option>
-                    <option>Cellphones</option>
-                    <option>Computer</option>
-                    <option>Electronics</option>
-                    <option>Accessories</option>
-                    <option>Home & Garden</option>
-                    <option>Luggage</option>
-                    <option>Shoes</option>
-                    <option>Mother & Kids</option>
-                  </select>
-                  <input type="text" placeholder="Search for items..." />
+                <form action="/searchHome" method="get">
+                  <input name="searchHomeValue" type="text" placeholder="Search for items..." />
+                  <button type="submit" class="btn btn-success">Search</button>
                 </form>
               </div>
               <div class="header-action-right">
@@ -1807,6 +1795,9 @@
                   aria-labelledby="tab-one"
                 >
                   <div class="row product-grid-4">
+
+                    <h1 class="font-sm" style="color: rgb(47, 46, 46)"><%=locals.result%></h1>
+
                     <%if (products) { %> <% products.forEach(product => {%>
                     <div class="col-lg-4 col-md-4 col-12 col-sm-6">
                       <div class="product-cart-wrap mb-30">
@@ -1889,9 +1880,30 @@
                         </div>
                       </div>
                     </div>
-                    <% }); %> <% } else { %>
-                    <p>No products available.</p>
-                             <% } %>
+                    <% });} %>
+
+
+                    <!-- pagination  -->
+                    
+                    
+                    <div class="page-buttons">
+                      <% for (let i = 1; i <= totalPages; i++) { %>
+                        <% if (i === page) { %>
+                          <button type="button" class="page-btn active"><%= i %></button>
+                          <% } else { %>
+                            <a href="/?page=<%= i %>"><button type="button" class="page-btn"><%= i %></button></a>
+                            <% } %>
+                            <% } %>
+                          </div>
+                          <br>
+                          <p>Pages</p>
+      
+      
+      
+<!-- pagination ends here -->
+
+
+
 
 
                                           </div>

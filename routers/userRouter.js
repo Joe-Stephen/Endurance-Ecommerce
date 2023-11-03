@@ -26,6 +26,10 @@ userRouter.get("/filterByMTB",userMiddleware.verifyUser, userController.filterBy
 userRouter.get("/filterByElectric",userMiddleware.verifyUser, userController.filterByElectric);
 userRouter.get("/filterByEndurance",userMiddleware.verifyUser, userController.filterByEndurance);
 
+//search product 
+userRouter.get("/searchHome",userMiddleware.verifyUser, userController.searchResults);
+
+
 
 
 userRouter.get("/toVerifyPage", userController.postUserSignup);

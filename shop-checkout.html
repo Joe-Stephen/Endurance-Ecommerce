@@ -4,26 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .image-container {
+  position: relative;
+  width: 100%; /* Adjust the size as needed */
+  overflow: hidden;
+}
+
+    </style>
 </head>
 <body>
-    <button id="returnButton">Return</button>
-    <button id="cancelButton">Cancel</button>
-    <button onclick="toggleClock()" id="clockButton">Show clock</button>
+<h1>IMAGE ZOOM</h1>
+
+
+
+<div class="image-container">
+    <img class="product-image" src="/test_image.jpg" alt="Product Image">
+  </div>
+  
+
+
+
+
+
+
 
     <script>
-        function toggleClock(){
-            var myClock=document.getElementById("cancelButton");
-            var displaySetting=myClock.style.display;
-            var clockButton=document.getElementById("clockButton")
-            if (displaySetting=='block'){
-                myClock.style.display='none';
-                clockButton.innerHTML= 'Show clock';
-            }
-            else{
-                myClock.style.display='block';
-                clockButton.innerHTML= 'Show clock';
-            }
-        }
+const imageContainer = document.querySelector('.image-container');
+const productImage = document.querySelector('.product-image'); // Adjust the selector
+
+imageContainer.addEventListener('mousemove', (e) => {
+  // Calculate the position of the cursor within the image container
+  const x = (e.clientX - imageContainer.getBoundingClientRect().left) / imageContainer.offsetWidth;
+  const y = (e.clientY - imageContainer.getBoundingClientRect().top) / imageContainer.offsetHeight;
+
+  // Adjust the size of the product image for zoom
+  productImage.style.transform = `scale(2) translate(-${x * 50}%, -${y * 50}%)`;
+});
+
+imageContainer.addEventListener('mouseleave', () => {
+  // Reset the image back to its original size when the cursor leaves the container
+  productImage.style.transform = 'scale(1) translate(0, 0)';
+});
+
     </script>
 </body>
 </html>
