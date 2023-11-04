@@ -41,7 +41,11 @@ userRouter.get("/userAccount", userMiddleware.verifyUser, userController.getUser
 userRouter.post("/editUserDetails", userMiddleware.verifyUser, userController.editUserDetails);
 userRouter.get("/addAddress", userMiddleware.verifyUser, userController.getAddAddress);
 userRouter.post("/postAddress", userMiddleware.verifyUser, userController.postAddAddress);
+userRouter.get("/editAddress", userMiddleware.verifyUser, userController.getEditAddress);
+userRouter.post("/postEditAddress", userMiddleware.verifyUser, userController.postEditAddress);
 
+
+//order
 userRouter.get("/orderDetails/:orderId", userMiddleware.verifyUser, userController.getOrderDetails);
 userRouter.post("/returnOrder",userMiddleware.verifyUser, userController.productReturn);
 userRouter.post("/cancelOrder",userMiddleware.verifyUser, userController.productCancel);
@@ -49,7 +53,7 @@ userRouter.post("/cancelOrder",userMiddleware.verifyUser, userController.product
 
 
 
-
+//cart
 userRouter.get("/cart", userMiddleware.verifyUser, userController.getCart);
 userRouter.post("/addToCart", userMiddleware.verifyUser, userController.addToCartController);
 userRouter.post("/cartQtyChange", userMiddleware.verifyUser, userController.postCartQty);
@@ -58,7 +62,7 @@ userRouter.get("/checkoutFromCart",  userMiddleware.verifyUser,userController.ge
 userRouter.post("/placeOrder", userMiddleware.verifyUser, userController.postCartOrder);
 
 
-
+//password change
 userRouter.get("/forgot_password", userController.getForgotPassword);
 userRouter.post("/sendOTPRoute", userController.getResetPasswordOtp);
 userRouter.post("/verifyOTPRoute", userController.verifyForgotPasswordOtp);

@@ -1,10 +1,10 @@
 require("dotenv").config();
 const user = require("../model/userModel");
-const address= require("../model/addressModel");
-const order= require("../model/orderModel")
-const returns= require("../model/returnModel")
-const cancels= require("../model/cancelModel")
-const bcrypt = require('bcrypt')
+const address = require("../model/addressModel");
+const order = require("../model/orderModel");
+const returns = require("../model/returnModel");
+const cancels = require("../model/cancelModel");
+const bcrypt = require("bcrypt");
 // const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const twilio_account_sid = process.env.twilio_account_sid;
@@ -17,16 +17,16 @@ require("dotenv").config();
 const secretKey = process.env.JWT_SECRET;
 const cart = require("../model/cartModel");
 
-
 const getHomePage = async (req, res) => {
   try {
     const loggedIn = req.cookies.loggedIn;
 
-
     const page = req.query.page ?? 1; // Default to page 1 if pageNo is not provided
     const no_of_docs_each_page = 6;
-    console.log(page)
-    const totalProducts = await product.countDocuments({ status: { $ne: "hide" } });
+    console.log(page);
+    const totalProducts = await product.countDocuments({
+      status: { $ne: "hide" },
+    });
     const totalPages = Math.ceil(totalProducts / no_of_docs_each_page);
 
     const skip = (page - 1) * no_of_docs_each_page;
@@ -36,7 +36,7 @@ const getHomePage = async (req, res) => {
       .skip(skip)
       .limit(no_of_docs_each_page);
 
-      console.log(products)
+    console.log(products);
 
     res.render("index-4", { products, loggedIn, page, totalPages }); // Pass the 'totalPages' variable to the template
   } catch (error) {
@@ -45,90 +45,96 @@ const getHomePage = async (req, res) => {
   }
 };
 
-
-
-
 //filter by category
-const filterByMTB= async (req, res)=>{
-  try{
-    const loggedIn=req.cookies.loggedIn;
-    const products= await product.find({category:"MTB"})
-    res.render("index-4",{products,loggedIn});
+const filterByMTB = async (req, res) => {
+  try {
+    const loggedIn = req.cookies.loggedIn;
+    const products = await product.find({ category: "MTB" });
+    res.render("index-4", { products, loggedIn });
+  } catch (error) {
+    console.log("An error occured while applying filter! " + error);
   }
-  catch(error){
-    console.log("An error occured while applying filter! "+error);
-  }
-}
+};
 
-const filterByElectric= async (req, res)=>{
-  try{
-    const loggedIn=req.cookies.loggedIn;
-    const products= await product.find({category:"E- bikes"})
-    res.render("index-4",{products,loggedIn});
+const filterByElectric = async (req, res) => {
+  try {
+    const loggedIn = req.cookies.loggedIn;
+    const products = await product.find({ category: "E- bikes" });
+    res.render("index-4", { products, loggedIn });
+  } catch (error) {
+    console.log("An error occured while applying filter! " + error);
   }
-  catch(error){
-    console.log("An error occured while applying filter! "+error);
-  }
-}
+};
 
-const filterByEndurance= async (req, res)=>{
-  try{
-    const loggedIn=req.cookies.loggedIn;
-    const products= await product.find({category:"Endurance bikes"})
-    res.render("index-4",{products,loggedIn});
+const filterByEndurance = async (req, res) => {
+  try {
+    const loggedIn = req.cookies.loggedIn;
+    const products = await product.find({ category: "Endurance bikes" });
+    res.render("index-4", { products, loggedIn });
+  } catch (error) {
+    console.log("An error occured while applying filter! " + error);
   }
-  catch(error){
-    console.log("An error occured while applying filter! "+error);
-  }
-}
+};
 
 //search results in the home page
-const searchResults= async (req, res)=>{
-  try{
+const searchResults = async (req, res) => {
+  try {
+
+    const page = req.query.page ?? 1; // Default to page 1 if pageNo is not provided
+    const no_of_docs_each_page = 6;
+    console.log(page);
+    const totalProducts = await product.countDocuments({
+      status: { $ne: "hide" },
+    });
+    const totalPages = Math.ceil(totalProducts / no_of_docs_each_page);
+
+    const skip = (page - 1) * no_of_docs_each_page;
+
+
     const loggedIn = req.cookies.loggedIn;
     const searchQuery = req.query.searchHomeValue;
     const regex = new RegExp(searchQuery, "i");
     const products = await product.find({ name: regex });
-    let result="";
+    let result = "";
     if (products.length === 0) {
-      result="No products found...";
-
+      result = "No products found...";
     } else {
-      result="We found these...";
+      result = "We found these...";
     }
-    res.render("index-4", { result, products, loggedIn });
-  }
-  catch (error) {
+    res.render("index-4", { result, products, loggedIn, totalPages, page });
+  } catch (error) {
     console.log(error);
-  }
+  }
 };
-
-
 
 //getting user account
 const getUserAccount = async (req, res) => {
   try {
     const loggedIn = req.user ? true : false;
-    console.log("User data IN REQ   "+req.user)
+    console.log("User data IN REQ   " + req.user);
     const userData = await user.findOne({ email: req.user });
-    console.log("User data   "+userData)
-    const userAddress = await address.findOne({ userId: userData._id });    
-    console.log("Address    "+userAddress);
-    const orders = await order.find({ userId: userData._id }).populate({
-      path: "products.productId",
-      model: "product",
+    console.log("User data   " + userData);
+    const userAddress = await address.findOne({ userId: userData._id });
+    console.log("Address    " + userAddress);
+    const orders = await order
+      .find({ userId: userData._id })
+      .sort({ orderDate: -1 })
+      .populate({
+        path: "products.productId",
+        model: "product",
+      });
+
+    orders.forEach((order) => {
+      console.log(
+        "orderss  here    " + order.totalAmount + "  " + order.orderDate
+      );
     });
 
-      res.render("userDashboard", { userData, userAddress, orders, loggedIn });
-
+    res.render("userDashboard", { userData, userAddress, orders, loggedIn });
   } catch (error) {
     console.log("An error happened in fetching user dashboard " + error);
   }
 };
-
-
-
-
 
 //getting user logout
 const logout = (req, res) => {
@@ -136,7 +142,7 @@ const logout = (req, res) => {
   // console.log(req.cookies.token)
   res.clearCookie("token");
   res.clearCookie("loggedIn");
-  res.redirect('/getLogin')
+  res.redirect("/getLogin");
 };
 
 //code for email sending and verification
@@ -199,72 +205,70 @@ const logout = (req, res) => {
 
 //getting user login page
 const getUserLogin = (req, res) => {
-  if(req.cookies.loggedIn){
-    res.redirect('/')
-  }else{
+  if (req.cookies.loggedIn) {
+    res.redirect("/");
+  } else {
     res.render("page-login-register");
   }
 };
 
 //getting forgot password page
-const getForgotPassword=(req, res)=>{
-  res.render('forgot-Password')
-}
+const getForgotPassword = (req, res) => {
+  res.render("forgot-Password");
+};
 
 //sending forget password otp
 const getResetPasswordOtp = async (req, res) => {
   try {
-      const userData = await user.findOne({ email: req.body.email });
-      if (!userData) {
-          return res.status(404).json({ error: "User not found" });
-      }
+    const userData = await user.findOne({ email: req.body.email });
+    if (!userData) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-      const phoneNumber = userData.phoneNumber;
-      if (!phoneNumber) {
-          return res.status(400).json({ error: "Phone number not available" });
-      }
+    const phoneNumber = userData.phoneNumber;
+    if (!phoneNumber) {
+      return res.status(400).json({ error: "Phone number not available" });
+    }
 
-      await twilio.verify.v2.services(twilio_serviceId).verifications.create({
-          to: `+91${phoneNumber}`,
-          channel: "sms",
-      });
+    await twilio.verify.v2.services(twilio_serviceId).verifications.create({
+      to: `+91${phoneNumber}`,
+      channel: "sms",
+    });
 
-      const response = {
-          phoneNumber: phoneNumber,
-      };
-      return res.json(response);
+    const response = {
+      phoneNumber: phoneNumber,
+    };
+    return res.json(response);
   } catch (error) {
-      console.error("An error happened while sending the OTP: " + error);
-      return res.status(500).json({ error: "Failed to send OTP" });
+    console.error("An error happened while sending the OTP: " + error);
+    return res.status(500).json({ error: "Failed to send OTP" });
   }
 };
 
 //verifying forgot password otp
-const verifyForgotPasswordOtp= async(req, res)=>{
-  try{
-    const phoneNumber=req.body.phoneNumber;
-    const otp=req.body.otpCode;
+const verifyForgotPasswordOtp = async (req, res) => {
+  try {
+    const phoneNumber = req.body.phoneNumber;
+    const otp = req.body.otpCode;
     const verifyOTP = await twilio.verify.v2
-    .services(twilio_serviceId)
-    .verificationChecks.create({
-      to: `+91${phoneNumber}`,
-      code: otp,
-    });
+      .services(twilio_serviceId)
+      .verificationChecks.create({
+        to: `+91${phoneNumber}`,
+        code: otp,
+      });
     if (verifyOTP.valid) {
       console.log("VERIFIED");
-}
-}
-catch(error){
-  console.log("An error occured "+error);
-  res.render("forgot-password");
-}
+    }
+  } catch (error) {
+    console.log("An error occured " + error);
+    res.render("forgot-password");
+  }
 };
 
-
-const getResetPassword=(req, res)=>{
-  let phoneNumber=req.params.phoneNumber;
+const getResetPassword = (req, res) => {
+  let phoneNumber = req.params.phoneNumber;
   res.render("resetPassword", { phoneNumber });
-}
+};
 
 // Update the user's password
 const changePassword = async (req, res) => {
@@ -277,17 +281,24 @@ const changePassword = async (req, res) => {
     bcrypt.hash(req.body.password1, 10, async (err, hash) => {
       if (err) {
         console.error("Error hashing the password: " + err);
-        res.status(500).json({ error: "An error occurred while changing the password" });
+        res
+          .status(500)
+          .json({ error: "An error occurred while changing the password" });
       } else {
         // Update the user's password with the hashed value using findOneAndUpdate
-        await user.findOneAndUpdate({ phoneNumber: phoneNumber }, { $set: { password: hash } });
+        await user.findOneAndUpdate(
+          { phoneNumber: phoneNumber },
+          { $set: { password: hash } }
+        );
         console.log("Password updated successfully");
         res.redirect("/getLogin");
       }
     });
   } catch (error) {
     console.error("An error occurred while changing the password: " + error);
-    res.status(500).json({ error: "An error occurred while changing the password" });
+    res
+      .status(500)
+      .json({ error: "An error occurred while changing the password" });
   }
 };
 
@@ -335,7 +346,12 @@ const editUserDetails = async (req, res) => {
     };
 
     console.log("Old one " + existingData);
-    console.log("New " + updatedData.username + updatedData.email + updatedData.phoneNumber);
+    console.log(
+      "New " +
+        updatedData.username +
+        updatedData.email +
+        updatedData.phoneNumber
+    );
 
     const changedData = {};
 
@@ -356,9 +372,9 @@ const editUserDetails = async (req, res) => {
       await user.updateOne({ _id: existingData._id }, { $set: changedData });
       res.redirect("/logout");
     } else if (updatedData.phoneNumber !== existingData.phoneNumber) {
-      const phoneNumber=updatedData.phoneNumber;
-      console.log("updatedData.phoneNumber "+updatedData.phoneNumber);
-      res.render("otpVerificationPage", {phoneNumber});
+      const phoneNumber = updatedData.phoneNumber;
+      console.log("updatedData.phoneNumber " + updatedData.phoneNumber);
+      res.render("otpVerificationPage", { phoneNumber });
     } else {
       res.redirect("/userAccount");
     }
@@ -369,40 +385,37 @@ const editUserDetails = async (req, res) => {
 
 //authenticating user credentials
 const postLogin = async (req, res) => {
-  console.log("Hello "+req.body.password);
-  
-    const verifyStatus = await user.findOne({
-      email: req.body.email,
+  console.log("Hello " + req.body.password);
+
+  const verifyStatus = await user.findOne({
+    email: req.body.email,
+  });
+  if (!verifyStatus) {
+    res.render("page-login-register", {
+      subreddit: "This email is not registered!",
     });
-    if (!verifyStatus) {
-      res.render("page-login-register", {
-        subreddit: "This email is not registered!",
-      });
-    } else {
-      if (verifyStatus) {
-        if (verifyStatus.status == "Blocked") {
-          res.render("page-login-register", {
-            subreddit: "Your account is currently blocked!",
-          });
-        } else {
-          console.log(verifyStatus.password)
-          const password=req.body.password;
-          console.log(password)
-          bcrypt.compare(password,verifyStatus.password, (err, result) => {
-            console.log(result);
-           if (result!==true) {
-             res.render("page-login-register", {
-               subreddit: "Incorrect password!",
-             });      
-          } else if (
-            req.body.email === verifyStatus.email &&
-            result==true
-            ) {
-              try {
+  } else {
+    if (verifyStatus) {
+      if (verifyStatus.status == "Blocked") {
+        res.render("page-login-register", {
+          subreddit: "Your account is currently blocked!",
+        });
+      } else {
+        console.log(verifyStatus.password);
+        const password = req.body.password;
+        console.log(password);
+        bcrypt.compare(password, verifyStatus.password, (err, result) => {
+          console.log(result);
+          if (result !== true) {
+            res.render("page-login-register", {
+              subreddit: "Incorrect password!",
+            });
+          } else if (req.body.email === verifyStatus.email && result == true) {
+            try {
               email = req.body.email;
               const token = jwt.sign(email, secretKey);
-              res.cookie("token", token,  { maxAge: 24 * 60 * 60 * 1000 });
-              res.cookie("loggedIn", true,  { maxAge: 24 * 60 * 60 * 1000 });
+              res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000 });
+              res.cookie("loggedIn", true, { maxAge: 24 * 60 * 60 * 1000 });
               userEmail = verifyStatus.email;
               res.redirect("/");
             } catch (error) {
@@ -411,11 +424,11 @@ const postLogin = async (req, res) => {
           }
         });
       }
-    }}
-  };
-  
-  let phoneNumber;
+    }
+  }
+};
 
+let phoneNumber;
 
 //displaying otp verification page and sending otp
 const getSendOtp = async (req, res) => {
@@ -429,7 +442,7 @@ const getSendOtp = async (req, res) => {
       to: `+91${phoneNumber}`,
       channel: "sms",
     });
-    res.json({ phoneNumber:phoneNumber });
+    res.json({ phoneNumber: phoneNumber });
   } catch (err) {
     console.error(err);
   }
@@ -450,19 +463,21 @@ const getVerifyOtp = async (req, res) => {
       });
     if (verifyOTP.valid) {
       console.log("VERIFIED");
-      bcrypt.hash(userData.password, 10, async (error, hash)=>{
-        await user.create({
-        username: userData.username,
-        password: hash,
-        email: userData.email,
-        phoneNumber: userData.phoneNumber,
-        status: "Unblocked",
-        isVerified: 0,
-      }).then((data)=>{
-        if(data){
-          res.redirect("/");
-        }
-      })
+      bcrypt.hash(userData.password, 10, async (error, hash) => {
+        await user
+          .create({
+            username: userData.username,
+            password: hash,
+            email: userData.email,
+            phoneNumber: userData.phoneNumber,
+            status: "Unblocked",
+            isVerified: 0,
+          })
+          .then((data) => {
+            if (data) {
+              res.redirect("/");
+            }
+          });
       });
     } else {
       res.redirect("/page-signup", {
@@ -474,10 +489,10 @@ const getVerifyOtp = async (req, res) => {
   }
 };
 
-const getPhoneNumberChange= async (req, res) => {
+const getPhoneNumberChange = async (req, res) => {
   try {
     console.log("reached the send otp fun.");
-   const newNumber = req.body.phoneNumber;
+    const newNumber = req.body.phoneNumber;
     console.log(newNumber);
     await twilio.verify.v2.services(twilio_serviceId).verifications.create({
       to: `+91${newNumber}`,
@@ -489,11 +504,8 @@ const getPhoneNumberChange= async (req, res) => {
   }
 };
 
-
-
-
-const phoneNumberChange=async (req, res)=>{
-  try{
+const phoneNumberChange = async (req, res) => {
+  try {
     const newNumber = req.body.phoneNumber;
     console.log(newNumber);
     const otp = req.body.otpCode;
@@ -504,28 +516,28 @@ const phoneNumberChange=async (req, res)=>{
         to: `+91${newNumber}`,
         code: otp,
       });
-      if (verifyOTP.valid) {
-        console.log("VERIFIED "+newNumber);
-        console.log("emial "+req.user);
+    if (verifyOTP.valid) {
+      console.log("VERIFIED " + newNumber);
+      console.log("emial " + req.user);
 
-        await user.updateOne({email:req.user},{$set:{phoneNumber:newNumber}});
-        res.redirect("/userAccount")
-  }else {
-    res.redirect("/userAccount");
+      await user.updateOne(
+        { email: req.user },
+        { $set: { phoneNumber: newNumber } }
+      );
+      res.redirect("/userAccount");
+    } else {
+      res.redirect("/userAccount");
+    }
+  } catch (err) {
+    console.error(err);
   }
-}
-catch (err) {
-  console.error(err);
-}
 };
-
-
 
 //getting product page
 (req, res) => {
-  const loggedIn=req.user?true:false;
+  const loggedIn = req.user ? true : false;
 
-  res.render("product-page",{loggedIn});
+  res.render("product-page", { loggedIn });
 };
 
 // for testing purpose only
@@ -534,9 +546,9 @@ const testmid = (req, res) => {
 };
 
 //getting add address
-const getAddAddress= (req, res)=>{
-      res.render("addressCreation")
-}
+const getAddAddress = (req, res) => {
+  res.render("addressCreation");
+};
 
 //saving address
 const postAddAddress = async (req, res) => {
@@ -591,11 +603,66 @@ const postAddAddress = async (req, res) => {
     }
 
     // Redirect to a success page or send a success response
-    res.redirect('/userAccount');
+    res.redirect("/userAccount");
   } catch (error) {
-    console.error('Error while saving address:', error);
+    console.error("Error while saving address:", error);
     // Handle the error and send an error response
-    res.status(500).json({ error: 'An error occurred while saving the address.' });
+    res
+      .status(500)
+      .json({ error: "An error occurred while saving the address." });
+  }
+};
+
+//edit address
+const getEditAddress = async (req, res) => {
+  try {
+    const userData = await user.findOne({ email: req.user });
+    const userAddress = await address.findOne({ userId: userData._id });
+    let newAddress;
+    userAddress.address.forEach((address) => {
+      if (address._id == req.query.addressId) {
+        newAddress = address;
+      }
+    });
+    res.render("editAddress", { newAddress });
+  } catch (error) {
+    console.log("An error");
+  }
+};
+
+//post edit address
+const postEditAddress = async (req, res) => {
+  try {
+    const addressId = req.body.addressId;
+    const addressType = req.body.addressType;
+    const userName = req.body.userName;
+    const city = req.body.city;
+    const landmark = req.body.landmark;
+    const state = req.body.state;
+    const pincode = req.body.pincode;
+    const phoneNumber = req.body.phoneNumber;
+    const altPhone = req.body.altPhone;
+    const userData = await user.findOne({ email: req.user });
+    const userAddress = await address.findOne({ userId: userData._id });
+    let newAddress;
+    userAddress.address.forEach((address) => {
+      if (address._id == addressId) {
+        newAddress = address;
+      }
+      newAddress.addressType = addressType;
+      newAddress.userName = userName;
+      newAddress.userName = userName;
+      newAddress.city = city;
+      newAddress.state = state;
+      newAddress.pincode = pincode;
+      newAddress.phoneNumber = phoneNumber;
+      newAddress.altPhone = altPhone;
+      newAddress.userData = userData;
+    });
+    await newAddress.save();
+    res.redirect("/userAccount");
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -607,7 +674,9 @@ const postCartOrder = async (req, res) => {
       path: "products.productId",
       model: "product",
     });
-    // let userCart=req.body.userCart;
+    const userAddress = await address.findOne({ userId: userData._id });
+    const selected_address = req.body.selected_address;
+
     let orderTotal = 0;
     let orderProducts = [];
 
@@ -617,46 +686,44 @@ const postCartOrder = async (req, res) => {
         price: product.productId.selling_price,
         quantity: product.quantity,
       };
-
+      console.log("address  " + req.body.selected_address);
       orderTotal += orderProduct.price * orderProduct.quantity;
       orderProducts.push(orderProduct);
     });
 
-    const newOrder= await order.create({
-      userId:userCart.userId,
-      products:orderProducts,
-      orderDate:new Date(),
-      totalAmount:orderTotal,
-      paymentMethod:req.body.payment_option,      
-    })
+    const newOrder = await order.create({
+      userId: userCart.userId,
+      products: orderProducts,
+      orderDate: new Date(),
+      orderAddress: userAddress.address[selected_address],
+      totalAmount: orderTotal,
+      paymentMethod: req.body.payment_option,
+    });
     // res.status(200).json({ message: "Order placed successfully.", order: userOrder });
-    await cart.deleteOne({userId:userData._id});
-    res.render("orderPlaced")
+    await cart.deleteOne({ userId: userData._id });
+    res.render("orderPlaced");
   } catch (error) {
     console.error("An error occurred while placing the order: ", error);
-    res.status(500).json({ error: "An error occurred while placing the order." });
+    res
+      .status(500)
+      .json({ error: "An error occurred while placing the order." });
   }
 };
 
 //getting order details
-const getOrderDetails=async (req, res)=>{
-  try{
-    const orderId=req.params.orderId;
+const getOrderDetails = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
     const userData = await user.findOne({ email: req.user });
-    const orderDetails = await order.findById({_id:orderId}).populate({
+    const orderDetails = await order.findById({ _id: orderId }).populate({
       path: "products.productId",
       model: "product",
-    }); 
-    res.render("orderDetails",{orderDetails})  
+    });
+    res.render("orderDetails", { orderDetails });
+  } catch (error) {
+    console.log("An error happened while loading the order details! :" + error);
   }
-  catch(error){
-    console.log("An error happened while loading the order details! :"+error);
-  }
-}
-
-
-
-
+};
 
 //finding product
 const findProduct = async (req, res) => {
@@ -670,7 +737,7 @@ const findProduct = async (req, res) => {
       return res.send("Product not found");
     }
     // Render the "product-page" template and pass the product details
-    res.render("product-page", { products});
+    res.render("product-page", { products });
   } catch (error) {
     console.error(error);
     res.send("Error fetching product details");
@@ -680,7 +747,7 @@ const findProduct = async (req, res) => {
 //getting cart
 const getCart = async (req, res) => {
   try {
-    const loggedIn=req.user?true:false;
+    const loggedIn = req.user ? true : false;
     const userData = await user.findOne({ email: req.user });
     const userCart = await cart.findOne({ userId: userData._id }).populate({
       path: "products.productId",
@@ -717,7 +784,7 @@ const addToCartController = async (req, res) => {
     );
     if (existingProduct) {
       // If the product is in the cart, increase its quantity
-      existingProduct.quantity+=1;
+      existingProduct.quantity += 1;
       console.log("The product is already inside the cart.");
     } else {
       // If the product is not in the cart, add it with a quantity of 1
@@ -735,7 +802,7 @@ const addToCartController = async (req, res) => {
   }
 };
 //updating cart quantity
-const   postCartQty = async (req, res) => {
+const postCartQty = async (req, res) => {
   try {
     const userData = await user.findOne({ email: req.user });
     const userCart = await cart.findOne({ userId: userData._id }).populate({
@@ -815,83 +882,90 @@ const removeProductFromCart = async (req, res) => {
 };
 
 //checkout from cart
-const getCartCheckout= async (req, res)=>{
-  try{
-    const loggedIn=req.user?true:false;
-    const userData= await user.findOne({email:req.user});
+const getCartCheckout = async (req, res) => {
+  try {
+    const loggedIn = req.user ? true : false;
+    const userData = await user.findOne({ email: req.user });
     const userCart = await cart.findOne({ userId: userData._id }).populate({
       path: "products.productId",
       model: "product",
     });
 
-    const userAddress= await address.findOne({userId:userData._id});
-    if(!userAddress){
-      res.redirect("/addAddress")
-    }else{
-      res.render("checkout",{userCart, loggedIn, userAddress})
+    const userAddress = await address.findOne({ userId: userData._id });
+    if (!userAddress) {
+      res.redirect("/addAddress");
+    } else {
+      res.render("checkout", { userCart, loggedIn, userAddress });
     }
+  } catch (error) {
+    console.log("An error happened while loading checkout page." + error);
   }
-  catch(error){
-    console.log("An error happened while loading checkout page."+error);
-  }
-}
+};
 
 //handling returns
-const productReturn=async (req, res)=>{
-  try{
-    const userData= await user.findOne({email:req.user});
-    let userReturn= await returns.findOne({userId:userData._id});
-    if(!userReturn){
-      userReturn= new returns({
-        userId:userData._id,
-        orders:[{
-          orderId:req.body.orderID,
-          reason:req.body.reason,
-        }]
-      })
-    }else{
+const productReturn = async (req, res) => {
+  try {
+    const userData = await user.findOne({ email: req.user });
+    let userReturn = await returns.findOne({ userId: userData._id });
+    if (!userReturn) {
+      userReturn = new returns({
+        userId: userData._id,
+        orders: [
+          {
+            orderId: req.body.orderID,
+            reason: req.body.reason,
+          },
+        ],
+      });
+    } else {
       userReturn.orders.push({
-        orderId:req.body.orderID,
-        reason:req.body.reason,
-      })
+        orderId: req.body.orderID,
+        reason: req.body.reason,
+      });
     }
     await userReturn.save();
-    await order.updateOne({ _id: req.body.orderID }, { $set: { orderStatus: "Returned" } });
+    await order.updateOne(
+      { _id: req.body.orderID },
+      { $set: { orderStatus: "Returned" } }
+    );
     res.redirect("/userAccount");
+  } catch (error) {
+    console.log("An error happened while processig return! :" + error);
   }
-  catch(error){
-    console.log("An error happened while processig return! :"+error);
-  }
-}
+};
 
 //handling cancels
-const productCancel=async (req, res)=>{
-  try{
-    const userData= await user.findOne({email:req.user});
-    let userCancel= await cancels.findOne({userId:userData._id});
-    if(!userCancel){
-      userCancel= new cancels({
-        userId:userData._id,
-        orders:[{
-          orderId:req.body.orderID,
-          reason:req.body.reason,
-        }]
-      })
-    }else{
+const productCancel = async (req, res) => {
+  try {
+    const userData = await user.findOne({ email: req.user });
+    let userCancel = await cancels.findOne({ userId: userData._id });
+    if (!userCancel) {
+      userCancel = new cancels({
+        userId: userData._id,
+        orders: [
+          {
+            orderId: req.body.orderID,
+            reason: req.body.reason,
+          },
+        ],
+      });
+    } else {
       userCancel.orders.push({
-        orderId:req.body.orderID,
-        reason:req.body.reason,
-      })
+        orderId: req.body.orderID,
+        reason: req.body.reason,
+      });
     }
     await userCancel.save();
-    await order.updateOne({ _id: req.body.orderID }, { $set: { orderStatus: "Cancelled" } });
+    await order.updateOne(
+      { _id: req.body.orderID },
+      { $set: { orderStatus: "Cancelled" } }
+    );
 
     res.redirect("/userAccount");
+  } catch (error) {
+    console.log("An error happened while processig return! :" + error);
   }
-  catch(error){
-    console.log("An error happened while processig return! :"+error);
-  }
-}
+};
 
 //exporting functions
 module.exports = {
@@ -929,4 +1003,6 @@ module.exports = {
   phoneNumberChange,
   getPhoneNumberChange,
   searchResults,
+  getEditAddress,
+  postEditAddress,
 };
