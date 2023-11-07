@@ -796,8 +796,8 @@
                                 <div class="mb-25">
                                     <h5>Payment</h5>
                                 </div>
-                                <form action="/placeOrder" method="post" id="paymentForm">
-                                    <input type="hidden" value="userCart" name="userCart" id="userCart">
+                                <form method="post" id="paymentForm">
+                                    <input type="hidden" value="<%=userCart%>" name="userCart" id="userCart">
                                     <div class="form-group">
                                         <label for="selected_address">Select Delivery Address:</label>
                                         <select style="border: 1px rgb(0, 183, 255) solid;" class="form-control" id="selected_address" name="selected_address" required>
@@ -814,61 +814,145 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="payment_option">Payment option:</label>
-                                        <select style="border: 1px rgb(0, 183, 255) solid;" class="form-control" id="payment_option" name="payment_option" required>
-                                            <option value="Bank transfer">Direct Bank Transfer</option>
-                                            <option value="Cash on delivery">Cash on Delivery</option>
-                                            <option value="paypal">Paypal</option>
-                                        </select>
+                                        <br>
+                                        <button id="codButton" class="btn btn-fill-out btn-block mt-30">Cash on delivery</button>
+
+                                        <button id="razorpayButton" class="btn btn-fill-out btn-block mt-30">Online payment</button>
                                     </div>
-                                    <a id="placeOrderButton" class="btn btn-fill-out btn-block mt-30">Place Order</a>
-                                </form>                                
-                            </div>
+                                </form> 
+                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    
+
+
+
+
     <script>
-        // Calculate the Grand Total when the page loads
-        document.addEventListener("DOMContentLoaded", function () {
-          // Get all the "price-span" elements (subtotals)
-          const priceSpans = document.querySelectorAll(".price-span");
-      
-          // Calculate the total by summing up the subtotals
-          let total = 0;
-          priceSpans.forEach((priceSpan) => {
-            total += parseFloat(priceSpan.textContent);
-          });
-      
-          // Update the "Grand Total" element with the calculated total
-          const grandTotalElement = document.getElementById("grandTotal");
-          grandTotalElement.textContent = total.toFixed(2); // You can format it as needed
-        });
-      </script>
-      <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const placeOrderButton = document.getElementById("placeOrderButton"); // Adjust the ID as needed
+document.addEventListener("DOMContentLoaded", function(){
+    const codButton=document.getElementById("codButton");
+    
+    codButton.addEventListener("click", function (event){
+        event.preventDefault();
 
-  placeOrderButton.addEventListener("click", function (event) {
-    event.preventDefault();
+        const selectedAddress = document.getElementById("selected_address").value;
+        const userCart = document.getElementById("userCart").value;
 
-    // Use SweetAlert to display your custom alert with a timer
-    Swal.fire({
-      position: 'top-center',
-      icon: 'success',
-      title: 'Order Placed!',
-      showConfirmButton: false,
-      timer: 1500, // Set the timer to close the alert after 1.5 seconds
-    }).then(() => {
-      // After the timer expires, redirect to the /userAccount route
-        paymentForm.submit();
-    });
-  });
+        const requestBody = {
+        selected_address: selectedAddress,
+        userCart: userCart,
+      };
+
+            // Send the data to your server using the Fetch API
+            fetch("/codOrder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      })
+      .then((response)=>{
+        if(!response){
+console.log("An error happened");
+        }
+        else{
+            Swal.fire({
+  position: "top-center",
+  icon: "success",
+  title: "Order placed",
+  showConfirmButton: false,
+  timer: 1500
 });
+window.location.href="/orderPlaced";
+        }
+      });
+    });
+    
+    
+    //razorpay button
+    const razorpayButton=document.getElementById("razorpayButton");
+    razorpayButton.addEventListener("click", function (event){
+        event.preventDefault();
+        const selectedAddress = document.getElementById("selected_address").value;
+        const userCart = document.getElementById("userCart").value;
+        const requestBody = {
+        selected_address: selectedAddress,
+        userCart: userCart,
+      };
+            // Send the data to your server using the Fetch API
+            fetch("/razorpayOrder", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+    })
+      .then((response)=>{
+        if(response.ok){
+            return response.json();
+        }else{
+            console.log("An error happened");        
+        }
+    })
+    .then((data)=>{
+        if (data && data.razorOrder) {
+            const order=data.razorOrder;
+            const orderId = order.id;
+            const amount= order.amount;
+            console.log(orderId);
+            var options = {
+        "key": "rzp_test_hF6WGmggeA2qso", // Enter the Key ID generated from the Dashboard
+        "amount": amount*100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "currency": "INR",
+        "name": "Joe",
+        "description": "Test Transaction",
+        "image": "",
+        "order_id": orderId, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        "handler": function (response){
+            alert(response.razorpay_payment_id);
+            alert(response.razorpay_order_id);
+            alert(response.razorpay_signature)
+        },
+        "prefill": {
+            "name": "Joe",
+            "email": "joestephenk10@example.com",
+            "contact": "9207149607"
+        },
+        "notes": {
+            "address": "Razorpay Corporate Office"
+        },
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response){
+            alert(response.error.code);
+            alert(response.error.description);
+            alert(response.error.source);
+            alert(response.error.step);
+            alert(response.error.reason);
+            alert(response.error.metadata.order_id);
+            alert(response.error.metadata.payment_id);
+    });
+        rzp1.open();
 
-      </script>
-      
+        }
+    });
+});
+});
+</script> 
+
+
+
+
+
     <footer class="main">
         <section class="newsletter p-30 text-white wow fadeIn animated">
             <div class="container">
@@ -995,6 +1079,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         </div>
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Vendor JS-->
     <script src="/userAssets/assets/js/vendor/modernizr-3.6.0.min.js"></script>

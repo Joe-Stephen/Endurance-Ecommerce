@@ -167,13 +167,8 @@
                         <script>
                             function validateName(input) {
                                 var name = input.value;
-                                var forbiddenChars = /e|E/g;
-                                if (forbiddenChars.test(name)) {
-                                    document.getElementById('nameError').textContent = 'Name cannot contain "e" or "E".';
-                                    input.value = name.replace(forbiddenChars, '');
-                                } else {
-                                    document.getElementById('nameError').textContent = '';
-                                }
+                                // Remove the 'forbiddenChars' variable and related code
+                                document.getElementById('nameError').textContent = '';
                             }
                         
                             function validateDescription(input) {
@@ -186,35 +181,35 @@
                             }
                         
                             function validateForm() {
-    var name = document.getElementById('categoryName').value;
-    var description = document.getElementById('description').value;
-
-    // Check for consecutive special characters
-    if (/[\W_]{2,}/.test(name) || /[\W_]{2,}/.test(description)) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Please avoid consecutive special characters in the fields!',
-        });
-        return false; // Prevent form submission
-    }
-
-    // Your other validation logic here
-    if (name.trim() === '' || description.trim() === '' || description.length < 5) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Name and description are required fields, and description must be at least 5 characters long.',
-        });
-        return false; // Prevent form submission
-    }
-
-    // Additional form validation checks can be added here
-
-    return true; // Submit the form if all validations pass
-}
-
+                                var name = document.getElementById('categoryName').value;
+                                var description = document.getElementById('description').value;
+                        
+                                // Check for consecutive special characters
+                                if (/[\W_]{2,}/.test(name) || /[\W_]{2,}/.test(description)) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Please avoid consecutive special characters in the fields!',
+                                    });
+                                    return false; // Prevent form submission
+                                }
+                        
+                                // Your other validation logic here
+                                if (name.trim() === '' || description.trim() === '' || description.length < 5) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Name and description are required fields, and description must be at least 5 characters long.',
+                                    });
+                                    return false; // Prevent form submission
+                                }
+                        
+                                // Additional form validation checks can be added here
+                        
+                                return true; // Submit the form if all validations pass
+                            }
                         </script>
+                        
                         
                                                 
                     </div>

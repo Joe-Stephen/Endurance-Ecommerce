@@ -24,10 +24,57 @@
     <style>
       /* product image card */
       .product-img {
-    max-width: 100%;
-    height: 200px; /* You can adjust this value as needed */
-    object-fit: cover;
+        max-width: 100%;
+        height: 200px; /* You can adjust this value as needed */
+        object-fit: cover;
       }
+      /* Style for modal container */
+.modal {
+  display: none; /* Hide the modal by default */
+  position: fixed; /* Fixed position */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+}
+
+/* Style for modal content */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered horizontally */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 400px;
+}
+
+/* Style for the close button (X) */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.close:hover {
+  color: #000;
+}
+
+/* Style for the available sizes list */
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  margin: 5px 0;
+}
+
+/* Center the available sizes list */
+h2 {
+  text-align: center;
+}
+
     </style>
   </head>
 
@@ -361,26 +408,25 @@
             </div>
             <div class="header-info header-info-right">
               <ul>
-                  <% if (loggedIn) { %>
-                      <!-- User is logged in -->
-                      <li>
-                          <a href="/userAccount">Account</a>
-                      </li>
-                      <li>
-                          <a href="/logout">Logout</a>
-                      </li>
-                  <% } else { %>
-                      <!-- User is not logged in -->
-                      <li>
-                          <a href="/getLogin">Log In</a>
-                      </li>
-                      <li>
-                          <a href="/page-signup">Sign Up</a>
-                      </li>
-                  <% } %>
+                <% if (loggedIn) { %>
+                <!-- User is logged in -->
+                <li>
+                  <a href="/userAccount">Account</a>
+                </li>
+                <li>
+                  <a href="/logout">Logout</a>
+                </li>
+                <% } else { %>
+                <!-- User is not logged in -->
+                <li>
+                  <a href="/getLogin">Log In</a>
+                </li>
+                <li>
+                  <a href="/page-signup">Sign Up</a>
+                </li>
+                <% } %>
               </ul>
-          </div>
-          
+            </div>
           </div>
         </div>
       </div>
@@ -389,13 +435,19 @@
           <div class="header-wrap">
             <div class="logo logo-width-1">
               <a href="index.html"
-                ><img src="userAssets/assets/imgs/theme/Endurance3.webp" alt="logo"
+                ><img
+                  src="userAssets/assets/imgs/theme/Endurance3.webp"
+                  alt="logo"
               /></a>
             </div>
             <div class="header-right">
               <div class="search-style-2">
                 <form action="/searchHome" method="get">
-                  <input name="searchHomeValue" type="text" placeholder="Search for items..." />
+                  <input
+                    name="searchHomeValue"
+                    type="text"
+                    placeholder="Search for items..."
+                  />
                   <button type="submit" class="btn btn-success">Search</button>
                 </form>
               </div>
@@ -471,7 +523,9 @@
           <div class="header-wrap header-space-between position-relative">
             <div class="logo logo-width-1 d-block d-lg-none">
               <a href="index.html"
-                ><img src="userAssets/assets/imgs/theme/Endurance3.webp" alt="logo"
+                ><img
+                  src="userAssets/assets/imgs/theme/Endurance3.webp"
+                  alt="logo"
               /></a>
             </div>
             <div class="header-nav d-none d-lg-flex">
@@ -1302,7 +1356,9 @@
         <div class="mobile-header-top">
           <div class="mobile-header-logo">
             <a href="index.html"
-              ><img src="userAssets/assets/imgs/theme/Endurance3.webp" alt="logo"
+              ><img
+                src="userAssets/assets/imgs/theme/Endurance3.webp"
+                alt="logo"
             /></a>
           </div>
           <div
@@ -1554,7 +1610,6 @@
                     <li><a href="page-404.html">404 Page</a></li>
                   </ul>
                 </li>
-
               </ul>
             </nav>
             <!-- mobile menu end -->
@@ -1690,16 +1745,32 @@
             <div class="col-lg-3">
               <div class="widget-category mb-30">
                 <h5 class="section-title style-1 mb-30 wow fadeIn animated">
-                    Category
+                  Category
                 </h5>
                 <ul class="categories">
-                    <li><a href="/" class="" data-category="All">All</a></li>
-                    <li><a href="/filterByMTB" class="" data-category="MTB">MTB</a></li>
-                    <li><a href="/filterByElectric" class="" data-category="E- bikes">E- bikes</a></li>
-                    <li><a href="/filterByEndurance" class="" data-category="Endurance bikes">Endurance bikes</a></li>
+                  <li><a href="/" class="" data-category="All">All</a></li>
+                  <li>
+                    <a href="/filterByMTB" class="" data-category="MTB">MTB</a>
+                  </li>
+                  <li>
+                    <a
+                      href="/filterByElectric"
+                      class=""
+                      data-category="E- bikes"
+                      >E- bikes</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="/filterByEndurance"
+                      class=""
+                      data-category="Endurance bikes"
+                      >Endurance bikes</a
+                    >
+                  </li>
                 </ul>
-            </div>
-            
+              </div>
+
               <div class="widget-category mb-30">
                 <h5 class="section-title style-1 mb-30 wow fadeIn animated">
                   Sort by
@@ -1795,8 +1866,9 @@
                   aria-labelledby="tab-one"
                 >
                   <div class="row product-grid-4">
-
-                    <h1 class="font-sm" style="color: rgb(47, 46, 46)"><%=locals.result%></h1>
+                    <h1 class="font-sm" style="color: rgb(47, 46, 46)">
+                      <%=locals.result%>
+                    </h1>
 
                     <%if (products) { %> <% products.forEach(product => {%>
                     <div class="col-lg-4 col-md-4 col-12 col-sm-6">
@@ -1805,15 +1877,15 @@
                           <div class="product-img product-img-zoom">
                             <a href="/product/<%=product._id%>">
                               <img
-                              class="product-img default-img"
-                              src="<%= product.photos[0] %>"
-                              alt=""
-                          />
-                          <img
-                          class="product-img hover-img"
-                          src="<%= product.photos[0] %>"
-                          alt=""
-                      />
+                                class="product-img default-img"
+                                src="<%= product.photos[0] %>"
+                                alt=""
+                              />
+                              <img
+                                class="product-img hover-img"
+                                src="<%= product.photos[0] %>"
+                                alt=""
+                              />
                             </a>
                           </div>
                           <div class="product-action-1">
@@ -1867,99 +1939,113 @@
                           </div>
                           <div class="product-action-1 show">
                             <a
-                                aria-label="Add To Cart"
-                                class="action-btn hover-up addToCartButton"
-                                data-product-id="<%= product._id %>"
-                                href="javascript:void(0);"
-                            >
-                                <i class="fi-rs-shopping-bag-add"></i>
-                            </a>
-                        </div>
-
-
+                            aria-label="Add To Cart"
+                            class="action-btn hover-up addToCartButton"
+                            data-product-id="<%= product._id %>"
+                            href="javascript:void(0);"
+                            onclick="openSizeModal()"
+                          >
+                            <i class="fi-rs-shopping-bag-add"></i>
+                          </a>
+                          </div>
                         </div>
                       </div>
                     </div>
                     <% });} %>
 
-
                     <!-- pagination  -->
-                    
-                    
+
                     <div class="page-buttons">
-                      <% for (let i = 1; i <= totalPages; i++) { %>
-                        <% if (i === page) { %>
-                          <button type="button" class="page-btn active"><%= i %></button>
-                          <% } else { %>
-                            <a href="/?page=<%= i %>"><button type="button" class="page-btn"><%= i %></button></a>
-                            <% } %>
-                            <% } %>
-                          </div>
-                          <br>
-                          <p>Pages</p>
-      
-      
-      
-<!-- pagination ends here -->
+                      <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
+                      page) { %>
+                      <button type="button" class="page-btn active">
+                        <%= i %>
+                      </button>
+                      <% } else { %>
+                      <a href="/?page=<%= i %>"
+                        ><button type="button" class="page-btn">
+                          <%= i %>
+                        </button></a
+                      >
+                      <% } %> <% } %>
+                    </div>
+                    <br />
+                    <p>Pages</p>
 
-
-
-
-
-                                          </div>
+                    <!-- pagination ends here -->
+                  </div>
                   <!--End product-grid-4-->
                 </div>
 
+                <div id="sizeModal" class="modal">
+                  <div class="modal-content">
+                    <span class="close" onclick="closeSizeModal()"
+                      >&times;</span>
+                    <h2>Available Sizes</h2>
+                    <ul>
+                      <li>Small</li>
+                      <li>Medium</li>
+                      <li>Large</li>
+                    </ul>
+                  </div>
+                </div>
 
-                  
-          
+                // Function to open the size modal
+function openSizeModal() {
+  var modal = document.getElementById('sizeModal');
+  modal.style.display = 'block';
+}
 
-
-
-
-
+// Function to close the size modal
+function closeSizeModal() {
+  var modal = document.getElementById('sizeModal');
+  modal.style.display = 'none';
+}
                 <script>
                   document.addEventListener("DOMContentLoaded", function () {
-                  const addToCartButtons = document.querySelectorAll(".addToCartButton");
-                
-                  addToCartButtons.forEach((button) => {
-                    button.addEventListener("click", function (event) {
-                      event.preventDefault();
-                
-                      const productId = button.getAttribute("data-product-id");
-                
-                      fetch("/addToCart", {
-                        method: "POST",
-                        headers: {
-                          "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ productId: productId }),
-                      })
-                        .then((response) => {
-                          if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                          }
-                          return response.json();
+                    const addToCartButtons =
+                      document.querySelectorAll(".addToCartButton");
+
+                    addToCartButtons.forEach((button) => {
+                      button.addEventListener("click", function (event) {
+                        event.preventDefault();
+
+                        const productId =
+                          button.getAttribute("data-product-id");
+
+                        fetch("/addToCart", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({ productId: productId }),
                         })
-                        .then((data) => {
-                          // Handle the response data as needed
-                          console.log("Added to cart:", data);
-                          Swal.fire({
-                          position: 'top-center',
-                          icon: 'success',
-                          title: 'Product added to cart!',
-                          showConfirmButton: false,
-                          timer: 1500
+                          .then((response) => {
+                            if (!response.ok) {
+                              throw new Error(
+                                `HTTP error! Status: ${response.status}`
+                              );
+                            }
+                            return response.json();
                           })
-                
-                        })
-                        .catch((error) => {
-                          window.location.href="/getLogin"
-                          // console.error("Error adding to cart:", error);
-                        });
+                          .then((data) => {
+                            // Handle the response data as needed
+                            console.log("Added to cart:", data);
+                            Swal.fire({
+                              position: "top-center",
+                              icon: "success",
+                              title: "Product added to cart!",
+                              showConfirmButton: false,
+                              timer: 1500,
+                            });
+                          })
+                          .catch((error) => {
+                            window.location.href = "/getLogin";
+                            // console.error("Error adding to cart:", error);
+                          });
+                      });
                     });
                   });
-                });
                 </script>
                 <!--En tab one (Featured)-->
                 <div
@@ -1992,8 +2078,7 @@
                               class="action-btn hover-up"
                               data-bs-toggle="modal"
                               data-bs-target="#quickViewModal"
-                              ><i class="fi-rs-eye"></i
-                            ></a>
+                              ><i class="fi-rs-eye"></i></a>
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"

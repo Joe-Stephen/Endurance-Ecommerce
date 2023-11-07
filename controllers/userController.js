@@ -1,6 +1,9 @@
 require("dotenv").config();
 const user = require("../model/userModel");
 const address = require("../model/addressModel");
+const razorpay= require("../razorPay")
+const razorPay_key_id= process.env.razorPay_key_id;
+const razorPay_key_secret= process.env.razorPay_key_secret;
 const order = require("../model/orderModel");
 const returns = require("../model/returnModel");
 const cancels = require("../model/cancelModel");
@@ -79,7 +82,6 @@ const filterByEndurance = async (req, res) => {
 //search results in the home page
 const searchResults = async (req, res) => {
   try {
-
     const page = req.query.page ?? 1; // Default to page 1 if pageNo is not provided
     const no_of_docs_each_page = 6;
     console.log(page);
@@ -89,7 +91,6 @@ const searchResults = async (req, res) => {
     const totalPages = Math.ceil(totalProducts / no_of_docs_each_page);
 
     const skip = (page - 1) * no_of_docs_each_page;
-
 
     const loggedIn = req.cookies.loggedIn;
     const searchQuery = req.query.searchHomeValue;
@@ -651,7 +652,6 @@ const postEditAddress = async (req, res) => {
       }
       newAddress.addressType = addressType;
       newAddress.userName = userName;
-      newAddress.userName = userName;
       newAddress.city = city;
       newAddress.state = state;
       newAddress.pincode = pincode;
@@ -666,8 +666,50 @@ const postEditAddress = async (req, res) => {
   }
 };
 
-//placing order with saving order details
-const postCartOrder = async (req, res) => {
+
+
+const cartOrder = async (req, res) => {
+  try {
+    const userData= await user.findOne({email:req.user});
+    console.log("data  "+userData)
+    console.log("cart  "+req.body.userCart)
+    const userCart = await cart.findOne({userId:userData._id}).populate({
+      path: "products.productId",
+      model: "product",
+    });
+    const userAddress = await address.findOne({ userId: userData._id });
+    const selected_address = req.body.selected_address;
+    let orderTotal = 0;
+    let orderProducts = [];
+    userCart.products.forEach((product) => {
+      const orderProduct = {
+        productId: product.productId._id,
+        price: product.productId.selling_price,
+        quantity: product.quantity,
+      };
+      console.log("address " + req.body.selected_address);
+      const userId=userData._id;
+      orderTotal += orderProduct.price * orderProduct.quantity;
+      orderProducts.push(orderProduct);
+    });
+    const newOrder = await order.create({
+      userId: userData._id,
+      products: orderProducts,
+      orderDate: new Date(),
+      orderAddress: userAddress.address[selected_address],
+      totalAmount: orderTotal,
+      paymentMethod:"Cash on delivery",
+    });
+    await cart.deleteOne({ userId: userData._id });
+    res.status(200).json({ message: "Order placed successfully.", order: newOrder });
+  } catch (error) {
+    console.error("An error occurred while placing the order: ", error);
+    res.status(500).json({ error: "An error occurred while placing the order." });
+  }
+};
+
+
+const razorpayOrder = async (req, res) => {
   try {
     const userData = await user.findOne({ email: req.user });
     const userCart = await cart.findOne({ userId: userData._id }).populate({
@@ -676,39 +718,64 @@ const postCartOrder = async (req, res) => {
     });
     const userAddress = await address.findOne({ userId: userData._id });
     const selected_address = req.body.selected_address;
-
     let orderTotal = 0;
     let orderProducts = [];
-
     userCart.products.forEach((product) => {
       const orderProduct = {
         productId: product.productId._id,
         price: product.productId.selling_price,
         quantity: product.quantity,
       };
-      console.log("address  " + req.body.selected_address);
       orderTotal += orderProduct.price * orderProduct.quantity;
       orderProducts.push(orderProduct);
     });
-
-    const newOrder = await order.create({
-      userId: userCart.userId,
-      products: orderProducts,
-      orderDate: new Date(),
-      orderAddress: userAddress.address[selected_address],
-      totalAmount: orderTotal,
-      paymentMethod: req.body.payment_option,
+    var options = {
+      amount: orderTotal,  // amount in the smallest currency unit
+      currency: "INR",
+      receipt:'',
+    };
+    // Create the Razorpay order and await its creation
+    razorpay.orders.create(options, async function (err, razorOrder) {
+      if (err) {
+        console.error("Error creating Razorpay order:", err);
+        res.status(500).json({ error: "An error occurred while placing the order." });
+      } else {
+        console.log(razorOrder);
+        const newOrder = await order.create({
+          userId: userData._id,
+          orderId: razorOrder.id,
+          products: orderProducts,
+          orderDate: new Date(),
+          orderAddress: userAddress.address[selected_address],
+          totalAmount: orderTotal,
+          paymentMethod: "Razorpay",
+        });
+        await newOrder.save(); // Update the new order's orderId
+        res.status(200).json({ message: "Order placed successfully.", razorOrder });
+      }
     });
-    // res.status(200).json({ message: "Order placed successfully.", order: userOrder });
-    await cart.deleteOne({ userId: userData._id });
-    res.render("orderPlaced");
   } catch (error) {
     console.error("An error occurred while placing the order: ", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while placing the order." });
+    res.status(500).json({ error: "An error occurred while placing the order." });
   }
 };
+
+
+
+
+
+//get order placed
+const getOrderPlaced= (req, res)=>{
+  res.render("orderPlaced")
+};
+
+
+
+
+
+
+
+
 
 //getting order details
 const getOrderDetails = async (req, res) => {
@@ -753,6 +820,7 @@ const getCart = async (req, res) => {
       path: "products.productId",
       model: "product",
     });
+    console.log(userCart);
     // The 'userCart' now contains the populated 'products' array with product details
     // You can access these details in your template
     res.render("cart", { userCart, loggedIn });
@@ -993,7 +1061,7 @@ module.exports = {
   getCartCheckout,
   getAddAddress,
   postAddAddress,
-  postCartOrder,
+  cartOrder,
   getOrderDetails,
   productCancel,
   productReturn,
@@ -1005,4 +1073,6 @@ module.exports = {
   searchResults,
   getEditAddress,
   postEditAddress,
+  getOrderPlaced,
+  razorpayOrder,
 };

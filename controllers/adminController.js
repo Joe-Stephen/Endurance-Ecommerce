@@ -66,8 +66,11 @@ module.exports.getAddProduct = async (req, res) => {
     console.log("An error happened while loading the add product page!:"+error)
   }
 };
-//post the added product
-module.exports.postAddProduct = (req, res) => {
+
+
+// POST request to add a new product
+module.exports.postAddProduct = async (req, res) => {
+  try{
   const {
     name,
     description,
@@ -75,25 +78,24 @@ module.exports.postAddProduct = (req, res) => {
     selling_price,
     category,
     brand,
-    stock,
   } = req.body;
-
+  // Handle file uploads and create an array of photo objects
   const photos = req.files;
   let arr = [];
   photos.forEach((element) => {
     arr.push({ name: element.filename, path: element.path });
   });
 
+  // Ensure that required fields are not empty
   if (
     !name ||
     !description ||
     !regular_price ||
     !category ||
     !brand ||
-    !stock ||
     !photos
   ) {
-    return res.render("admin-products-list",{
+    return res.render("admin-products-list", {
       error:
         "Please fill out all the required fields and upload at least one photo.",
     });
@@ -101,6 +103,27 @@ module.exports.postAddProduct = (req, res) => {
 
   const photoIds = arr.map((photo) => photo.path);
 
+let sizeSmall=0;
+let sizeMedium=0;
+let sizeLarge=0;
+  if(req.body.sizeSmall){
+    sizeSmall=req.body.stockSmall
+  } 
+  if(req.body.sizeMedium){
+    sizeMedium=req.body.stockMedium
+  } 
+  if(req.body.sizeLarge){
+    sizeLarge=req.body.stockLarge
+  } 
+
+
+  const sizes=[{
+    small:sizeSmall,
+    medium:sizeMedium,
+    large:sizeLarge,
+  }]
+
+  // Create a new product document with size information
   const newProduct = new product({
     name,
     description,
@@ -108,13 +131,20 @@ module.exports.postAddProduct = (req, res) => {
     selling_price,
     category,
     brand,
-    stock,
+    sizes, // Store the size
     photos: photoIds,
   });
+console.log("Haiiii   "+newProduct)
+  // Save the product to the database
 
   newProduct.save();
-  res.redirect("/admin/admin-products-list");
+      res.redirect("/admin/admin-products-list"); // Redirect to the product list page or perform other actions
+    }
+    catch(error){
+      console.log("error  "+error);
+    }
 };
+
 
 module.exports.postUserStatus = async (req, res) => {
   const userId = req.params.userId;
@@ -171,7 +201,7 @@ module.exports.getEditProduct = async (req, res) => {
 };
 
 //saving edited details into the db
-module.exports.postEditProduct = async (req, res) => {
+module.exports. postEditProduct = async (req, res) => {
   try {
     const editId = req.params.productId;
     const existingProduct = await product.findById(editId);
@@ -183,7 +213,6 @@ module.exports.postEditProduct = async (req, res) => {
       selling_price,
       category,
       brand,
-      stock,
     } = req.body;
 
     // Get newly uploaded photos
@@ -194,6 +223,28 @@ module.exports.postEditProduct = async (req, res) => {
     const updatedPhotos = existingProduct.photos.map((oldPhoto, index) =>
     picPaths[index] ? picPaths[index] : oldPhoto
     );
+let sizeSmall=0;
+let sizeMedium=0;
+let sizeLarge=0;
+  if(req.body.sizeSmall){
+    sizeSmall=req.body.stockSmall
+  } 
+  if(req.body.sizeMedium){
+    sizeMedium=req.body.stockMedium
+  } 
+  if(req.body.sizeLarge){
+    sizeLarge=req.body.stockLarge
+  } 
+
+
+  const sizes=[{
+    small:sizeSmall,
+    medium:sizeMedium,
+    large:sizeLarge,
+  }]
+
+
+
     const updatedData = {
       name,
       description,
@@ -201,9 +252,9 @@ module.exports.postEditProduct = async (req, res) => {
       selling_price,
       category,
       brand,
-      stock,
       status: existingProduct.status,
       photos: updatedPhotos,
+      sizes,
     };
 
     const updatedProduct = await product.findByIdAndUpdate(editId, updatedData, { new: true });

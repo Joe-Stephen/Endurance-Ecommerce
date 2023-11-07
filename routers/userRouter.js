@@ -49,6 +49,10 @@ userRouter.post("/postEditAddress", userMiddleware.verifyUser, userController.po
 userRouter.get("/orderDetails/:orderId", userMiddleware.verifyUser, userController.getOrderDetails);
 userRouter.post("/returnOrder",userMiddleware.verifyUser, userController.productReturn);
 userRouter.post("/cancelOrder",userMiddleware.verifyUser, userController.productCancel);
+userRouter.post("/codOrder", userMiddleware.verifyUser, userController.cartOrder);
+userRouter.post("/razorpayOrder", userMiddleware.verifyUser, userController.razorpayOrder);
+
+userRouter.get("/orderPlaced", userMiddleware.verifyUser, userController.getOrderPlaced);
 
 
 
@@ -59,7 +63,6 @@ userRouter.post("/addToCart", userMiddleware.verifyUser, userController.addToCar
 userRouter.post("/cartQtyChange", userMiddleware.verifyUser, userController.postCartQty);
 userRouter.delete("/removeProductFromCart/:productId", userMiddleware.verifyUser, userController.removeProductFromCart);
 userRouter.get("/checkoutFromCart",  userMiddleware.verifyUser,userController.getCartCheckout);
-userRouter.post("/placeOrder", userMiddleware.verifyUser, userController.postCartOrder);
 
 
 //password change

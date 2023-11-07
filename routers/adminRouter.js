@@ -8,6 +8,7 @@ const path = require("path");
 
 
 adminRouter.use(express.static("public/adminAssets/assets"));
+
 adminRouter.use("/uploads",express.static('uploads'));
 // adminRouter.use(cookieParser())
 const storage = multer.diskStorage({
@@ -48,6 +49,5 @@ adminRouter.delete("/delete-category/:categoryId", adminController.deleteCategor
 adminRouter.get("/orderList", adminController.getOrderList);
 adminRouter.get("/editOrder/:orderId", adminController.getOrderDetails);
 adminRouter.post("/editOrderStatus", adminController.editOrderStatus);
-
 
 module.exports = adminRouter;

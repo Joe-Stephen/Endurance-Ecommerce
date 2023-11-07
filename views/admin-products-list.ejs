@@ -108,6 +108,10 @@
                     <a class="menu-link" href=""> <i class="icon material-icons md-person"></i>
                         <span class="text">products</span>
                     </a>
+
+                    <h5 class="font-sm" style="color: red">
+                        <%=locals.error%>
+                      </h5>
                     <div class="submenu">
                         <a href="page-account-login.html">product management</a>
                         <!-- <a href="page-account-register.html">product registration</a>
@@ -220,63 +224,61 @@
                     <header class="card-header">
                         <div class="table-responsive">
                             <table class="table">
-                              <thead>
-                                <tr>
-                                  <th>#</th>
-                                  <th>Product Photo</th>
-                                  <th>Name</th>
-                                  <th>Brand</th>
-                                  <th>Category</th>
-                                  <th>Selling Price</th>
-                                  <th>Stock</th>
-                                  <th>Actions</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <!-- Loop through products and display in the table -->
-                                <% for (let i = 0; i < products.length; i++) { %>
-                                <tr>
-                                  <td><%= i + 1 %></td>
-                                  <td>
-                                    <% if (products[i].photos.length > 0) { %>
-                                      <img src="<%= products[i].photos[0] %>" alt="Product Photo" height="64">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Product Photo</th>
+                                        <th>Name</th>
+                                        <th>Brand</th>
+                                        <th>Category</th>
+                                        <th>Selling Price</th>
+                                        <th>Stock (S)</th>
+                                        <th>Stock (M)</th>
+                                        <th>Stock (L)</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Loop through products and display in the table -->
+                                    <% for (let i = 0; i < products.length; i++) { %>
+                                    <tr>
+                                        <td><%= i + 1 %></td>
+                                        <td>
+                                            <% if (products[i].photos.length > 0) { %>
+                                                <img src="<%= products[i].photos[0] %>" alt="Product Photo" height="64">
+                                            <% } %>
+                                        </td>
+                                        <td><%= products[i].name %></td>
+                                        <td><%= products[i].brand %></td>
+                                        <td><%= products[i].category %></td>
+                                        <td>₹<%= products[i].selling_price %></td>
+                                        <td><%= products[i].sizes[0].small %></td>
+                                        <td><%= products[i].sizes[0].medium %></td>
+                                        <td><%= products[i].sizes[0].large %></td>
+                                        <td>
+                                            <div class="button-group">
+                                                <button class="btn<%= products[i].status === 'show' ? ' red-button' : (products[i].status === 'hide' ? ' green-button' : '') %>"
+                                                    onclick="toggleProductStatus('<%= products[i]._id %>', '<%= products[i].status %>')">
+                                                    <% if (products[i].status === 'show') { %>
+                                                        Block
+                                                    <% } else { %>
+                                                        Unblock
+                                                    <% } %>
+                                                </button>
+                                                <a href="/admin/edit-product/?productId=<%= products[i]._id %>" class="button-link">Edit Product</a>
+                                                <a style="background-color: red; margin-top: 2px;" data-product-id="<%= products[i]._id %>" href="#"
+                                                    class="button-link" onclick="deleteProduct('<%= products[i]._id %>')">Delete Product</a>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     <% } %>
-                                  </td>
-                                  <td><%= products[i].name %></td>
-                                  <td><%= products[i].brand %></td>
-                                  <td><%= products[i].category %></td>
-                                  <!-- <td><%= products[i].regular_price %></td> -->
-                                  <td>₹<%= products[i].selling_price %></td>
-                                  <td><%= products[i].stock %></td>
-                                  <td>
-                                    <div class="button-group">
-                                      <button class="btn<%= products[i].status === 'show' ? ' red-button' : (products[i].status === 'hide' ? ' green-button' : '') %>" onclick="toggleProductStatus('<%= products[i]._id %>', '<%= products[i].status %>')">
-                                        <% if (products[i].status === 'show') { %>
-                                          Block
-                                        <% } else { %>
-                                          Unblock
-                                        <% } %>
-                                      </button>
-                                      <a href="/admin/edit-product/?productId=<%= products[i]._id %>" class="button-link">Edit Product</a>
-                                      <a style="background-color: red; margin-top: 2px;" data-product-id="<%= products[i]._id %>" href="#" class="button-link" onclick="deleteProduct('<%= products[i]._id %>')">Delete Product</a>
-                                    </div>
-                                  </td>
-                                </tr>
-                                <% } %>
-                              </tbody>
+                                </tbody>
                             </table>
-                          </div>
-                          
-                        
-                        
+                        </div>
                     </header> <!-- card-header end// -->
-                    
-
-                    
-                                        
-
-
-  <script>
+                </div>
+                 
+ <script>
     function deleteProduct(productId) {
       Swal.fire({
         title: "Are you sure?",
@@ -317,9 +319,6 @@
       });
     }
   </script>
-
-
-
   <script>
     function toggleProductStatus(productId, currentStatus) {
         const statusElement = document.querySelector(`#status-${productId}`);
@@ -356,10 +355,6 @@
         });
     }
 </script>
-
-
-
-
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">

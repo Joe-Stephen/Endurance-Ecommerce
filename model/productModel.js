@@ -28,10 +28,20 @@ const productSchema = new mongoose.Schema({
     photos: {
         type: Array, // You can store the URL or file path to the product photo
     },
-    stock: {
-        type: Number,
-        required: true,
-    },
+    sizes: [{
+        small:{
+            type:Number,
+            default:0,
+        },
+        medium:{
+            type:Number,
+            default:0,
+        },
+        large:{
+            type:Number,
+            default:0,
+        },
+    }],
     status: {
         type: String, // You can use 'Available', 'Out of Stock', etc.
         default:"show",

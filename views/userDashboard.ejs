@@ -162,6 +162,12 @@
                                     <span class="pro-count blue">2</span>
                                 </a>
                             </div>
+                            <div class="header-action-icon-2">
+                                <a class="" href="/userWallet">
+                                    <img alt="Wallet" src="/userAssets/assets/imgs/theme/icons/wallet.svg">
+                                    <!-- <span class="pro-count blue">2</span> -->
+                                </a>
+                            </div>
                             <div class="header-action-icon d-block d-lg-none">
                                 <div class="burger-icon">
                                     <span class="burger-icon-top"></span>
@@ -363,10 +369,11 @@
                                                     class="fi-rs-shopping-bag mr-10"></i>Orders</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab"
-                                                href="#track-orders" role="tab" aria-controls="track-orders"
-                                                aria-selected="false"><i
-                                                    class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order</a>
+                                            <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#userWallet"
+                                                role="tab" aria-controls="address" aria-selected="true"><i
+                                                    class="bi bi-wallet mr-10"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wallet" viewBox="0 0 16 16">
+                                                        <path d="M0 3a2 2 0 0 1 2-2h13.5a.5.5 0 0 1 0 1H15v2a1 1 0 0 1 1 1v8.5a1.5 1.5 0 0 1-1.5 1.5h-12A2.5 2.5 0 0 1 0 12.5V3zm1 1.732V12.5A1.5 1.5 0 0 0 2.5 14h12a.5.5 0 0 0 .5-.5V5H2a1.99 1.99 0 0 1-1-.268zM1 3a1 1 0 0 0 1 1h12V2H2a1 1 0 0 0-1 1z"/>
+                                                      </svg></i>Wallet</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address"
@@ -468,38 +475,48 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="tab-pane fade" id="track-orders" role="tabpanel"
-                                        aria-labelledby="track-orders-tab">
+                                    <div class="tab-pane fade" id="userWallet" role="tabpanel"
+                                        aria-labelledby="userWallet-tab">
                                         <div class="card">
-                                            <div class="card-header">
-                                                <h5 class="mb-0">Orders tracking</h5>
-                                            </div>
-                                            <div class="card-body contact-from-area">
-                                                <p>To track your order please enter your OrderID in the box below and
-                                                    press "Track" button. This was given to you on your receipt and in
-                                                    the confirmation email you should have received.</p>
-                                                <div class="row">
-                                                    <div class="col-lg-8">
-                                                        <form class="contact-form-style mt-30 mb-50" action="#"
-                                                            method="post">
-                                                            <div class="input-style mb-20">
-                                                                <label>Order ID</label>
-                                                                <input name="order-id"
-                                                                    placeholder="Found in your order confirmation email"
-                                                                    type="text" class="square">
-                                                            </div>
-                                                            <div class="input-style mb-20">
-                                                                <label>Billing email</label>
-                                                                <input name="billing-email"
-                                                                    placeholder="Email you used during checkout"
-                                                                    type="email" class="square">
-                                                            </div>
-                                                            <button class="submit submit-auto-width"
-                                                                type="submit">Track</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
+
+
+                                            
+        <h4>Your Wallet</h4>
+        <br>
+
+        <!-- Include navigation links to other sections of your application -->
+        <section id="balance">
+            <h5>Account Balance</h5>
+            <p>Your current balance: $[Balance Amount]</p>
+            <br><br>
+        </section>
+        <section id="transaction-history">
+            <h5>Transaction History</h5>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Payment status</th>
+                        <th>Transaction ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>[Date]</td>
+                        <td>[Type]</td>
+                        <td>$[Amount]</td>
+                        <td>[Payment status]</td>
+                        <td>[Transaction ID]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="add-funds">
+            <button type="button" class="btn btn-primary btn-sm">Add Funds</button>
+        </section>
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="address" role="tabpanel"

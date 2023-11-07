@@ -6,6 +6,9 @@ const orderSchema = new mongoose.Schema({
     ref: "user",
     required: true,
   },
+  orderId:{
+    type:String,
+  },
   products: [
     {
       productId: {
@@ -46,8 +49,8 @@ const orderSchema = new mongoose.Schema({
     default: "Pending",
   },
   paymentMethod: {
-    type: String, // You can define the data type for the payment method (e.g., "Credit Card", "PayPal", etc.)
-    required: true, // You can set this to "true" if the payment method is mandatory
+    type: String, 
+    required: true, 
   },
 });
 

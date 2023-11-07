@@ -172,7 +172,7 @@
                                         <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
                                     </div>
                                     <div class="product-extra-link2">
-                                        <button type="submit" class="button button-add-to-cart">Add to cart</button>
+                                        <a href="/addToCart"> Add to cart</a>
                                         <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                             href="/verify-user-authentication"><i class="fi-rs-heart"></i></a>
                                         <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i
@@ -1053,8 +1053,10 @@
                                     <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
                                 </div>
                                 <div class="product-extra-link2">
-                                    <button type="submit" class="button button-add-to-cart">Add to
-                                        cart</button>
+                                    <form action="/addToCart" method="post">
+                                        <button type="submit" class="button button-add-to-cart">Add to
+                                            cart</button>
+                                        </form>
                                     <a href="/verify-user-authentication">click me</a>
                                     <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                         href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
