@@ -339,7 +339,7 @@ h2 {
                       <a
                         aria-label="Add To Wishlist"
                         class="action-btn hover-up"
-                        href="shop-wishlist.html"
+                        href="/wishlist"
                         ><i class="fi-rs-heart"></i
                       ></a>
                       <a
@@ -454,7 +454,7 @@ h2 {
               <div class="header-action-right">
                 <div class="header-action-2">
                   <div class="header-action-icon-2">
-                    <a href="shop-wishlist.html">
+                    <a href="/wishlist">
                       <img
                         class="svgInject"
                         alt="Evara"
@@ -1153,7 +1153,7 @@ h2 {
                         </li>
                         <li><a href="shop-filter.html">Shop – Filter</a></li>
                         <li>
-                          <a href="shop-wishlist.html">Shop – Wishlist</a>
+                          <a href="/wishlist">Shop – Wishlist</a>
                         </li>
                         <li><a href="shop-cart.html">Shop – Cart</a></li>
                         <li>
@@ -1268,7 +1268,7 @@ h2 {
             <div class="header-action-right d-block d-lg-none">
               <div class="header-action-2">
                 <div class="header-action-icon-2">
-                  <a href="shop-wishlist.html">
+                  <a href="/wishlist">
                     <img
                       alt="Evara"
                       src="userAssets/assets/imgs/theme/icons/icon-heart.svg"
@@ -1489,7 +1489,7 @@ h2 {
                       </ul>
                     </li>
                     <li><a href="shop-filter.html">Shop – Filter</a></li>
-                    <li><a href="shop-wishlist.html">Shop – Wishlist</a></li>
+                    <li><a href="/wishlist">Shop – Wishlist</a></li>
                     <li><a href="shop-cart.html">Shop – Cart</a></li>
                     <li><a href="shop-checkout.html">Shop – Checkout</a></li>
                     <li><a href="shop-compare.html">Shop – Compare</a></li>
@@ -1898,8 +1898,9 @@ h2 {
                             ></a>
                             <a
                               aria-label="Add To Wishlist"
-                              class="action-btn hover-up"
-                              href="/"
+                              class="action-btn hover-up addToWishlist"
+                              data-product-id="<%= product._id %>"
+                              href="javascript:void(0);"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -1989,22 +1990,24 @@ h2 {
                     </ul>
                   </div>
                 </div>
-
-                // Function to open the size modal
+<script>
 function openSizeModal() {
   var modal = document.getElementById('sizeModal');
   modal.style.display = 'block';
 }
 
-// Function to close the size modal
 function closeSizeModal() {
   var modal = document.getElementById('sizeModal');
   modal.style.display = 'none';
 }
+</script>
                 <script>
                   document.addEventListener("DOMContentLoaded", function () {
                     const addToCartButtons =
                       document.querySelectorAll(".addToCartButton");
+                    const addToWishlistButtons=
+                      document.querySelectorAll(".addToWishlist");
+
 
                     addToCartButtons.forEach((button) => {
                       button.addEventListener("click", function (event) {
@@ -2045,6 +2048,49 @@ function closeSizeModal() {
                           });
                       });
                     });
+
+                    addToWishlistButtons.forEach((button) => {
+                      button.addEventListener("click", function (event) {
+                        event.preventDefault();
+
+                        const productId =
+                          button.getAttribute("data-product-id");
+
+                        fetch("/addToWishlist", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({ productId: productId }),
+                        })
+                          .then((response) => {
+                            if (!response.ok) {
+                              throw new Error(
+                                `HTTP error! Status: ${response.status}`
+                              );
+                            }
+                            return response.json();
+                          })
+                          .then((data) => {
+                            // Handle the response data as needed
+                            console.log("Added to wishlist:", data);
+                            Swal.fire({
+                              position: "top-center",
+                              icon: "success",
+                              title: "Product added to wishlist!",
+                              showConfirmButton: false,
+                              timer: 1500,
+                            });
+                          })
+                          .catch((error) => {
+                            window.location.href = "/getLogin";
+                            // console.error("Error adding to cart:", error);
+                          });
+                      });
+                    });
+
+
+
                   });
                 </script>
                 <!--En tab one (Featured)-->
@@ -2082,7 +2128,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -2155,7 +2201,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -2228,7 +2274,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -2301,7 +2347,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -2374,7 +2420,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -2447,7 +2493,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -2520,7 +2566,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -2593,7 +2639,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -2665,7 +2711,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -2744,7 +2790,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -2817,7 +2863,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -2890,7 +2936,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -2963,7 +3009,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -3036,7 +3082,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -3109,7 +3155,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -3182,7 +3228,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -3255,7 +3301,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -3327,7 +3373,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -3600,7 +3646,7 @@ function closeSizeModal() {
                     <a
                       aria-label="Add To Wishlist"
                       class="action-btn small hover-up"
-                      href="shop-wishlist.html"
+                      href="/wishlist"
                       tabindex="0"
                       ><i class="fi-rs-heart"></i
                     ></a>
@@ -3660,7 +3706,7 @@ function closeSizeModal() {
                     <a
                       aria-label="Add To Wishlist"
                       class="action-btn small hover-up"
-                      href="shop-wishlist.html"
+                      href="/wishlist"
                       tabindex="0"
                       ><i class="fi-rs-heart"></i
                     ></a>
@@ -3718,7 +3764,7 @@ function closeSizeModal() {
                     <a
                       aria-label="Add To Wishlist"
                       class="action-btn small hover-up"
-                      href="shop-wishlist.html"
+                      href="/wishlist"
                       tabindex="0"
                       ><i class="fi-rs-heart"></i
                     ></a>
@@ -3778,7 +3824,7 @@ function closeSizeModal() {
                     <a
                       aria-label="Add To Wishlist"
                       class="action-btn small hover-up"
-                      href="shop-wishlist.html"
+                      href="/wishlist"
                       tabindex="0"
                       ><i class="fi-rs-heart"></i
                     ></a>
@@ -3836,7 +3882,7 @@ function closeSizeModal() {
                     <a
                       aria-label="Add To Wishlist"
                       class="action-btn small hover-up"
-                      href="shop-wishlist.html"
+                      href="/wishlist"
                       tabindex="0"
                       ><i class="fi-rs-heart"></i
                     ></a>
@@ -3894,7 +3940,7 @@ function closeSizeModal() {
                     <a
                       aria-label="Add To Wishlist"
                       class="action-btn small hover-up"
-                      href="shop-wishlist.html"
+                      href="/wishlist"
                       tabindex="0"
                       ><i class="fi-rs-heart"></i
                     ></a>
@@ -3954,7 +4000,7 @@ function closeSizeModal() {
                     <a
                       aria-label="Add To Wishlist"
                       class="action-btn small hover-up"
-                      href="shop-wishlist.html"
+                      href="/wishlist"
                       tabindex="0"
                       ><i class="fi-rs-heart"></i
                     ></a>
@@ -4171,7 +4217,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -4241,7 +4287,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -4313,7 +4359,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -4383,7 +4429,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -4455,7 +4501,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -4546,7 +4592,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -4618,7 +4664,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -4688,7 +4734,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -4758,7 +4804,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -4828,7 +4874,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -4920,7 +4966,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -4992,7 +5038,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -5062,7 +5108,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -5132,7 +5178,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a
@@ -5202,7 +5248,7 @@ function closeSizeModal() {
                             <a
                               aria-label="Add To Wishlist"
                               class="action-btn small hover-up"
-                              href="shop-wishlist.html"
+                              href="/wishlist"
                               ><i class="fi-rs-heart"></i
                             ></a>
                             <a

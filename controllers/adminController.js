@@ -1,9 +1,20 @@
 const admin = require("../model/adminModel");
+const coupon = require("../model/couponModel")
 const category=require("../model/categoryModel")
 const product = require("../model/productModel");
 const order  = require("../model/orderModel")
 const user = require("../model/userModel");
 const multer = require("multer");
+
+//error page loading
+module.exports.getErrorPage = (req, res)=>{
+  try{
+    res.render("error-page");
+  }
+  catch(error){
+    console.log("An error happened while loading the error page! :"+error);
+  }
+}
 
 module.exports.getAdminLogin = (req, res) => {
   res.render("admin-login-page");
@@ -161,6 +172,22 @@ module.exports.postUserStatus = async (req, res) => {
     res.status(500).send("Error updating user status.");
   }
 };
+
+
+  //toggle coupon status
+  module.exports.toggleCouponStatus = async (req, res) => {
+    try {
+    const couponId = req.params.couponId;
+    console.log("id----"+couponId);
+    const newStatus = req.body.status;
+    console.log("status----"+newStatus);
+    const UpdatedCoupon = await coupon.findByIdAndUpdate(couponId, { isActive:newStatus });
+    res.status(200).json({ status: UpdatedCoupon.isActive });    }
+    catch (error) {
+      console.error(error);
+      res.status(500).send("Error updating coupon status.");
+    }
+  };
 
 module.exports.postProductStatus =async(req,res)=>{
   const productId =req.params.productId;
@@ -373,6 +400,87 @@ module.exports.deleteCategory = async (req, res) => {
   }
 }
 
+//coupon management
+//get coupon management
+module.exports.getCouponManagement= async (req, res)=>{
+  try{
+    const couponList= await coupon.find();
+    res.render("admin-coupon-management", {couponList});
+  }
+  catch(error){
+    console.log("An error happened while loading the coupon page! :"+error);
+    res.redirect("/errorPage")
+  }
+};
+
+//get add counpon
+module.exports.getAddCoupon = async (req, res)=>{
+  try{
+    res.render("adminAddCoupon")
+  }
+  catch(error){
+    console.log("An error happened while loading the add-coupon page! :"+error);
+    res.redirect("/errorPage")
+  }
+};
+
+//save coupon to db
+module.exports.saveCoupon= async (req, res)=>{
+  try{
+    const couponCode = req.body.code;
+    console.log("codeasdfsadf "+req.body.formData);
+    const existingCoupon = await coupon.findOne({ code: couponCode });
+    if (existingCoupon) {
+      // The coupon code already exists, so return an error
+      return res.status(400).json({ error: 'Coupon code already exists' });
+    }
+    const newCoupon = new coupon({
+      code: couponCode,
+      discountType: req.body.discountType,
+      discountValue: req.body.discountValue,
+      minOrderAmount: req.body.minOrderAmount,
+      expirationDate: req.body.expirationDate,
+      isActive: req.body.isActive,
+    });
+    // Save the new coupon document
+    await newCoupon.save();
+    // Return the new coupon document
+    return res.json(newCoupon);
+  }
+  catch(error){
+    res.status(500).json({message:"An error happened while saving the coupon details to the database!:"})
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //getting order list
 module.exports.getOrderList = async (req, res) => {
@@ -391,7 +499,7 @@ module.exports.getOrderList = async (req, res) => {
       userData.push(userDoc.username);
 
     }
-    console.log("user data: "+userData[0] );
+    console.log("user data: "+userData );
 
     res.render("admin-order-management", { orderList, userData});
   } catch (error) {

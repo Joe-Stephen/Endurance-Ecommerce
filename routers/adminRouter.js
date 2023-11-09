@@ -21,6 +21,9 @@ const storage = multer.diskStorage({
 });
 const upload=multer({storage:storage})
 
+//error page
+adminRouter.get("/errorPage", adminController.getErrorPage);
+
 //login
 adminRouter.get("/", adminController.getAdminLogin);
 adminRouter.post("/admin-dashboard", adminController.postAdminDashboard);
@@ -44,6 +47,13 @@ adminRouter.post("/add-category", adminController.postAddCategory);
 adminRouter.get("/edit-category/:categoryId", adminController.editCategory);
 adminRouter.post("/edit-category",upload.single("icon"), adminController.postEditCategory);
 adminRouter.delete("/delete-category/:categoryId", adminController.deleteCategory);
+
+//coupon management 
+adminRouter.get("/couponManagement", adminController.getCouponManagement);
+adminRouter.get("/adminAddCoupon", adminController.getAddCoupon);
+adminRouter.post("/saveCoupon", adminController.saveCoupon);
+adminRouter.post("/update-coupon-status/:couponId", adminController.toggleCouponStatus);
+
 
 //order management
 adminRouter.get("/orderList", adminController.getOrderList);

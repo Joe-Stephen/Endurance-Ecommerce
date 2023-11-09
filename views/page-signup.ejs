@@ -407,7 +407,7 @@
                         <div class="form-group">
                           <input
                             type="text"
-                            required=""
+                            required
                             name="username"
                             placeholder="Username"
                           />
@@ -416,7 +416,7 @@
 
                         <div class="form-group">
                           <input
-                            required=""
+                            required
                             type="password"
                             name="password"
                             placeholder="Password"
@@ -429,7 +429,7 @@
                         </div>
                         <div class="form-group">
                           <input
-                            required=""
+                            required
                             type="password"
                             name="confirm_password"
                             placeholder="Confirm password"
@@ -443,7 +443,7 @@
                         <div class="form-group">
                           <input
                             type="text"
-                            required=""
+                            required
                             name="email"
                             placeholder="Email"
                             id="errEmail"
@@ -454,6 +454,7 @@
                         <div class="input-group w-auto">
                           <input
                             type="number"
+                            required
                             class="form-control"
                             placeholder="Mobile number"
                             name="phoneNumber"
@@ -506,6 +507,45 @@
                       <div class="divider-text-center mt-15 mb-15">
                         <span> or</span>
                       </div>
+
+<script>
+  const phoneNumberInput = document.getElementById('phoneNumber');
+
+phoneNumberInput.addEventListener('input', function(event) {
+  const inputValue = event.target.value;
+  const regex = /[eE]/g;
+
+  // Remove any 'e' or 'E' characters from the input value
+  const filteredValue = inputValue.replace(regex, '');
+
+  // Update the input value with the filtered value
+  event.target.value = filteredValue;
+});
+</script>
+<script>
+  const usernameInput = document.getElementById('username');
+
+usernameInput.addEventListener('input', function(event) {
+  const inputValue = event.target.value;
+
+  // Validate the username using a regular expression
+  if (!/^[a-zA-Z0-9]+$/.test(inputValue)) {
+    // Display an error message
+    const errorMessage = document.getElementById('errSignupName');
+    errorMessage.textContent = 'Username can only contain letters and numbers.';
+
+    // Prevent further input
+    event.preventDefault();
+  } else {
+    // Clear the error message
+    const errorMessage = document.getElementById('errSignupName');
+    errorMessage.textContent = '';
+  }
+});
+
+</script>
+
+                                            
 
 
                       
@@ -566,86 +606,6 @@ document.addEventListener("DOMContentLoaded", function () {
                       </script>
 
                      
-                      <script>
-                        //             const errEmail = document.getElementById('errEmail')
-                        //             const errPassword = document.getElementById('errPassword')
-                        //             const registrationForm = document.querySelector('form[action="/signup_submit"]');
-                        //             const registrationEmailInput = document.querySelector('input[name="email"]');
-                        //             const registrationPasswordInput = document.querySelector('input[name="password"]');
-                        //             const registrationConfirmPasswordInput = document.querySelector('input[name="Confirm password"]');
-                        //             const registrationPhoneNumberInput = document.getElementById("phoneNumber");
-                        //             const registrationOTPInput = document.getElementById("otp");
-
-                        //             const errSignupEmail = document.getElementById('errSignupEmail');
-                        //             const errSignupPassword = document.getElementById('errSignupPassword');
-                        //             const errSignupConfirmPassword = document.getElementById('errSignupConfirmPassword');
-                        //             const errSignupPhoneNumber = document.getElementById('errSignupPhoneNumber');
-                        //             const errSignupOtp = document.getElementById('errSignupOtp');
-                        //             const errSignupName = document.getElementById('errSignupName')
-
-                        //             registrationForm.addEventListener("submit", function (e) {
-                        //                 if (registrationForm.querySelector('input[name="username"]').value.trim() === "") {
-                        //                     e.preventDefault();
-                        //                     errSignupName.innerHTML = "Please enter your name."
-                        //                     return;
-                        //                 }
-
-                        //                 // if (registrationForm.querySelector('input[name="lname"]').value.trim() === "") {
-                        //                 //     e.preventDefault();
-                        //                 //     errSignupName.innerHTML = "Please enter your Last Name."
-                        //                 //     return;
-                        //                 // }
-
-                        //                 if (!isValidEmail(registrationEmailInput.value)) {
-                        //                     e.preventDefault();
-                        //                     errSignupEmail.innerHTML = "Please enter a valid email address."
-                        //                     return;
-                        //                 }
-
-                        //                 if (registrationPasswordInput.value.length < 6) {
-                        //                     e.preventDefault();
-                        //                     errSignupPassword.innerHTML = "Password must be entered and Must have alteast 6 characters."
-                        //                     return;
-                        //                 }
-
-                        //                 if (registrationPasswordInput.value !== registrationConfirmPasswordInput.value) {
-                        //                     e.preventDefault();
-                        //                     errSignupConfirmPassword.innerHTML = "Passwords do not match."
-                        //                     return;
-                        //                 }
-
-                        //                 if (!isValidPhoneNumber(registrationPhoneNumberInput.value)) {
-                        //                     e.preventDefault();
-                        //                     errSignupPhoneNumber.innerHTML = "Please enter a valid phone number."
-                        //                     return;
-                        //                 }
-
-                        //                 if (!isValidOTP(registrationOTPInput.value)) {
-                        //                     e.preventDefault();
-                        //                     errSignupOtp.innerHTML = "Please enter a valid OTP."
-                        //                     return;
-                        //                 }
-                        //             });
-
-                        //             function isValidEmail(email) {
-                        //                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                        //                 return emailRegex.test(email);
-                        //             }
-
-                        //             function isValidPhoneNumber(phoneNumber) {
-                        //                 const phoneNumberRegex = /^[0-9]{10}$/;
-                        //                 return phoneNumberRegex.test(phoneNumber);
-                        //             }
-
-                        //             function isValidOTP(otp) {
-                        //                 const otpRegex = /^[0-9]{6}$/;
-                        //                 return otpRegex.test(otp);
-                        //             }
-
-                        //         })
-
-                        //
-                      </script>
               
 
                       <ul class="btn-login list_none text-center mb-15">

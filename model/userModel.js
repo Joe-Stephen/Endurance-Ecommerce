@@ -28,7 +28,11 @@ const userSchema=new mongoose.Schema({
     createdOn:{
         type: Date,
         default: Date.now,
-    }
+    },
+    walletBalance:{
+        type:Number,
+        default:0,
+    },
 });
 
 const user=mongoose.model("user",userSchema);

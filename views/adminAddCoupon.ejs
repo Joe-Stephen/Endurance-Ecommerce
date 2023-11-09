@@ -1,0 +1,351 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-form-product-1.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:31 GMT -->
+<head>
+    <meta charset="utf-8">
+    <title>Evara Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/adminAssets/assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/adminAssets/assets/css/main.css" rel="stylesheet" type="text/css" />
+    <style>
+        form {
+          width: 500px;
+          margin: 0 auto;
+        }
+    
+        label {
+          display: block;
+          margin-bottom: 5px;
+        }
+    
+        input[type="text"], input[type="number"], select {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ccc;
+          margin-bottom: 10px;
+        }
+    
+        input[type="checkbox"] {
+          margin-right: 5px;
+        }
+    
+        button {
+          padding: 10px 20px;
+          border: none;
+          background-color: #007bff;
+          color: #fff;
+          cursor: pointer;
+        }
+      </style>
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="index.html" class="brand-wrap">
+                <img src="/adminAssets/assets/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard">
+            </a>
+            <div>
+                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+            </div>
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item">
+                    <a class="menu-link" href="index.html"> <i class="icon material-icons md-home"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item has-submenu">
+                    <a class="menu-link" href="page-products-list.html"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="page-products-list.html">Product List</a>
+                        <a href="page-products-grid.html">Product grid</a>
+                        <a href="page-products-grid-2.html">Product grid 2</a>
+                        <a href="page-categories.html">Categories</a>
+                    </div>
+                </li>
+                <li class="menu-item has-submenu">
+                    <a class="menu-link" href="page-orders-1.html"> <i class="icon material-icons md-shopping_cart"></i>
+                        <span class="text">Orders</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="page-orders-1.html">Order list 1</a>
+                        <a href="page-orders-2.html">Order list 2</a>
+                        <a href="page-orders-detail.html">Order detail</a>
+                    </div>
+                </li>
+                <li class="menu-item has-submenu">
+                    <a class="menu-link" href="page-sellers-cards.html"> <i class="icon material-icons md-store"></i>
+                        <span class="text">Sellers</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="page-sellers-cards.html">Sellers cards</a>
+                        <a href="page-sellers-list.html">Sellers list</a>
+                        <a href="page-seller-detail.html">Seller profile</a>
+                    </div>
+                </li>
+                <li class="menu-item has-submenu active">
+                    <a class="menu-link" href="page-form-product-1.html"> <i class="icon material-icons md-add_box"></i>
+                        <span class="text">Add product</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="page-form-product-1.html" class="active">Add product 1</a>
+                        <a href="page-form-product-2.html">Add product 2</a>
+                        <a href="page-form-product-3.html">Add product 3</a>
+                        <a href="page-form-product-4.html">Add product 4</a>
+                    </div>
+                </li>
+                <li class="menu-item has-submenu">
+                    <a class="menu-link" href="page-transactions-1.html"> <i class="icon material-icons md-monetization_on"></i>
+                        <span class="text">Transactions</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="page-transactions-1.html">Transaction 1</a>
+                        <a href="page-transactions-2.html">Transaction 2</a>
+                    </div>
+                </li>
+                <li class="menu-item has-submenu">
+                    <a class="menu-link" href="#"> <i class="icon material-icons md-person"></i>
+                        <span class="text">Account</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="page-account-login.html">User login</a>
+                        <a href="page-account-register.html">User registration</a>
+                        <a href="page-error-404.html">Error 404</a>
+                    </div>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="page-reviews.html"> <i class="icon material-icons md-comment"></i>
+                        <span class="text">Reviews</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="page-brands.html"> <i class="icon material-icons md-stars"></i>
+                        <span class="text">Brands</span> </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" disabled href="#"> <i class="icon material-icons md-pie_chart"></i>
+                        <span class="text">Statistics</span>
+                    </a>
+                </li>
+            </ul>
+            <hr>
+            <ul class="menu-aside">
+                <li class="menu-item has-submenu">
+                    <a class="menu-link" href="#"> <i class="icon material-icons md-settings"></i>
+                        <span class="text">Settings</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="page-settings-1.html">Setting sample 1</a>
+                        <a href="page-settings-2.html">Setting sample 2</a>
+                    </div>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="page-blank.html"> <i class="icon material-icons md-local_offer"></i>
+                        <span class="text"> Starter page </span>
+                    </a>
+                </li>
+            </ul>
+            <br>
+            <br>
+        </nav>
+    </aside>
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                    </div>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <ul class="nav">
+
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+
+
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/adminAssets/assets/imgs/people/avatar2.jpg" alt="User"></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="/admin/"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section class="content-main">
+            <div class="row">
+                <div class="col-9">
+                    <div class="content-header">
+                        <form id="coupon-form" action="/admin/saveCoupon" method="post">
+                            <label for="code">Coupon Code:</label>
+                            <input type="text" id="code" name="code" placeholder="Enter a unique coupon code" required>
+                          
+                            <label for="discountType">Discount Type:</label>
+                            <select name="discountType" id="discountType">
+                              <option value="percentage">Percentage Discount</option>
+                              <option value="fixedAmount">Fixed Amount Discount</option>
+                            </select>
+                          
+                            <label for="discountValue">Discount Value:</label>
+                            <input type="number" id="discountValue" name="discountValue" placeholder="Enter the discount value" required>
+                          
+                            <label for="minOrderAmount">Minimum Order Amount:</label>
+                            <input type="number" id="minOrderAmount" name="minOrderAmount" placeholder="Enter the minimum order amount (optional)" min="0">
+                          
+                            <label for="expirationDate">Expiration Date:</label>
+                            <input type="date" id="expirationDate" name="expirationDate" placeholder="Select the expiration date" required>
+                          
+                            <label for="isActive">Is Coupon Active:</label>
+                            <input type="checkbox" id="isActive" name="isActive" checked>
+                          
+                            <button type="submit">Add Coupon</button>
+                          </form>
+                                                
+                         </div>
+                    </div>
+                    <script>
+const couponForm = document.querySelector('#coupon-form');
+
+couponForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const formData = {
+    code: document.getElementById('code').value,
+    discountType: document.getElementById('discountType').value,
+    discountValue: document.getElementById('discountValue').value,
+    minOrderAmount: document.getElementById('minOrderAmount').value,
+    expirationDate: document.getElementById('expirationDate').value,
+    isActive: document.getElementById('isActive').checked,
+  };
+
+  const response = await fetch('/admin/saveCoupon', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(formData),
+  });
+
+  if (response.ok) {
+    // Success!
+    // Redirect to the coupon management page or display a success message
+    window.location.href = "/admin/couponManagement";
+  } else {
+    // Error!
+    // Display an error message to the user
+    alert("An error occurred while saving the coupon. Please try again.");
+  }
+});
+                    </script>
+                    <script>
+                        // Prevent `e` and `E` in number fields
+const preventEAndE = (event) => {
+  const key = event.key;
+  if (key === 'e' || key === 'E') {
+    event.preventDefault();
+  }
+};
+
+// Add event listeners to number fields
+const numberFields = document.querySelectorAll('input[type="number"]');
+numberFields.forEach((field) => {
+  field.addEventListener('keydown', preventEAndE);
+});
+
+// Other standard validation
+const form = document.querySelector('form');
+form.addEventListener('submit', (event) => {
+  // Validate required fields
+  const requiredFields = ['code', 'discountType', 'discountValue', 'expirationDate', 'isActive'];
+  for (const field of requiredFields) {
+    const fieldElement = document.querySelector(`input[name="${field}"]`);
+    if (fieldElement.value === '') {
+      // Display error message and prevent form submission
+      event.preventDefault();
+      fieldElement.setCustomValidity('This field is required.');
+    }
+  }
+
+  // Validate email field
+  const emailField = document.querySelector('input[type="email"]');
+  if (emailField) {
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if (!emailRegex.test(emailField.value)) {
+      // Display error message and prevent form submission
+      event.preventDefault();
+      emailField.setCustomValidity('Please enter a valid email address.');
+    }
+  }
+
+  // Validate date field
+  const dateField = document.querySelector('input[type="date"]');
+  if (dateField) {
+    const today = new Date();
+    if (dateField.value < today) {
+      // Display error message and prevent form submission
+      event.preventDefault();
+      dateField.setCustomValidity('Expiration date must be in the future.');
+    }
+  }
+
+  // Validate minimum order amount field
+  const minOrderAmountField = document.querySelector('input[name="minOrderAmount"]');
+  if (minOrderAmountField.value < 0) {
+    // Display error message and prevent form submission
+    event.preventDefault();
+    minOrderAmountField.setCustomValidity('Minimum order amount must be a non-negative value.');
+  }
+});
+
+                    </script>
+                </div>
+        </section> <!-- content-main end// -->
+        
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <script src="/adminAssets/assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/adminAssets/assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/adminAssets/assets/js/vendors/select2.min.js"></script>
+    <script src="/adminAssets/assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/adminAssets/assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/adminAssets/assets/js/main.js" type="text/javascript"></script>
+</body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-form-product-1.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:32 GMT -->
+</html>

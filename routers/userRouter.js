@@ -51,8 +51,8 @@ userRouter.post("/returnOrder",userMiddleware.verifyUser, userController.product
 userRouter.post("/cancelOrder",userMiddleware.verifyUser, userController.productCancel);
 userRouter.post("/codOrder", userMiddleware.verifyUser, userController.cartOrder);
 userRouter.post("/razorpayOrder", userMiddleware.verifyUser, userController.razorpayOrder);
-
 userRouter.get("/orderPlaced", userMiddleware.verifyUser, userController.getOrderPlaced);
+userRouter.get("/paymentStatus", userMiddleware.verifyUser, userController.paymentStatus);
 
 
 
@@ -63,6 +63,14 @@ userRouter.post("/addToCart", userMiddleware.verifyUser, userController.addToCar
 userRouter.post("/cartQtyChange", userMiddleware.verifyUser, userController.postCartQty);
 userRouter.delete("/removeProductFromCart/:productId", userMiddleware.verifyUser, userController.removeProductFromCart);
 userRouter.get("/checkoutFromCart",  userMiddleware.verifyUser,userController.getCartCheckout);
+
+//wishlist
+userRouter.get("/wishlist", userMiddleware.verifyUser, userController.getWishlist);
+userRouter.post("/addToWishlist", userMiddleware.verifyUser, userController.addToWishlist);
+userRouter.get("/moveToCart", userMiddleware.verifyUser, userController.moveToCart);
+userRouter.get("/deleteFromWishlist", userMiddleware.verifyUser, userController.deleteFromWishlist);
+
+
 
 
 //password change
