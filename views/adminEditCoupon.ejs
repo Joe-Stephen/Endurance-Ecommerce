@@ -194,53 +194,55 @@
             </div>
         </header>
         <section class="content-main">
-            <h3>Add coupon</h3>
+            <h3>Edit coupon</h3>
             <div class="row">
                 <div class="col-9">
                     <div class="content-header">
-                        <form id="coupon-form" action="/admin/saveCoupon" method="post">
+                        <form id="coupon-form" action="/admin/saveEditedCoupon" method="post">
+                            <input type="hidden" id="couponId" name="couponId" value="<%= couponDoc._id %>">
                             <label for="code">Coupon Code:</label>
-                            <input type="text" id="code" name="code" placeholder="Enter a unique coupon code" required>
-                          
+                            <input type="text" value="<%= couponDoc.code %>" id="code" name="code" placeholder="Enter a unique coupon code" required>
                             <label for="discountType">Discount Type:</label>
                             <select name="discountType" id="discountType">
-                              <option value="percentage">Percentage Discount</option>
-                              <option value="fixedAmount">Fixed Amount Discount</option>
+                              <option value="percentage" <%= couponDoc.discountType === 'percentage' ? 'selected' : '' %>>Percentage Discount</option>
+                              <option value="fixedAmount" <%= couponDoc.discountType === 'fixedAmount' ? 'selected' : '' %>>Fixed Amount Discount</option>
                             </select>
-                          
                             <label for="discountValue">Discount Value:</label>
-                            <input type="number" id="discountValue" name="discountValue" placeholder="Enter the discount value" required>
-                          
+                            <input value="<%= couponDoc.discountValue %>" type="number" id="discountValue" name="discountValue" placeholder="Enter the discount value" required>
                             <label for="minOrderAmount">Minimum Order Amount:</label>
-                            <input type="number" id="minOrderAmount" name="minOrderAmount" placeholder="Enter the minimum order amount (optional)" min="0">
-                          
+                            <input value="<%= couponDoc.minOrderAmount %>" type="number" id="minOrderAmount" name="minOrderAmount" placeholder="Enter the minimum order amount (optional)" min="0">
                             <label for="expirationDate">Expiration Date:</label>
-                            <input type="date" id="expirationDate" name="expirationDate" placeholder="Select the expiration date" required>
-                          
-                            <label for="isActive">Is Coupon Active:</label>
-                            <input type="checkbox" id="isActive" name="isActive" checked>
-                          
-                            <button type="submit">Add Coupon</button>
-                          </form>
-                                                
+                            <input value="<%= couponDoc.expirationDate.toISOString().split('T')[0] %>" type="date" id="expirationDate" name="expirationDate" placeholder="Select the expiration date" required>
+                            <button type="submit">Save changes</button>
+                        </form>
                          </div>
                     </div>
                     <script>
-const couponForm = document.querySelector('#coupon-form');
+  const couponForm = document.querySelector('#coupon-form');
 
 couponForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
   const formData = {
-    code: document.getElementById('code').value,
+    code: document.getElementById('code').value.toUpperCase(), // Convert to uppercase
     discountType: document.getElementById('discountType').value,
     discountValue: document.getElementById('discountValue').value,
     minOrderAmount: document.getElementById('minOrderAmount').value,
     expirationDate: document.getElementById('expirationDate').value,
-    isActive: document.getElementById('isActive').checked,
+    couponId: document.getElementById('couponId').value,
   };
 
-  const response = await fetch('/admin/saveCoupon', {
+  // Ensure none of the number values are negative
+  if (
+    formData.discountValue < 0 ||
+    formData.minOrderAmount < 0
+  ) {
+    // Display error message and prevent form submission
+    alert('Discount value and minimum order amount must be non-negative.');
+    return;
+  }
+
+  const response = await fetch('/admin/saveEditedCoupon', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -248,77 +250,75 @@ couponForm.addEventListener('submit', async (event) => {
     body: JSON.stringify(formData),
   });
 
+  // Handle the response as needed
   if (response.ok) {
     // Success!
-    // Redirect to the coupon management page or display a success message
     window.location.href = "/admin/couponManagement";
   } else {
-    // Error!
-    // Display an error message to the user
+    // Error handling
     alert("An error occurred while saving the coupon. Please try again.");
   }
 });
-                    </script>
-                    <script>
                         // Prevent `e` and `E` in number fields
-const preventEAndE = (event) => {
-  const key = event.key;
-  if (key === 'e' || key === 'E') {
-    event.preventDefault();
-  }
-};
-
-// Add event listeners to number fields
-const numberFields = document.querySelectorAll('input[type="number"]');
-numberFields.forEach((field) => {
-  field.addEventListener('keydown', preventEAndE);
-});
-
-// Other standard validation
-const form = document.querySelector('form');
-form.addEventListener('submit', (event) => {
-  // Validate required fields
-  const requiredFields = ['code', 'discountType', 'discountValue', 'expirationDate', 'isActive'];
-  for (const field of requiredFields) {
-    const fieldElement = document.querySelector(`input[name="${field}"]`);
-    if (fieldElement.value === '') {
-      // Display error message and prevent form submission
-      event.preventDefault();
-      fieldElement.setCustomValidity('This field is required.');
-    }
-  }
-
-  // Validate email field
-  const emailField = document.querySelector('input[type="email"]');
-  if (emailField) {
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    if (!emailRegex.test(emailField.value)) {
-      // Display error message and prevent form submission
-      event.preventDefault();
-      emailField.setCustomValidity('Please enter a valid email address.');
-    }
-  }
-
-  // Validate date field
-  const dateField = document.querySelector('input[type="date"]');
-  if (dateField) {
-    const today = new Date();
-    if (dateField.value < today) {
-      // Display error message and prevent form submission
-      event.preventDefault();
-      dateField.setCustomValidity('Expiration date must be in the future.');
-    }
-  }
-
-  // Validate minimum order amount field
-  const minOrderAmountField = document.querySelector('input[name="minOrderAmount"]');
-  if (minOrderAmountField.value < 0) {
-    // Display error message and prevent form submission
-    event.preventDefault();
-    minOrderAmountField.setCustomValidity('Minimum order amount must be a non-negative value.');
-  }
-});
-
+                        const preventEAndE = (event) => {
+                          const key = event.key;
+                          if (key === 'e' || key === 'E') {
+                            event.preventDefault();
+                          }
+                        };
+                      
+                        // Add event listeners to number fields
+                        const numberFields = document.querySelectorAll('input[type="number"]');
+                        numberFields.forEach((field) => {
+                          field.addEventListener('keydown', preventEAndE);
+                        });
+                      
+                        // Other standard validation
+                        const form = document.querySelector('form');
+                        form.addEventListener('submit', (event) => {
+                          // Validate required fields
+                          const requiredFields = ['code', 'discountType', 'discountValue', 'expirationDate', 'isActive'];
+                          for (const field of requiredFields) {
+                            const fieldElement = document.querySelector(`input[name="${field}"]`);
+                            if (fieldElement.value === '') {
+                              // Display error message and prevent form submission
+                              event.preventDefault();
+                              fieldElement.setCustomValidity('This field is required.');
+                            }
+                          }
+                      
+                          // Validate email field
+                          const emailField = document.querySelector('input[type="email"]');
+                          if (emailField) {
+                            const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+                            if (!emailRegex.test(emailField.value)) {
+                              // Display error message and prevent form submission
+                              event.preventDefault();
+                              emailField.setCustomValidity('Please enter a valid email address.');
+                            }
+                          }
+                      
+                          // Validate date field
+                          const dateField = document.querySelector('input[type="date"]');
+                          if (dateField) {
+                            const today = new Date();
+                            if (dateField.value < today) {
+                              // Display error message and prevent form submission
+                              event.preventDefault();
+                              dateField.setCustomValidity('Expiration date must be in the future.');
+                            }
+                          }
+                      
+                          // Validate minimum order amount field
+                          const minOrderAmountField = document.querySelector('input[name="minOrderAmount"]');
+                          if (minOrderAmountField.value < 0) {
+                            // Display error message and prevent form submission
+                            event.preventDefault();
+                            minOrderAmountField.setCustomValidity('Minimum order amount must be a non-negative value.');
+                          }
+                        });
+                      </script>
+                      
                     </script>
                 </div>
         </section> <!-- content-main end// -->

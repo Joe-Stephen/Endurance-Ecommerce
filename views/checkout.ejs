@@ -25,11 +25,10 @@
         max-width: 800px; /* Set your desired width */
       }
       .copy-code-icon {
-    cursor: pointer;
-    color: #007bff; /* Blue color for link-like styles */
-  }
+        cursor: pointer;
+        color: #007bff; /* Blue color for link-like styles */
+      }
     </style>
-
   </head>
 
   <body>
@@ -1455,10 +1454,7 @@
         <div class="container">
           <div class="row">
             <div class="col-md-6">
-              <div class="col-lg-6">
-
-               
-              </div>
+              <div class="col-lg-6"></div>
               <div class="order_review">
                 <div class="mb-20">
                   <h4>Your Orders</h4>
@@ -1525,162 +1521,230 @@
                   <form id="coupon-form">
                     <div class="grand-total">
                       <h3>Grand Total:₹ <span id="grandTotal"></span></h3>
-                      <h5>Coupon discount:₹ <span class="discountValue" id="couponDiscount">0</span></h5>
-                      <br>
-                      <input oninput="this.value = this.value.toUpperCase()" style="border: 1px solid rgb(44, 103, 44);" type="text" id="couponCode" placeholder="Enter coupon code">
-                      <br><br>
+                      <h5>
+                        Coupon discount:₹
+                        <span class="discountValue" id="couponDiscount">0</span>
+                      </h5>
+                      <br />
+                      <input
+                        oninput="this.value = this.value.toUpperCase()"
+                        style="border: 1px solid rgb(44, 103, 44)"
+                        type="text"
+                        id="couponCode"
+                        placeholder="Enter coupon code"
+                      />
+                      <br /><br />
 
-                      <div style="display:flex; justify-content: space-between; padding-bottom: 10px;">
-  <div>
-    <button class="btn btn-sm" type="submit" id="coupon-submit">Apply Coupon</button>
-  </div>
-  <div>
-    <a href="#" onclick="openCouponModal()">Available Coupons</a>
-  </div>
-</div>
-                      
-                      
+                      <div
+                        style="
+                          display: flex;
+                          justify-content: space-between;
+                          padding-bottom: 10px;
+                        "
+                      >
+                        <div>
+                          <button
+                            class="btn btn-sm"
+                            type="submit"
+                            id="coupon-submit"
+                          >
+                            Apply Coupon
+                          </button>
+                        </div>
+                        <div>
+                          <a href="#" onclick="openCouponModal()"
+                            >Available Coupons</a
+                          >
+                        </div>
+                      </div>
                     </div>
                   </form>
-                  
                 </div>
-
 
                 <!-- Your modal HTML structure -->
 
-<!-- Button trigger modal -->
+                <!-- Button trigger modal -->
 
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="exampleModalCenter"
+                  tabindex="-1"
+                  role="dialog"
+                  aria-labelledby="exampleModalCenterTitle"
+                  aria-hidden="true"
+                >
+                  <div
+                    class="modal-dialog modal-dialog-centered custom-width"
+                    role="document"
+                  >
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">
+                          Available coupons
+                        </h5>
+                        <button
+                          onclick="closeCouponModal()"
+                          type="button"
+                          class="close"
+                          data-dismiss="modal"
+                          aria-label="Close"
+                        >
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <table class="coupon-table">
+                          <thead>
+                            <tr>
+                              <th></th>
+                              <th>Code</th>
+                              <th>Type</th>
+                              <th>Value</th>
+                              <th>Minimum Order</th>
+                              <th>Expiry Date</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% if(!coupons){ %>
+                            <h5>Coupons are unavailable at the moment...</h5>
+                            <% }else{ %> <% coupons.forEach((coupon)=>{%>
+                            <!-- Add coupon rows dynamically based on your data -->
+                            <tr>
+                              <!-- Coupon information -->
+                              <td>
+                                <img
+                                  style="
+                                    height: 20px;
+                                    width: 20px;
+                                    margin-bottom: -5px;
+                                  "
+                                  src="\userAssets\assets\coupon1.png"
+                                  alt=""
+                                />
+                              </td>
+                              <td><%=coupon.code%></td>
+                              <td><%=coupon.discountType%></td>
+                              <td><%=coupon.discountValue%></td>
+                              <td><%=coupon.minOrderAmount%></td>
+                              <td>
+                                <%= coupon.expirationDate.toLocaleDateString()
+                                %>
+                              </td>
+                              <!-- Copy code icon -->
+                              <!-- Copy code icon -->
+                            </tr>
+                            <%}) } %>
+                            <!-- Add more rows as needed -->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered custom-width" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Available coupons</h5>
-        <button onclick="closeCouponModal()"  type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
+                <script>
+                  // Open the modal
+                  function openCouponModal() {
+                    $("#exampleModalCenter").modal("show");
+                  }
 
-        <table class="coupon-table">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Code</th>
-              <th>Type</th>
-              <th>Value</th>
-              <th>Minimum Order</th>
-              <th>Expiry Date</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% if(!coupons){ %>
-              <h5>Coupons are unavailable at the moment...</h5>
-              <% }else{ %>
-                <% coupons.forEach((coupon)=>{%>
-            <!-- Add coupon rows dynamically based on your data -->
-            <tr>
-              <!-- Coupon information -->
-              <td><img style="height: 20px; width: 20px; margin-bottom: -5px;" src="\userAssets\assets\coupon1.png" alt=""></td>
-              <td><%=coupon.code%></td>
-              <td><%=coupon.discountType%></td>
-              <td><%=coupon.discountValue%></td>
-              <td><%=coupon.minOrderAmount%></td>
-              <td><%= coupon.expirationDate.toLocaleDateString() %></td>
-              <!-- Copy code icon -->
-<!-- Copy code icon -->
-            </tr>
-            <%}) } %>
-            <!-- Add more rows as needed -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
+                  // Close the modal when the close 'X' button is clicked
+                  function closeCouponModal() {
+                    $("#exampleModalCenter").modal("hide");
+                  }
+                </script>
 
-<script>
-  // Open the modal
-  function openCouponModal() {
-    $('#exampleModalCenter').modal('show');
-  }
+                <script
+                  src="https://code.jquery.com/jquery-3.6.4.slim.min.js"
+                  integrity="sha384-r/cBD9VX1Un/E3+RueX1uNSSEOf0kQl/r/9ZZXa7/oRMh0ZcVm2E5lLExnvpFQbJ"
+                  crossorigin="anonymous"
+                ></script>
+                <script
+                  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+                  integrity="sha384-ZMP7rVo3mIq8PCD7R1XMwoaZyAAdm6s1gCBmxFVo/EEQ1W98/Dt6Oq5F5FflC2G"
+                  crossorigin="anonymous"
+                ></script>
 
-  // Close the modal when the close 'X' button is clicked
-  function closeCouponModal(){
-    $('#exampleModalCenter').modal('hide');
-  }
-</script>
+                <!-- Add this script within your HTML file -->
+                <!-- Add this script within your HTML file -->
+                <script>
+                  document.addEventListener("DOMContentLoaded", function () {
+                    const couponForm = document.querySelector("#coupon-form");
+                    const couponDiscountElement =
+                      document.getElementById("couponDiscount");
+                    const grandTotalElement =
+                      document.getElementById("grandTotal");
+                    console.log(
+                      "couponDiscountElement:",
+                      couponDiscountElement
+                    );
+                    console.log("grandTotalElement:", grandTotalElement);
 
+                    couponForm.addEventListener(
+                      "submit",
+                      async function (event) {
+                        event.preventDefault();
 
+                        // Get the coupon code from the input field
+                        const couponCode =
+                          document.getElementById("couponCode").value;
 
+                        // Get the grand total from the element
+                        const grandTotal = parseFloat(
+                          grandTotalElement.textContent.trim()
+                        );
 
-<script src="https://code.jquery.com/jquery-3.6.4.slim.min.js" integrity="sha384-r/cBD9VX1Un/E3+RueX1uNSSEOf0kQl/r/9ZZXa7/oRMh0ZcVm2E5lLExnvpFQbJ" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-ZMP7rVo3mIq8PCD7R1XMwoaZyAAdm6s1gCBmxFVo/EEQ1W98/Dt6Oq5F5FflC2G" crossorigin="anonymous"></script>
-                
+                        // Send a POST request to the `/getCouponValue` endpoint with the coupon code and grand total as query parameters
+                        const url = `/getCouponValue?couponCode=${couponCode}&grandTotal=${Number(
+                          grandTotal
+                        )}`;
+                        const response = await fetch(url, {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                        });
 
-  <!-- Add this script within your HTML file -->
-<!-- Add this script within your HTML file -->
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  const couponForm = document.querySelector('#coupon-form');
-  const couponDiscountElement = document.getElementById('couponDiscount');
-  const grandTotalElement = document.getElementById('grandTotal');
-  console.log('couponDiscountElement:', couponDiscountElement);
-console.log('grandTotalElement:', grandTotalElement);
+                        if (response.ok) {
+                          const data = await response.json();
 
+                          // Update the coupon discount element and the grand total element with the data returned from the server
+                          couponDiscountElement.textContent =
+                            data.discountValue;
+                          if (grandTotalElement) {
+                            grandTotalElement.textContent =
+                              data.discountedPrice;
+                            Swal.fire({
+                              position: "top-center",
+                              icon: "success",
+                              title: "Coupon has been applied successfully!",
+                              showConfirmButton: false,
+                              timer: 1500,
+                            });
+                          } else {
+                            console.error(
+                              "grandTotalElement is null or undefined."
+                            );
+                          }
+                        } else {
+                          const errorMessage = await response.json();
 
-  couponForm.addEventListener('submit', async function (event) {
-    event.preventDefault();
-
-    // Get the coupon code from the input field
-    const couponCode = document.getElementById('couponCode').value;
-
-    // Get the grand total from the element
-    const grandTotal = parseFloat(grandTotalElement.textContent.trim());
-
-    // Send a POST request to the `/getCouponValue` endpoint with the coupon code and grand total as query parameters
-    const url = `/getCouponValue?couponCode=${couponCode}&grandTotal=${Number(grandTotal)}`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-
-      // Update the coupon discount element and the grand total element with the data returned from the server
-      couponDiscountElement.textContent = data.discountValue;
-      if (grandTotalElement) {
-  grandTotalElement.textContent = data.discountedPrice;
-  Swal.fire({
-  position: "top-center",
-  icon: "success",
-  title: "Coupon has been applied successfully!",
-  showConfirmButton: false,
-  timer: 1500
-});
-} else {
-  console.error('grandTotalElement is null or undefined.');
-}
-    } else {
-      const errorMessage = await response.json();
-
-      Swal.fire({
-  icon: "error",
-  title: "Oops...",
-  text: errorMessage.error,
-  footer: ''
-});
-      console.error('An error occurred while fetching coupon value');
-    }
-  });
-});
-
-</script>
+                          Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: errorMessage.error,
+                            footer: "",
+                          });
+                          console.error(
+                            "An error occurred while fetching coupon value"
+                          );
+                        }
+                      }
+                    );
+                  });
+                </script>
                 <div class="payment_method">
                   <div class="mb-25">
                     <h5>Payment</h5>
@@ -1717,7 +1781,7 @@ console.log('grandTotalElement:', grandTotalElement);
                     <label for="payment_option">Payment option:</label>
                     <div class="form-group d-flex">
                       <button
-                      style="margin-right: 20px;"
+                        style="margin-right: 20px"
                         id="codButton"
                         class="btn btn-sm btn-fill-out btn-block mt-30"
                       >
@@ -1725,7 +1789,7 @@ console.log('grandTotalElement:', grandTotalElement);
                       </button>
 
                       <button
-                      style="margin-right: 20px;"
+                        style="margin-right: 20px"
                         id="razorpayButton"
                         class="btn btn-sm btn-fill-out btn-block mt-30"
                       >
@@ -1733,12 +1797,11 @@ console.log('grandTotalElement:', grandTotalElement);
                       </button>
 
                       <button
-                      id="walletButton"
-                      class="btn btn-sm btn-fill-out btn-block mt-30"
-                    >
-                      Pay using wallet
-                    </button>
-
+                        id="walletButton"
+                        class="btn btn-sm btn-fill-out btn-block mt-30"
+                      >
+                        Pay using wallet
+                      </button>
                     </div>
                   </form>
                 </div>
@@ -1750,93 +1813,91 @@ console.log('grandTotalElement:', grandTotalElement);
     </main>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
-
-
-            document.addEventListener("DOMContentLoaded", function () {
-            const priceSpans= document.querySelectorAll('.price-span');
-            let total=0;
-            priceSpans.forEach((element)=>{
-              var value=parseFloat(element.textContent);
-              if (!isNaN(value)) {
-                total+=value;
-              }
-            document.querySelector("#grandTotal").textContent=total;
-            })
-          })
-
+      document.addEventListener("DOMContentLoaded", function () {
+        const priceSpans = document.querySelectorAll(".price-span");
+        let total = 0;
+        priceSpans.forEach((element) => {
+          var value = parseFloat(element.textContent);
+          if (!isNaN(value)) {
+            total += value;
+          }
+          document.querySelector("#grandTotal").textContent = total;
+        });
+      });
     </script>
 
     <script>
-
       // cod button
       document.addEventListener("DOMContentLoaded", function () {
-        const couponDiscountElement = document.getElementById('couponDiscount');
-  const codButton = document.getElementById("codButton");
+        const couponDiscountElement = document.getElementById("couponDiscount");
+        const codButton = document.getElementById("codButton");
 
-  codButton.addEventListener("click", function (event) {
-    event.preventDefault();
+        codButton.addEventListener("click", function (event) {
+          event.preventDefault();
 
-    // Move the coupon code retrieval inside the event listener
-    const couponCode = document.getElementById('couponCode').value;
-    console.log("this is the code " + couponCode);
+          // Move the coupon code retrieval inside the event listener
+          const couponCode = document.getElementById("couponCode").value;
+          console.log("this is the code " + couponCode);
 
-    const selectedAddress = document.getElementById("selected_address").value;
-    const userCart = document.getElementById("userCart").value;
+          const selectedAddress =
+            document.getElementById("selected_address").value;
+          const userCart = document.getElementById("userCart").value;
 
-    const requestBody = {
-      selected_address: selectedAddress,
-      userCart: userCart,
-      discount: parseFloat(couponDiscountElement.textContent.trim()),
-    };
-    console.log(requestBody.discount);
+          const requestBody = {
+            selected_address: selectedAddress,
+            userCart: userCart,
+            discount: parseFloat(couponDiscountElement.textContent.trim()),
+          };
+          console.log(requestBody.discount);
 
-    // Send the data to your server using the Fetch API
-    fetch(`/codOrder?couponCode=${couponCode}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    }).then((response) => {
-      if (!response) {
-        console.log("An error happened");
-      } else {
-        Swal.fire({
-          position: "top-center",
-          icon: "success",
-          title: "Order placed",
-          showConfirmButton: false,
-          timer: 1500,
+          // Send the data to your server using the Fetch API
+          fetch(`/codOrder?couponCode=${couponCode}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+          }).then((response) => {
+            if (!response) {
+              console.log("An error happened");
+            } else {
+              Swal.fire({
+                position: "top-center",
+                icon: "success",
+                title: "Order placed",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+              window.location.href = "/orderPlaced";
+            }
+          });
         });
-        window.location.href = "/orderPlaced";
-      }
-    });
-  });
         //razorpay button
         const razorpayButton = document.getElementById("razorpayButton");
-razorpayButton.addEventListener("click", function (event) {
-  event.preventDefault();
+        razorpayButton.addEventListener("click", function (event) {
+          event.preventDefault();
 
-  const selectedAddress = document.getElementById("selected_address").value;
-  const userCart = document.getElementById("userCart").value;
-  const couponCode = document.getElementById("couponCode").value; // Get the coupon code
+          const selectedAddress =
+            document.getElementById("selected_address").value;
+          const userCart = document.getElementById("userCart").value;
+          const couponCode = document.getElementById("couponCode").value; // Get the coupon code
 
-  const requestBody = {
-    selected_address: selectedAddress,
-    userCart: userCart,
-    discount: parseFloat(couponDiscountElement.textContent.trim()),
-    couponCode: couponCode, // Include the coupon code in the request body
-  };
+          const requestBody = {
+            selected_address: selectedAddress,
+            userCart: userCart,
+            discount: parseFloat(couponDiscountElement.textContent.trim()),
+            couponCode: couponCode, // Include the coupon code in the request body
+          };
 
-  // Send the data to your server using the Fetch API
-  fetch("/razorpayOrder", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(requestBody),
-  })
-              .then((response) => {
+          // Send the data to your server using the Fetch API
+          fetch("/razorpayOrder", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+          })
+            .then((response) => {
               if (response.ok) {
                 return response.json();
               } else {
@@ -1850,18 +1911,25 @@ razorpayButton.addEventListener("click", function (event) {
                 const amount = order.amount;
                 console.log(orderId);
                 var options = {
-                  key: "rzp_test_hF6WGmggeA2qso", 
-                  amount: amount, 
+                  key: "rzp_test_hF6WGmggeA2qso",
+                  amount: amount,
                   currency: "INR",
                   name: "Joe",
                   description: "Test Transaction",
                   image: "",
-                  order_id: orderId, 
+                  order_id: orderId,
                   handler: function (response) {
-                    alert(response.razorpay_payment_id);
-                    alert(response.razorpay_order_id);
-                    alert(response.razorpay_signature);
-                    window.location.href=`/paymentStatus?orderId=${data.razorOrder.id}&status=Success`;
+                    // alert(response.razorpay_payment_id);
+                    // alert(response.razorpay_order_id);
+                    // alert(response.razorpay_signature);
+                    Swal.fire({
+                      position: "top-end",
+                      icon: "success",
+                      title: "Payment successful",
+                      showConfirmButton: false,
+                      timer: 1500,
+                    });
+                    window.location.href = `/paymentStatus?orderId=${data.razorOrder.id}&status=Success`;
                   },
                   prefill: {
                     name: "Joe",
@@ -1877,73 +1945,74 @@ razorpayButton.addEventListener("click", function (event) {
                 };
                 var rzp1 = new Razorpay(options);
                 rzp1.on("payment.failed", function (response) {
-                window.location.href=`/paymentStatus?orderId=${data.razorOrder.id}&status=Failed`;
-
+                  Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Payment failed!",
+                    footer: '<a href="#">Why do I have this issue?</a>',
+                  });
+                  window.location.href = `/paymentStatus?orderId=${data.razorOrder.id}&status=Failed`;
                 });
                 rzp1.open();
               }
             });
         });
 
-//wallet payment
+        //wallet payment
 
-const walletButton = document.getElementById("walletButton");
+        const walletButton = document.getElementById("walletButton");
 
-walletButton.addEventListener("click", function (event) {
-  event.preventDefault();
+        walletButton.addEventListener("click", function (event) {
+          event.preventDefault();
 
-  const selectedAddress =
-    document.getElementById("selected_address").value;
-  const userCart = document.getElementById("userCart").value;
-  const couponCode = document.getElementById("couponCode").value; // Get the coupon code
+          const selectedAddress =
+            document.getElementById("selected_address").value;
+          const userCart = document.getElementById("userCart").value;
+          const couponCode = document.getElementById("couponCode").value; // Get the coupon code
 
-
-  const requestBody = {
-    selected_address: selectedAddress,
-    userCart: userCart,
-    discount:parseFloat(couponDiscountElement.textContent.trim()),
-    couponCode: couponCode, // Include the coupon code in the request body
-  };
-console.log(requestBody.discount);
-  // Send the data to your server using the Fetch API
-  fetch("/walletOrder", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(requestBody),
-  })
-  .then(response => {
-                        if(!response.ok){
-                            // throw new Error("Insufficent Balance")
-                            Swal.fire({
-                      icon: "error",
-                      title: "Oops...",
-                      text: "Insufficient balance! Please use another method.",
-                      footer: ''
-                      });
-                        }
-                        if(response.ok){
-                        console.log("Wallet payment successful");
-                        Swal.fire({
+          const requestBody = {
+            selected_address: selectedAddress,
+            userCart: userCart,
+            discount: parseFloat(couponDiscountElement.textContent.trim()),
+            couponCode: couponCode, // Include the coupon code in the request body
+          };
+          console.log(requestBody.discount);
+          // Send the data to your server using the Fetch API
+          fetch("/walletOrder", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                // throw new Error("Insufficent Balance")
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Insufficient balance! Please use another method.",
+                  footer: "",
+                });
+              }
+              if (response.ok) {
+                console.log("Wallet payment successful");
+                Swal.fire({
                   position: "top-center",
                   icon: "success",
                   title: "Order placed",
                   showConfirmButton: false,
                   timer: 1500,
                 });
-                        window.location.href="/orderPlaced"  
-            }})
-                    .catch(error => {
-                        console.log("Wallet payment failed:", error);
-                    })
-});
-
+                window.location.href = "/orderPlaced";
+              }
+            })
+            .catch((error) => {
+              console.log("Wallet payment failed:", error);
+            });
+        });
       });
     </script>
-
-
-
 
     <footer class="main">
       <section class="newsletter p-30 text-white wow fadeIn animated">
@@ -2137,7 +2206,7 @@ console.log(requestBody.discount);
         </div>
       </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Vendor JS-->
     <script src="/userAssets/assets/js/vendor/modernizr-3.6.0.min.js"></script>

@@ -51,32 +51,58 @@ const getHomePage = async (req, res) => {
   }
 };
 
-//filter by category
+//filter mtb
 const filterByMTB = async (req, res) => {
   try {
+    const page = req.query.page ?? 1; // Default to page 1 if pageNo is not provided
+    const no_of_docs_each_page = 6;
+    console.log(page);
+    const totalProducts = await product.countDocuments({
+      status: { $ne: "hide" },
+    });
+    const totalPages = Math.ceil(totalProducts / no_of_docs_each_page);
+    const skip = (page - 1) * no_of_docs_each_page;
     const loggedIn = req.cookies.loggedIn;
     const products = await product.find({ category: "MTB" });
-    res.render("index-4", { products, loggedIn });
+    res.render("index-4", { products, loggedIn, totalPages, page});
   } catch (error) {
     console.log("An error occured while applying filter! " + error);
   }
 };
 
+// filter electric
 const filterByElectric = async (req, res) => {
   try {
+    const page = req.query.page ?? 1; // Default to page 1 if pageNo is not provided
+    const no_of_docs_each_page = 6;
+    console.log(page);
+    const totalProducts = await product.countDocuments({
+      status: { $ne: "hide" },
+    });
+    const totalPages = Math.ceil(totalProducts / no_of_docs_each_page);
+    const skip = (page - 1) * no_of_docs_each_page;
     const loggedIn = req.cookies.loggedIn;
     const products = await product.find({ category: "E- bikes" });
-    res.render("index-4", { products, loggedIn });
+    res.render("index-4", { products, loggedIn, totalPages, page });
   } catch (error) {
     console.log("An error occured while applying filter! " + error);
   }
 };
 
+// filter endurance
 const filterByEndurance = async (req, res) => {
   try {
+    const page = req.query.page ?? 1; // Default to page 1 if pageNo is not provided
+    const no_of_docs_each_page = 6;
+    console.log(page);
+    const totalProducts = await product.countDocuments({
+      status: { $ne: "hide" },
+    });
+    const totalPages = Math.ceil(totalProducts / no_of_docs_each_page);
+    const skip = (page - 1) * no_of_docs_each_page;
     const loggedIn = req.cookies.loggedIn;
     const products = await product.find({ category: "Endurance bikes" });
-    res.render("index-4", { products, loggedIn });
+    res.render("index-4", { products, loggedIn, totalPages, page });
   } catch (error) {
     console.log("An error occured while applying filter! " + error);
   }
@@ -730,6 +756,8 @@ const calculateDiscount = (discountType, discountValue, grandTotal) => {
       return 0;
   }
 };
+
+
 
 
 

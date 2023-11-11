@@ -413,7 +413,7 @@ module.exports.getCouponManagement= async (req, res)=>{
   }
 };
 
-//get add counpon
+//get add coupon
 module.exports.getAddCoupon = async (req, res)=>{
   try{
     res.render("adminAddCoupon")
@@ -423,6 +423,64 @@ module.exports.getAddCoupon = async (req, res)=>{
     res.redirect("/errorPage")
   }
 };
+
+//edit coupon
+module.exports.getEditCoupon= async (req, res)=>{
+  try{
+    const couponDoc= await coupon.findById(req.query.couponId)
+    res.render("adminEditCoupon", {couponDoc});
+  }
+  catch(error){
+    console.log("An error occured while loading the edit coupon page! : "+error);
+    res.redirect("/admin/couponManagement");
+  }
+};
+
+//saving edited coupon
+module.exports.saveEditedCoupon = async (req, res) => {
+  try {
+    const couponCode = req.body.code;
+    const couponId = req.body.couponId;
+
+    // Check if the coupon code is unique
+    const existingCoupon = await coupon.findOne({ code: couponCode, _id: { $ne: couponId } });
+    if (existingCoupon) {
+      // The coupon code already exists for another coupon, so return an error
+      return res.status(400).json({ error: 'Coupon code already exists' });
+    }
+
+    // Check if the expiration date is not in the past
+    const expirationDate = new Date(req.body.expirationDate);
+    if (expirationDate < new Date()) {
+      return res.status(400).json({ error: 'Expiration date must be in the future' });
+    }
+
+    // Update the existing coupon document with the new data
+    const updatedCoupon = await coupon.findByIdAndUpdate(
+      couponId,
+      {
+        code: couponCode,
+        discountType: req.body.discountType,
+        discountValue: req.body.discountValue,
+        minOrderAmount: req.body.minOrderAmount,
+        expirationDate: expirationDate,
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedCoupon) {
+      // Coupon with the given ID not found
+      return res.status(404).json({ error: 'Coupon not found' });
+    }
+
+    // Return the updated coupon document
+    res.json(updatedCoupon);
+  } catch (error) {
+    console.error("An error occurred while saving the edited coupons: " + error);
+    res.status(500).json({ message: "An error happened while saving the coupon details to the database" });
+  }
+};
+
 
 //save coupon to db
 module.exports.saveCoupon= async (req, res)=>{

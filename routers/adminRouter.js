@@ -51,6 +51,8 @@ adminRouter.delete("/delete-category/:categoryId", adminController.deleteCategor
 //coupon management 
 adminRouter.get("/couponManagement", adminController.getCouponManagement);
 adminRouter.get("/adminAddCoupon", adminController.getAddCoupon);
+adminRouter.get("/getEditCoupon", adminController.getEditCoupon);
+adminRouter.post("/saveEditedCoupon", adminController.saveEditedCoupon);
 adminRouter.post("/saveCoupon", adminController.saveCoupon);
 adminRouter.post("/update-coupon-status/:couponId", adminController.toggleCouponStatus);
 
