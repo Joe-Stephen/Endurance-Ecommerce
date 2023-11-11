@@ -6,8 +6,8 @@ const orderSchema = new mongoose.Schema({
     ref: "user",
     required: true,
   },
-  orderId:{
-    type:String,
+  orderId: {
+    type: String,
   },
   products: [
     {
@@ -30,9 +30,9 @@ const orderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  orderAddress:{
-    type:String,
-    required:true,
+  orderAddress: {
+    type: String,
+    required: true,
   },
   totalAmount: {
     type: Number,
@@ -45,12 +45,16 @@ const orderSchema = new mongoose.Schema({
   },
   paymentStatus: {
     type: String,
-    enum: ["Pending", "Success", "Failed"],
+    enum: ["Pending", "Success", "Failed", "Refunded"],
     default: "Pending",
   },
+  appliedCoupon: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "coupon",
+  },
   paymentMethod: {
-    type: String, 
-    required: true, 
+    type: String,
+    required: true,
   },
 });
 

@@ -45,12 +45,18 @@ userRouter.get("/editAddress", userMiddleware.verifyUser, userController.getEdit
 userRouter.post("/postEditAddress", userMiddleware.verifyUser, userController.postEditAddress);
 
 
+//coupon
+userRouter.post("/getCouponValue", userMiddleware.verifyUser, userController.getCouponDiscount);
+
+
+
 //order
 userRouter.get("/orderDetails/:orderId", userMiddleware.verifyUser, userController.getOrderDetails);
 userRouter.post("/returnOrder",userMiddleware.verifyUser, userController.productReturn);
 userRouter.post("/cancelOrder",userMiddleware.verifyUser, userController.productCancel);
 userRouter.post("/codOrder", userMiddleware.verifyUser, userController.cartOrder);
 userRouter.post("/razorpayOrder", userMiddleware.verifyUser, userController.razorpayOrder);
+userRouter.post("/walletOrder", userMiddleware.verifyUser, userController.walletOrder);
 userRouter.get("/orderPlaced", userMiddleware.verifyUser, userController.getOrderPlaced);
 userRouter.get("/paymentStatus", userMiddleware.verifyUser, userController.paymentStatus);
 

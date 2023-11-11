@@ -21,6 +21,7 @@ require("dotenv").config();
 const secretKey = process.env.JWT_SECRET;
 const cart = require("../model/cartModel");
 const wishlist = require("../model/wishlistModel");
+const coupon = require("../model/couponModel");
 
 const getHomePage = async (req, res) => {
   try {
@@ -674,19 +675,76 @@ const postEditAddress = async (req, res) => {
   }
 };
 
+const getCouponDiscount = async (req, res) => {
+  try {
+    const userData= await user.findOne({email:req.user});
+    const couponCode = req.query.couponCode;
+    const grandTotal = req.query.grandTotal;
+    console.log(couponCode,grandTotal);
+
+    // Find the coupon document in the database
+    const couponDoc = await coupon.findOne({ code: couponCode }).exec();
+    console.log(couponDoc);
+
+    const dateNow= new Date();
+
+    if (!couponDoc) {
+      return res.status(404).json({ error: 'Invalid coupon code' });
+    }
+    else if(couponDoc.redeemedUsers.includes(userData._id)){
+      return res.status(404).json({ error: 'You have already redeemed this coupon.' });
+    }
+    else if(couponDoc.isActive=="Inactive"){
+      return res.status(404).json({ error: 'Sorry, this coupon is currently unavailable.' });
+    }
+    else if (couponDoc.expirationDate < dateNow) {
+      return res.status(404).json({ error: `Coupon is expired on ${couponDoc.expirationDate}`  });
+    }
+    else if(couponDoc.minOrderAmount>grandTotal){
+      return res.status(404).json({ error: `Minimum order amount is ${couponDoc.minOrderAmount}` });
+    }
+
+    // Calculate the discount value
+    const discountValue = calculateDiscount(couponDoc.discountType, couponDoc.discountValue,grandTotal);
+    console.log("calculated value  ="+discountValue);
+    couponDoc.redeemedUsers.push(userData._id);
+    await couponDoc.save();
+    // Return the discount value and the discounted price to the client
+    res.status(200).json({
+      discountValue,
+      discountedPrice: grandTotal - discountValue
+    });
+  } catch (error) {
+    console.error('An error occurred while calculating the discount!', error);
+    res.status(500).json({ error: 'An error occurred while calculating the discount!.' });
+  }
+};
+
+const calculateDiscount = (discountType, discountValue, grandTotal) => {
+  switch (discountType) {
+    case 'fixedAmount':
+      return discountValue;
+    case 'percentage':
+      return (discountValue / 100) * grandTotal;
+    default:
+      return 0;
+  }
+};
+
+
 
 
 const cartOrder = async (req, res) => {
   try {
     const userData= await user.findOne({email:req.user});
-    console.log("data  "+userData)
-    console.log("cart  "+req.body.userCart)
     const userCart = await cart.findOne({userId:userData._id}).populate({
       path: "products.productId",
       model: "product",
     });
     const userAddress = await address.findOne({ userId: userData._id });
     const selected_address = req.body.selected_address;
+    const discount= req.body.discount;
+    console.log("discount = "+req.body.discount);
     let orderTotal = 0;
     let orderProducts = [];
     userCart.products.forEach((product) => {
@@ -705,7 +763,7 @@ const cartOrder = async (req, res) => {
       products: orderProducts,
       orderDate: new Date(),
       orderAddress: userAddress.address[selected_address],
-      totalAmount: orderTotal,
+      totalAmount: orderTotal-discount,
       paymentMethod:"Cash on delivery",
     });
     await cart.deleteOne({ userId: userData._id });
@@ -719,6 +777,7 @@ const cartOrder = async (req, res) => {
 
 const razorpayOrder = async (req, res) => {
   try {
+    const discount=req.body.discount;
     const userData = await user.findOne({ email: req.user });
     const userCart = await cart.findOne({ userId: userData._id }).populate({
       path: "products.productId",
@@ -735,6 +794,7 @@ const razorpayOrder = async (req, res) => {
         quantity: product.quantity,
       };
       orderTotal += orderProduct.price * orderProduct.quantity;
+      orderTotal-=discount;
       orderProducts.push(orderProduct);
     });
     var options = {
@@ -763,6 +823,60 @@ const razorpayOrder = async (req, res) => {
       }
     });
   } catch (error) {
+    console.error("An error occurred while placing the order: ", error);
+    res.status(500).json({ error: "An error occurred while placing the order." });
+  }
+};
+
+//wallet Order
+const walletOrder=async (req, res)=>{
+  try {
+    console.log("in wallet.log")
+    const userData= await user.findOne({email:req.user});
+    const userCart = await cart.findOne({userId:userData._id}).populate({
+      path: "products.productId",
+      model: "product",
+    });
+    const userWallet= await wallet.findOne({userId:userData._id});
+    const userAddress = await address.findOne({ userId: userData._id });
+    const selected_address = req.body.selected_address;
+    const discount= req.body.discount;
+    console.log("discount = "+req.body.discount);
+    let orderTotal = 0;
+    let orderProducts = [];
+    userCart.products.forEach((product) => {
+      const orderProduct = {
+        productId: product.productId._id,
+        price: product.productId.selling_price,
+        quantity: product.quantity,
+      };
+      console.log("address " + req.body.selected_address);
+      const userId=userData._id;
+      orderTotal += orderProduct.price * orderProduct.quantity;
+      orderProducts.push(orderProduct);
+    });
+    const totalAmount=orderTotal;
+    if(discount){
+      totalAmount=orderTotal-discount;
+    }
+    if(totalAmount>userWallet.amount){
+      res.status(500).json({ error: "Insufficient balance! Please use another method." });
+    }
+    else{
+  
+    userWallet.amount-=totalAmount;
+    await userWallet.save();
+    const newOrder = await order.create({
+      userId: userData._id,
+      products: orderProducts,
+      orderDate: new Date(),
+      orderAddress: userAddress.address[selected_address],
+      totalAmount: totalAmount,
+      paymentMethod:"Wallet payment",
+    });
+    await cart.deleteOne({ userId: userData._id });
+    res.status(200).json({ message: "Order placed successfully.", order: newOrder });
+  }} catch (error) {
     console.error("An error occurred while placing the order: ", error);
     res.status(500).json({ error: "An error occurred while placing the order." });
   }
@@ -975,6 +1089,7 @@ const removeProductFromCart = async (req, res) => {
 //checkout from cart
 const getCartCheckout = async (req, res) => {
   try {
+    const coupons= await coupon.find();
     const loggedIn = req.user ? true : false;
     const userData = await user.findOne({ email: req.user });
     const userCart = await cart.findOne({ userId: userData._id }).populate({
@@ -986,7 +1101,7 @@ const getCartCheckout = async (req, res) => {
     if (!userAddress) {
       res.redirect("/addAddress");
     } else {
-      res.render("checkout", { userCart, loggedIn, userAddress });
+      res.render("checkout", { userCart, loggedIn, userAddress, coupons });
     }
   } catch (error) {
     console.log("An error happened while loading checkout page." + error);
@@ -1107,6 +1222,7 @@ const deleteFromWishlist = async (req, res) => {
 const productReturn = async (req, res) => {
   try {
     const userData = await user.findOne({ email: req.user });
+    const orderDoc = await order.findOne({_id:req.body.orderID})
     let userReturn = await returns.findOne({ userId: userData._id });
     if (!userReturn) {
       userReturn = new returns({
@@ -1125,10 +1241,16 @@ const productReturn = async (req, res) => {
       });
     }
     await userReturn.save();
+    if(orderDoc.paymentStatus=="Success"){
+    const userWallet= await wallet.findOne({userId:userData._id});
+    userWallet.amount+= orderDoc.totalAmount;
+    await userWallet.save()
+    orderDoc.paymentStatus="Refunded";
+    }
     await order.updateOne(
       { _id: req.body.orderID },
       { $set: { orderStatus: "Returned" } }
-    );
+      );
     res.redirect("/userAccount");
   } catch (error) {
     console.log("An error happened while processig return! :" + error);
@@ -1199,6 +1321,8 @@ module.exports = {
   getAddAddress,
   postAddAddress,
   cartOrder,
+  razorpayOrder,
+  walletOrder,
   getOrderDetails,
   productCancel,
   productReturn,
@@ -1211,6 +1335,6 @@ module.exports = {
   getEditAddress,
   postEditAddress,
   getOrderPlaced,
-  razorpayOrder,
   paymentStatus,
+  getCouponDiscount,
 };
