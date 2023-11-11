@@ -736,6 +736,9 @@ const calculateDiscount = (discountType, discountValue, grandTotal) => {
 
 const cartOrder = async (req, res) => {
   try {
+    const couponCode=req.query.couponCode;
+    console.log("code=  "+couponCode)
+
     const userData= await user.findOne({email:req.user});
     const userCart = await cart.findOne({userId:userData._id}).populate({
       path: "products.productId",
@@ -758,16 +761,31 @@ const cartOrder = async (req, res) => {
       orderTotal += orderProduct.price * orderProduct.quantity;
       orderProducts.push(orderProduct);
     });
-    const newOrder = await order.create({
-      userId: userData._id,
-      products: orderProducts,
-      orderDate: new Date(),
-      orderAddress: userAddress.address[selected_address],
-      totalAmount: orderTotal-discount,
-      paymentMethod:"Cash on delivery",
-    });
+    if(couponCode){
+      const couponDoc= await coupon.findOne({code:couponCode});
+      const newOrder = await order.create({
+        userId: userData._id,
+        products: orderProducts,
+        orderDate: new Date(),
+        orderAddress: userAddress.address[selected_address],
+        totalAmount: orderTotal-discount,
+        paymentMethod:"Cash on delivery",
+        appliedCoupon: couponDoc._id,
+      });
+      console.log("ordered "+newOrder)
+    }
+    else{
+      const newOrder = await order.create({
+        userId: userData._id,
+        products: orderProducts,
+        orderDate: new Date(),
+        orderAddress: userAddress.address[selected_address],
+        totalAmount: orderTotal-discount,
+        paymentMethod:"Cash on delivery",
+      });
+    }
     await cart.deleteOne({ userId: userData._id });
-    res.status(200).json({ message: "Order placed successfully.", order: newOrder });
+    res.status(200).json({ message: "Order placed successfully."});
   } catch (error) {
     console.error("An error occurred while placing the order: ", error);
     res.status(500).json({ error: "An error occurred while placing the order." });
@@ -777,6 +795,8 @@ const cartOrder = async (req, res) => {
 
 const razorpayOrder = async (req, res) => {
   try {
+    const couponCode=req.body.couponCode;
+    console.log("code=  "+couponCode)
     const discount=req.body.discount;
     const userData = await user.findOne({ email: req.user });
     const userCart = await cart.findOne({ userId: userData._id }).populate({
@@ -794,7 +814,9 @@ const razorpayOrder = async (req, res) => {
         quantity: product.quantity,
       };
       orderTotal += orderProduct.price * orderProduct.quantity;
+      console.log("first total= "+orderTotal);
       orderTotal-=discount;
+      console.log("last total= "+orderTotal);
       orderProducts.push(orderProduct);
     });
     var options = {
@@ -808,17 +830,32 @@ const razorpayOrder = async (req, res) => {
         console.error("Error creating Razorpay order:", err);
         res.status(500).json({ error: "An error occurred while placing the order." });
       } else {
+        if(couponCode){
+          const couponDoc= await coupon.findOne({code:couponCode});
+          const newOrder = await order.create({
+            userId: userData._id,
+            orderId: razorOrder.id,
+            products: orderProducts,
+            orderDate: new Date(),
+            orderAddress: userAddress.address[selected_address],
+            totalAmount: orderTotal,
+            paymentMethod:"Razorpay",
+            appliedCoupon: couponDoc._id,
+          });
+          console.log("ordered "+newOrder)
+        }
+        else{
+          const newOrder = await order.create({
+            userId: userData._id,
+            orderId: razorOrder.id,
+            products: orderProducts,
+            orderDate: new Date(),
+            orderAddress: userAddress.address[selected_address],
+            totalAmount: orderTotal,
+            paymentMethod:"Razorpay",
+          });
+        }  
         console.log(razorOrder);
-        const newOrder = await order.create({
-          userId: userData._id,
-          orderId: razorOrder.id,
-          products: orderProducts,
-          orderDate: new Date(),
-          orderAddress: userAddress.address[selected_address],
-          totalAmount: orderTotal,
-          paymentMethod: "Razorpay",
-        });
-        await newOrder.save(); // Update the new order's orderId
         res.status(200).json({ message: "Order placed successfully.", razorOrder });
       }
     });
@@ -831,6 +868,7 @@ const razorpayOrder = async (req, res) => {
 //wallet Order
 const walletOrder=async (req, res)=>{
   try {
+    const couponCode=req.body.couponCode;
     console.log("in wallet.log")
     const userData= await user.findOne({email:req.user});
     const userCart = await cart.findOne({userId:userData._id}).populate({
@@ -838,6 +876,7 @@ const walletOrder=async (req, res)=>{
       model: "product",
     });
     const userWallet= await wallet.findOne({userId:userData._id});
+    console.log("wallet doc = "+userWallet);
     const userAddress = await address.findOne({ userId: userData._id });
     const selected_address = req.body.selected_address;
     const discount= req.body.discount;
@@ -855,27 +894,49 @@ const walletOrder=async (req, res)=>{
       orderTotal += orderProduct.price * orderProduct.quantity;
       orderProducts.push(orderProduct);
     });
-    const totalAmount=orderTotal;
+    let totalAmount=orderTotal;
+    console.log("total amout = "+totalAmount);
     if(discount){
       totalAmount=orderTotal-discount;
+      console.log("total final = "+totalAmount);
+      console.log("wallet final = "+userWallet.amount);
+
     }
     if(totalAmount>userWallet.amount){
       res.status(500).json({ error: "Insufficient balance! Please use another method." });
     }
     else{
-  
     userWallet.amount-=totalAmount;
     await userWallet.save();
-    const newOrder = await order.create({
-      userId: userData._id,
-      products: orderProducts,
-      orderDate: new Date(),
-      orderAddress: userAddress.address[selected_address],
-      totalAmount: totalAmount,
-      paymentMethod:"Wallet payment",
-    });
+
+
+    if(couponCode){
+      const couponDoc= await coupon.findOne({code:couponCode});
+      const newOrder = await order.create({
+        userId: userData._id,
+        products: orderProducts,
+        orderDate: new Date(),
+        orderAddress: userAddress.address[selected_address],
+        totalAmount: orderTotal-discount,
+        paymentStatus:"Success",
+        paymentMethod:"Wallet payment",
+        appliedCoupon: couponDoc._id,
+      });
+      console.log("ordered "+newOrder)
+    }
+    else{
+      const newOrder = await order.create({
+        userId: userData._id,
+        products: orderProducts,
+        orderDate: new Date(),
+        orderAddress: userAddress.address[selected_address],
+        totalAmount: orderTotal-discount,
+        paymentStatus:"Success",
+        paymentMethod:"Wallet payment",
+      });
+    }
     await cart.deleteOne({ userId: userData._id });
-    res.status(200).json({ message: "Order placed successfully.", order: newOrder });
+    res.status(200).json({ message: "Order placed successfully." });
   }} catch (error) {
     console.error("An error occurred while placing the order: ", error);
     res.status(500).json({ error: "An error occurred while placing the order." });
@@ -1246,6 +1307,7 @@ const productReturn = async (req, res) => {
     userWallet.amount+= orderDoc.totalAmount;
     await userWallet.save()
     orderDoc.paymentStatus="Refunded";
+    await orderDoc.save();
     }
     await order.updateOne(
       { _id: req.body.orderID },
@@ -1261,6 +1323,7 @@ const productReturn = async (req, res) => {
 const productCancel = async (req, res) => {
   try {
     const userData = await user.findOne({ email: req.user });
+    const orderDoc = await order.findOne({_id:req.body.orderID})
     let userCancel = await cancels.findOne({ userId: userData._id });
     if (!userCancel) {
       userCancel = new cancels({
@@ -1279,6 +1342,13 @@ const productCancel = async (req, res) => {
       });
     }
     await userCancel.save();
+    if(orderDoc.paymentStatus=="Success"){
+      const userWallet= await wallet.findOne({userId:userData._id});
+      userWallet.amount+= orderDoc.totalAmount;
+      await userWallet.save()
+      orderDoc.paymentStatus="Refunded";
+      await orderDoc.save();
+      }
     await order.updateOne(
       { _id: req.body.orderID },
       { $set: { orderStatus: "Cancelled" } }

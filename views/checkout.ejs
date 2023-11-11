@@ -1767,68 +1767,76 @@ console.log('grandTotalElement:', grandTotalElement);
     </script>
 
     <script>
+
+      // cod button
       document.addEventListener("DOMContentLoaded", function () {
-      const couponDiscountElement = document.getElementById('couponDiscount');
+        const couponDiscountElement = document.getElementById('couponDiscount');
+  const codButton = document.getElementById("codButton");
 
-        const codButton = document.getElementById("codButton");
+  codButton.addEventListener("click", function (event) {
+    event.preventDefault();
 
-        codButton.addEventListener("click", function (event) {
-          event.preventDefault();
+    // Move the coupon code retrieval inside the event listener
+    const couponCode = document.getElementById('couponCode').value;
+    console.log("this is the code " + couponCode);
 
-          const selectedAddress =
-            document.getElementById("selected_address").value;
-          const userCart = document.getElementById("userCart").value;
+    const selectedAddress = document.getElementById("selected_address").value;
+    const userCart = document.getElementById("userCart").value;
 
-          const requestBody = {
-            selected_address: selectedAddress,
-            userCart: userCart,
-            discount:parseFloat(couponDiscountElement.textContent.trim()),
-          };
-console.log(requestBody.discount);
-          // Send the data to your server using the Fetch API
-          fetch("/codOrder", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          }).then((response) => {
-            if (!response) {
-              console.log("An error happened");
-            } else {
-              Swal.fire({
-                position: "top-center",
-                icon: "success",
-                title: "Order placed",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-              window.location.href = "/orderPlaced";
-            }
-          });
+    const requestBody = {
+      selected_address: selectedAddress,
+      userCart: userCart,
+      discount: parseFloat(couponDiscountElement.textContent.trim()),
+    };
+    console.log(requestBody.discount);
+
+    // Send the data to your server using the Fetch API
+    fetch(`/codOrder?couponCode=${couponCode}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    }).then((response) => {
+      if (!response) {
+        console.log("An error happened");
+      } else {
+        Swal.fire({
+          position: "top-center",
+          icon: "success",
+          title: "Order placed",
+          showConfirmButton: false,
+          timer: 1500,
         });
-
+        window.location.href = "/orderPlaced";
+      }
+    });
+  });
         //razorpay button
         const razorpayButton = document.getElementById("razorpayButton");
-        razorpayButton.addEventListener("click", function (event) {
-          event.preventDefault();
-          const selectedAddress =
-            document.getElementById("selected_address").value;
-          const userCart = document.getElementById("userCart").value;
-          const requestBody = {
-            selected_address: selectedAddress,
-            userCart: userCart,
-            discount:parseFloat(couponDiscountElement.textContent.trim()),
-          };
-          // Send the data to your server using the Fetch API
-          fetch("/razorpayOrder", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          })
-            .then((response) => {
+razorpayButton.addEventListener("click", function (event) {
+  event.preventDefault();
+
+  const selectedAddress = document.getElementById("selected_address").value;
+  const userCart = document.getElementById("userCart").value;
+  const couponCode = document.getElementById("couponCode").value; // Get the coupon code
+
+  const requestBody = {
+    selected_address: selectedAddress,
+    userCart: userCart,
+    discount: parseFloat(couponDiscountElement.textContent.trim()),
+    couponCode: couponCode, // Include the coupon code in the request body
+  };
+
+  // Send the data to your server using the Fetch API
+  fetch("/razorpayOrder", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestBody),
+  })
+              .then((response) => {
               if (response.ok) {
                 return response.json();
               } else {
@@ -1887,11 +1895,14 @@ walletButton.addEventListener("click", function (event) {
   const selectedAddress =
     document.getElementById("selected_address").value;
   const userCart = document.getElementById("userCart").value;
+  const couponCode = document.getElementById("couponCode").value; // Get the coupon code
+
 
   const requestBody = {
     selected_address: selectedAddress,
     userCart: userCart,
     discount:parseFloat(couponDiscountElement.textContent.trim()),
+    couponCode: couponCode, // Include the coupon code in the request body
   };
 console.log(requestBody.discount);
   // Send the data to your server using the Fetch API
@@ -1921,7 +1932,7 @@ console.log(requestBody.discount);
                   showConfirmButton: false,
                   timer: 1500,
                 });
-                        window.location.href="/placeorder"  
+                        window.location.href="/orderPlaced"  
             }})
                     .catch(error => {
                         console.log("Wallet payment failed:", error);
