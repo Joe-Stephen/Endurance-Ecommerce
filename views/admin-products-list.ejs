@@ -19,7 +19,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <!-- <link rel="stylesheet" type="text/css" href="/adminAssets/assets/css/main.css"> -->
-    <style>.red-button {
+    
+    <style>
+        .out-of-stock {
+  color: red;
+}   
+    .red-button {
         background-color: red;
         color: white; /* You can adjust the text color as needed */
     }
@@ -241,38 +246,45 @@
                                 <tbody>
                                     <!-- Loop through products and display in the table -->
                                     <% for (let i = 0; i < products.length; i++) { %>
-                                    <tr>
-                                        <td><%= i + 1 %></td>
-                                        <td>
+                                        <tr>
+                                          <td><%= i + 1 %></td>
+                                          <td>
                                             <% if (products[i].photos.length > 0) { %>
-                                                <img src="<%= products[i].photos[0] %>" alt="Product Photo" height="64">
+                                              <img src="<%= products[i].photos[0] %>" alt="Product Photo" height="64">
                                             <% } %>
-                                        </td>
-                                        <td><%= products[i].name %></td>
-                                        <td><%= products[i].brand %></td>
-                                        <td><%= products[i].category %></td>
-                                        <td>₹<%= products[i].selling_price %></td>
-                                        <td><%= products[i].sizes[0].small %></td>
-                                        <td><%= products[i].sizes[0].medium %></td>
-                                        <td><%= products[i].sizes[0].large %></td>
-                                        <td>
+                                          </td>
+                                          <td><%= products[i].name %></td>
+                                          <td><%= products[i].brand %></td>
+                                          <td><%= products[i].category %></td>
+                                          <td>₹<%= products[i].selling_price %></td>
+                                          <td class="<%= products[i].sizes[0].small === 0 ? 'out-of-stock' : '' %>">
+                                            <%= products[i].sizes[0].small === 0 ? 'Out of stock' : products[i].sizes[0].small %>
+                                          </td>
+                                          <td class="<%= products[i].sizes[0].medium === 0 ? 'out-of-stock' : '' %>">
+                                            <%= products[i].sizes[0].medium === 0 ? 'Out of stock' : products[i].sizes[0].medium %>
+                                          </td>
+                                          <td class="<%= products[i].sizes[0].large === 0 ? 'out-of-stock' : '' %>">
+                                            <%= products[i].sizes[0].large === 0 ? 'Out of stock' : products[i].sizes[0].large %>
+                                          </td>
+                                          <td>
                                             <div class="button-group">
-                                                <button class="btn<%= products[i].status === 'show' ? ' red-button' : (products[i].status === 'hide' ? ' green-button' : '') %>"
-                                                    onclick="toggleProductStatus('<%= products[i]._id %>', '<%= products[i].status %>')">
-                                                    <% if (products[i].status === 'show') { %>
-                                                        Block
-                                                    <% } else { %>
-                                                        Unblock
-                                                    <% } %>
-                                                </button>
-                                                <a href="/admin/edit-product/?productId=<%= products[i]._id %>" class="button-link">Edit Product</a>
-                                                <a style="background-color: red; margin-top: 2px;" data-product-id="<%= products[i]._id %>" href="#"
-                                                    class="button-link" onclick="deleteProduct('<%= products[i]._id %>')">Delete Product</a>
+                                              <button class="btn<%= products[i].status === 'show' ? ' red-button' : (products[i].status === 'hide' ? ' green-button' : '') %>"
+                                                onclick="toggleProductStatus('<%= products[i]._id %>', '<%= products[i].status %>')">
+                                                <% if (products[i].status === 'show') { %>
+                                                  Block
+                                                <% } else { %>
+                                                  Unblock
+                                                <% } %>
+                                              </button>
+                                              <a href="/admin/edit-product/?productId=<%= products[i]._id %>" class="button-link">Edit Product</a>
+                                              <a style="background-color: red; margin-top: 2px;" data-product-id="<%= products[i]._id %>" href="#"
+                                                class="button-link" onclick="deleteProduct('<%= products[i]._id %>')">Delete Product</a>
                                             </div>
-                                        </td>
-                                    </tr>
-                                    <% } %>
-                                </tbody>
+                                          </td>
+                                        </tr>
+                                      <% } %>
+                                      
+                                                                      </tbody>
                             </table>
                         </div>
                     </header> <!-- card-header end// -->

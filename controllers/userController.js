@@ -27,9 +27,9 @@ const getHomePage = async (req, res) => {
   try {
     const loggedIn = req.cookies.loggedIn;
 
-    const page = req.query.page ?? 1; // Default to page 1 if pageNo is not provided
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if pageNo is not provided
     const no_of_docs_each_page = 6;
-    console.log(page);
+    
     const totalProducts = await product.countDocuments({
       status: { $ne: "hide" },
     });
@@ -51,6 +51,9 @@ const getHomePage = async (req, res) => {
   }
 };
 
+module.exports = { getHomePage };
+
+
 //filter mtb
 const filterByMTB = async (req, res) => {
   try {
@@ -63,7 +66,7 @@ const filterByMTB = async (req, res) => {
     const totalPages = Math.ceil(totalProducts / no_of_docs_each_page);
     const skip = (page - 1) * no_of_docs_each_page;
     const loggedIn = req.cookies.loggedIn;
-    const products = await product.find({ category: "MTB" });
+    const products = await product.find({ category: "MTB", status: { $ne: "hide" } });
     res.render("index-4", { products, loggedIn, totalPages, page});
   } catch (error) {
     console.log("An error occured while applying filter! " + error);
@@ -82,7 +85,7 @@ const filterByElectric = async (req, res) => {
     const totalPages = Math.ceil(totalProducts / no_of_docs_each_page);
     const skip = (page - 1) * no_of_docs_each_page;
     const loggedIn = req.cookies.loggedIn;
-    const products = await product.find({ category: "E- bikes" });
+    const products = await product.find({ category: "E- bikes", status: { $ne: "hide" } });
     res.render("index-4", { products, loggedIn, totalPages, page });
   } catch (error) {
     console.log("An error occured while applying filter! " + error);
@@ -101,12 +104,74 @@ const filterByEndurance = async (req, res) => {
     const totalPages = Math.ceil(totalProducts / no_of_docs_each_page);
     const skip = (page - 1) * no_of_docs_each_page;
     const loggedIn = req.cookies.loggedIn;
-    const products = await product.find({ category: "Endurance bikes" });
+    const products = await product.find({ category: "Endurance bikes", status: { $ne: "hide" }});
     res.render("index-4", { products, loggedIn, totalPages, page });
   } catch (error) {
     console.log("An error occured while applying filter! " + error);
   }
 };
+
+//sorting function
+
+// Low to High with pagination
+const sortLowToHigh = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if pageNo is not provided
+    const no_of_docs_each_page = 6;
+    const skip = (page - 1) * no_of_docs_each_page;
+
+    const totalProducts = await product.countDocuments({
+      status: { $ne: "hide" },
+    });
+
+    const totalPages = Math.ceil(totalProducts / no_of_docs_each_page);
+    const loggedIn = req.cookies.loggedIn;
+
+    const products = await product
+      .find({ status: { $ne: "hide" } })
+      .sort({ selling_price: 1 })
+      .skip(skip)
+      .limit(no_of_docs_each_page);
+
+    res.render("index-4", { products, loggedIn, totalPages, page });
+  } catch (error) {
+    console.log("An error occurred while applying filter! " + error);
+  }
+};
+
+
+// High to Low with pagination
+const sortHighToLow = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if pageNo is not provided
+    const no_of_docs_each_page = 6;
+    const skip = (page - 1) * no_of_docs_each_page;
+
+    const totalProducts = await product.countDocuments({
+      status: { $ne: "hide" },
+    });
+
+    const totalPages = Math.ceil(totalProducts / no_of_docs_each_page);
+    const loggedIn = req.cookies.loggedIn;
+
+    const products = await product
+      .find({ status: { $ne: "hide" } })
+      .sort({ selling_price: -1 })
+      .skip(skip)
+      .limit(no_of_docs_each_page);
+
+    res.render("index-4", { products, loggedIn, totalPages, page });
+  } catch (error) {
+    console.log("An error occurred while applying filter! " + error);
+  }
+};
+
+
+
+
+
+
+
 
 //search results in the home page
 const searchResults = async (req, res) => {
@@ -757,70 +822,113 @@ const calculateDiscount = (discountType, discountValue, grandTotal) => {
   }
 };
 
-
-
-
-
-
+// cash on delivery order placing
 const cartOrder = async (req, res) => {
   try {
-    const couponCode=req.query.couponCode;
-    console.log("code=  "+couponCode)
+    const couponCode = req.query.couponCode;
+    console.log("code=  " + couponCode);
 
-    const userData= await user.findOne({email:req.user});
-    const userCart = await cart.findOne({userId:userData._id}).populate({
+    const userData = await user.findOne({ email: req.user });
+    const userCart = await cart.findOne({ userId: userData._id }).populate({
       path: "products.productId",
       model: "product",
     });
+
     const userAddress = await address.findOne({ userId: userData._id });
     const selected_address = req.body.selected_address;
-    const discount= req.body.discount;
-    console.log("discount = "+req.body.discount);
+    const discount = req.body.discount;
+    console.log("discount = " + req.body.discount);
     let orderTotal = 0;
     let orderProducts = [];
+
     userCart.products.forEach((product) => {
       const orderProduct = {
         productId: product.productId._id,
         price: product.productId.selling_price,
         quantity: product.quantity,
+        size: product.size,
       };
-      console.log("address " + req.body.selected_address);
-      const userId=userData._id;
+      console.log("Processing product:", orderProduct);
+      const userId = userData._id;
       orderTotal += orderProduct.price * orderProduct.quantity;
       orderProducts.push(orderProduct);
     });
-    if(couponCode){
-      const couponDoc= await coupon.findOne({code:couponCode});
+
+    for (const prod of orderProducts) {
+      let currentProduct = await product.findById(prod.productId);
+    
+      console.log("this product =  ", currentProduct);
+    
+      let sizeToUpdate = `${prod.size}`;
+    
+      console.log("size to update =  ", sizeToUpdate);
+    
+      // Access the first element of the sizes array
+      let sizeObject = currentProduct.sizes[0];
+    
+      // Access the size property in the sizeObject
+      let currentQuantity = sizeObject[sizeToUpdate];
+    
+      console.log("current quantity =  ", currentQuantity);
+    
+      if (typeof currentQuantity === 'number') {
+        let updatedQuantity = currentQuantity - prod.quantity;
+    
+        console.log("updated quantity =  ", updatedQuantity);
+
+        // Update the product sizes using $set to set the updated quantity
+// Update the product sizes using $set to set the updated quantity
+await product.updateOne(
+  {
+    _id: prod.productId,
+    "sizes._id": sizeObject._id // Make sure to include the _id of the sizes array element
+  },
+  { $set: { [`sizes.$.${sizeToUpdate}`]: updatedQuantity } }
+);
+
+      } else {
+        console.error("Invalid current quantity:", currentQuantity);
+      }
+    }
+
+    // Create the order with the updated total amount
+    if (couponCode) {
+      const couponDoc = await coupon.findOne({ code: couponCode });
       const newOrder = await order.create({
         userId: userData._id,
         products: orderProducts,
         orderDate: new Date(),
         orderAddress: userAddress.address[selected_address],
-        totalAmount: orderTotal-discount,
-        paymentMethod:"Cash on delivery",
+        totalAmount: orderTotal - discount,
+        paymentMethod: "Cash on delivery",
         appliedCoupon: couponDoc._id,
       });
-      console.log("ordered "+newOrder)
-    }
-    else{
+      console.log("Ordered:", newOrder);
+    } else {
       const newOrder = await order.create({
         userId: userData._id,
         products: orderProducts,
         orderDate: new Date(),
         orderAddress: userAddress.address[selected_address],
-        totalAmount: orderTotal-discount,
-        paymentMethod:"Cash on delivery",
+        totalAmount: orderTotal - discount,
+        paymentMethod: "Cash on delivery",
       });
+      console.log("Ordered:", newOrder);
     }
+
+    // Clear the user's cart after placing the order
     await cart.deleteOne({ userId: userData._id });
-    res.status(200).json({ message: "Order placed successfully."});
+
+    res.status(200).json({ message: "Order placed successfully." });
   } catch (error) {
     console.error("An error occurred while placing the order: ", error);
-    res.status(500).json({ error: "An error occurred while placing the order." });
+    res
+      .status(500)
+      .json({ error: "An error occurred while placing the order." });
   }
 };
 
-
+// razorpay order placing 
 const razorpayOrder = async (req, res) => {
   try {
     const couponCode=req.body.couponCode;
@@ -835,23 +943,63 @@ const razorpayOrder = async (req, res) => {
     const selected_address = req.body.selected_address;
     let orderTotal = 0;
     let orderProducts = [];
+
     userCart.products.forEach((product) => {
       const orderProduct = {
         productId: product.productId._id,
         price: product.productId.selling_price,
         quantity: product.quantity,
+        size: product.size,
       };
+      console.log("Processing product:", orderProduct);
+      const userId = userData._id;
       orderTotal += orderProduct.price * orderProduct.quantity;
-      console.log("first total= "+orderTotal);
-      orderTotal-=discount;
-      console.log("last total= "+orderTotal);
       orderProducts.push(orderProduct);
     });
+
     var options = {
       amount: orderTotal * 100,  // Amount in the smallest currency unit
       currency: "INR",
       receipt: '',
     };
+
+    for (const prod of orderProducts) {
+      let currentProduct = await product.findById(prod.productId);
+    
+      console.log("this product =  ", currentProduct);
+    
+      let sizeToUpdate = `${prod.size}`;
+    
+      console.log("size to update =  ", sizeToUpdate);
+    
+      // Access the first element of the sizes array
+      let sizeObject = currentProduct.sizes[0];
+    
+      // Access the size property in the sizeObject
+      let currentQuantity = sizeObject[sizeToUpdate];
+    
+      console.log("current quantity =  ", currentQuantity);
+    
+      if (typeof currentQuantity === 'number') {
+        let updatedQuantity = currentQuantity - prod.quantity;
+    
+        console.log("updated quantity =  ", updatedQuantity);
+
+        // Update the product sizes using $set to set the updated quantity
+// Update the product sizes using $set to set the updated quantity
+await product.updateOne(
+  {
+    _id: prod.productId,
+    "sizes._id": sizeObject._id // Make sure to include the _id of the sizes array element
+  },
+  { $set: { [`sizes.$.${sizeToUpdate}`]: updatedQuantity } }
+);
+
+      } else {
+        console.error("Invalid current quantity:", currentQuantity);
+      }
+    }
+
     // Create the Razorpay order and await its creation
     razorpay.orders.create(options, async function (err, razorOrder) {
       if (err) {
@@ -911,17 +1059,22 @@ const walletOrder=async (req, res)=>{
     console.log("discount = "+req.body.discount);
     let orderTotal = 0;
     let orderProducts = [];
+
     userCart.products.forEach((product) => {
       const orderProduct = {
         productId: product.productId._id,
         price: product.productId.selling_price,
         quantity: product.quantity,
+        size: product.size,
       };
-      console.log("address " + req.body.selected_address);
-      const userId=userData._id;
+      console.log("Processing product:", orderProduct);
+      const userId = userData._id;
       orderTotal += orderProduct.price * orderProduct.quantity;
       orderProducts.push(orderProduct);
     });
+
+
+
     let totalAmount=orderTotal;
     console.log("total amout = "+totalAmount);
     if(discount){
@@ -936,6 +1089,43 @@ const walletOrder=async (req, res)=>{
     else{
     userWallet.amount-=totalAmount;
     await userWallet.save();
+
+    for (const prod of orderProducts) {
+      let currentProduct = await product.findById(prod.productId);
+    
+      console.log("this product =  ", currentProduct);
+    
+      let sizeToUpdate = `${prod.size}`;
+    
+      console.log("size to update =  ", sizeToUpdate);
+    
+      // Access the first element of the sizes array
+      let sizeObject = currentProduct.sizes[0];
+    
+      // Access the size property in the sizeObject
+      let currentQuantity = sizeObject[sizeToUpdate];
+    
+      console.log("current quantity =  ", currentQuantity);
+    
+      if (typeof currentQuantity === 'number') {
+        let updatedQuantity = currentQuantity - prod.quantity;
+    
+        console.log("updated quantity =  ", updatedQuantity);
+
+        // Update the product sizes using $set to set the updated quantity
+// Update the product sizes using $set to set the updated quantity
+await product.updateOne(
+  {
+    _id: prod.productId,
+    "sizes._id": sizeObject._id // Make sure to include the _id of the sizes array element
+  },
+  { $set: { [`sizes.$.${sizeToUpdate}`]: updatedQuantity } }
+);
+
+      } else {
+        console.error("Invalid current quantity:", currentQuantity);
+      }
+    }
 
 
     if(couponCode){
@@ -1055,45 +1245,50 @@ const getCart = async (req, res) => {
   }
 };
 
-//function for adding product to cart
-const addToCartController = async (req, res) => {
-  try {
-    // Extract user ID and product ID from the request
-    const { productId } = req.body;
-    let userData = await user.findOne({ email: req.user });
-    let userId = userData._id;
-    // Check if the user has a cart document
-    let userCart = await cart.findOne({ userId: userId });
-    // If the user doesn't have a cart, create a new one
-    if (!userCart) {
-      userCart = new cart({
-        userId: userId,
-        products: [],
-      });
+  //function for adding product to cart
+  const addToCartController = async (req, res) => {
+    try {
+      const selectedSize= req.query.selectedSize ;
+      console.log("selected size is = "+selectedSize);
+      // Extract user ID and product ID from the request
+      const { productId } = req.body;
+      const sizeCheck= await product.findById(productId);
+      let userData = await user.findOne({ email: req.user });
+      let userId = userData._id;
+      // Check if the user has a cart document
+      let userCart = await cart.findOne({ userId: userId });
+      // If the user doesn't have a cart, create a new one
+      if (!userCart) {
+        userCart = new cart({
+          userId: userId,
+          products: [],
+        });
+      }
+      // Check if the desired product is already in the cart
+      const existingProduct = userCart.products.find(
+        (product) => product.productId.toString() === productId
+      );
+      if (existingProduct) {
+        // If the product is in the cart, increase its quantity
+        existingProduct.quantity += 1;
+        console.log("The product is already inside the cart.");
+      } else {
+        // If the product is not in the cart, add it with a quantity of 1
+        userCart.products.push({
+          productId: new mongoose.Types.ObjectId(productId),
+          size:selectedSize,
+          quantity: 1,
+        });
+      }
+      // Save the updated cart document
+      await userCart.save();
+      res.json({ message: "Product added to the cart" });
+    
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      // res.status(500).json({ error: "Failed to add the product to the cart" });
     }
-    // Check if the desired product is already in the cart
-    const existingProduct = userCart.products.find(
-      (product) => product.productId.toString() === productId
-    );
-    if (existingProduct) {
-      // If the product is in the cart, increase its quantity
-      existingProduct.quantity += 1;
-      console.log("The product is already inside the cart.");
-    } else {
-      // If the product is not in the cart, add it with a quantity of 1
-      userCart.products.push({
-        productId: new mongoose.Types.ObjectId(productId),
-        quantity: 1,
-      });
-    }
-    // Save the updated cart document
-    await userCart.save();
-    res.json({ message: "Product added to the cart" });
-  } catch (error) {
-    console.error("Error adding to cart:", error);
-    // res.status(500).json({ error: "Failed to add the product to the cart" });
-  }
-};
+  };
 
 //updating cart quantity
 const postCartQty = async (req, res) => {
@@ -1341,7 +1536,45 @@ const productReturn = async (req, res) => {
       { _id: req.body.orderID },
       { $set: { orderStatus: "Returned" } }
       );
-    res.redirect("/userAccount");
+
+      for (const prod of orderDoc.products) {
+        let currentProduct = await product.findById(prod.productId);
+      
+        console.log("this product =  ", currentProduct);
+      
+        let sizeToUpdate = `${prod.size}`;
+      
+        console.log("size to update =  ", sizeToUpdate);
+      
+        // Access the first element of the sizes array
+        let sizeObject = currentProduct.sizes[0];
+      
+        // Access the size property in the sizeObject
+        let currentQuantity = sizeObject[sizeToUpdate];
+      
+        console.log("current quantity =  ", currentQuantity);
+      
+        if (typeof currentQuantity === 'number') {
+          let updatedQuantity = currentQuantity + prod.quantity;
+      
+          console.log("updated quantity =  ", updatedQuantity);
+  
+          // Update the product sizes using $set to set the updated quantity
+  // Update the product sizes using $set to set the updated quantity
+  await product.updateOne(
+    {
+      _id: prod.productId,
+      "sizes._id": sizeObject._id // Make sure to include the _id of the sizes array element
+    },
+    { $set: { [`sizes.$.${sizeToUpdate}`]: updatedQuantity } }
+  );
+  
+        } else {
+          console.error("Invalid current quantity:", currentQuantity);
+        }
+      }
+
+      res.redirect("/userAccount");
   } catch (error) {
     console.log("An error happened while processig return! :" + error);
   }
@@ -1377,6 +1610,45 @@ const productCancel = async (req, res) => {
       orderDoc.paymentStatus="Refunded";
       await orderDoc.save();
       }
+
+      for (const prod of orderDoc.products) {
+        let currentProduct = await product.findById(prod.productId);
+      
+        console.log("this product =  ", currentProduct);
+      
+        let sizeToUpdate = `${prod.size}`;
+      
+        console.log("size to update =  ", sizeToUpdate);
+      
+        // Access the first element of the sizes array
+        let sizeObject = currentProduct.sizes[0];
+      
+        // Access the size property in the sizeObject
+        let currentQuantity = sizeObject[sizeToUpdate];
+      
+        console.log("current quantity =  ", currentQuantity);
+      
+        if (typeof currentQuantity === 'number') {
+          let updatedQuantity = currentQuantity + prod.quantity;
+      
+          console.log("updated quantity =  ", updatedQuantity);
+  
+          // Update the product sizes using $set to set the updated quantity
+  // Update the product sizes using $set to set the updated quantity
+  await product.updateOne(
+    {
+      _id: prod.productId,
+      "sizes._id": sizeObject._id // Make sure to include the _id of the sizes array element
+    },
+    { $set: { [`sizes.$.${sizeToUpdate}`]: updatedQuantity } }
+  );
+  
+        } else {
+          console.error("Invalid current quantity:", currentQuantity);
+        }
+      }
+
+
     await order.updateOne(
       { _id: req.body.orderID },
       { $set: { orderStatus: "Cancelled" } }
@@ -1427,6 +1699,8 @@ module.exports = {
   filterByEndurance,
   filterByElectric,
   filterByMTB,
+  sortHighToLow,
+  sortLowToHigh,
   phoneNumberChange,
   getPhoneNumberChange,
   searchResults,

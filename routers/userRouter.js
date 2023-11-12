@@ -22,9 +22,18 @@ userRouter.get("/logout", userController.logout);
 userRouter.get("/product/:productId", userController.findProduct);
 
 //filter by category
-userRouter.get("/filterByMTB",userMiddleware.verifyUser, userController.filterByMTB);
-userRouter.get("/filterByElectric",userMiddleware.verifyUser, userController.filterByElectric);
-userRouter.get("/filterByEndurance",userMiddleware.verifyUser, userController.filterByEndurance);
+userRouter.get("/filterByMTB", userController.filterByMTB);
+userRouter.get("/filterByElectric", userController.filterByElectric);
+userRouter.get("/filterByEndurance", userController.filterByEndurance);
+
+//sorting routes
+userRouter.get("/sort-LowToHigh", userController.sortLowToHigh);
+userRouter.get("/sort-HighToLow", userController.sortHighToLow);
+userRouter.get("/sort-priceRange/:priceRange", userController.sortPriceRange);
+
+
+
+
 
 //search product 
 userRouter.get("/searchHome",userMiddleware.verifyUser, userController.searchResults);
@@ -52,13 +61,13 @@ userRouter.post("/getCouponValue", userMiddleware.verifyUser, userController.get
 
 //order
 userRouter.get("/orderDetails/:orderId", userMiddleware.verifyUser, userController.getOrderDetails);
-userRouter.post("/returnOrder",userMiddleware.verifyUser, userController.productReturn);
-userRouter.post("/cancelOrder",userMiddleware.verifyUser, userController.productCancel);
 userRouter.post("/codOrder", userMiddleware.verifyUser, userController.cartOrder);
 userRouter.post("/razorpayOrder", userMiddleware.verifyUser, userController.razorpayOrder);
 userRouter.post("/walletOrder", userMiddleware.verifyUser, userController.walletOrder);
 userRouter.get("/orderPlaced", userMiddleware.verifyUser, userController.getOrderPlaced);
 userRouter.get("/paymentStatus", userMiddleware.verifyUser, userController.paymentStatus);
+userRouter.post("/returnOrder",userMiddleware.verifyUser, userController.productReturn);
+userRouter.post("/cancelOrder",userMiddleware.verifyUser, userController.productCancel);
 
 
 

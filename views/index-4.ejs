@@ -1776,10 +1776,10 @@ h2 {
                   Sort by
                 </h5>
                 <ul class="categories">
-                  <li><a href="shop-grid-right.html">Popularity</a></li>
-                  <li><a href="shop-grid-right.html">Average rating</a></li>
-                  <li><a href="shop-grid-right.html">Price: Low to High</a></li>
-                  <li><a href="shop-grid-right.html">Price: High to Low</a></li>
+                  <!-- <li><a href="shop-grid-right.html">Popularity</a></li>
+                  <li><a href="shop-grid-right.html">Average rating</a></li> -->
+                  <li><a href="/sort-LowToHigh">Price: Low to High</a></li>
+                  <li><a href="/sort-HighToLow">Price: High to Low</a></li>
                 </ul>
               </div>
               <div class="widget-category mb-30">
@@ -1787,12 +1787,14 @@ h2 {
                   Price Range
                 </h5>
                 <ul class="categories">
-                  <li><a href="shop-grid-right.html">$0-$200</a></li>
-                  <li><a href="shop-grid-right.html">$200-$400</a></li>
-                  <li><a href="shop-grid-right.html">$400-$600</a></li>
-                  <li><a href="shop-grid-right.html">$600-$800</a></li>
-                  <li><a href="shop-grid-right.html">800$+</a></li>
+                  <li><a href="/sort-priceRange/0-15000">₹0 - ₹15000</a></li>
+                  <li><a href="/sort-priceRange/15000-30000">₹15000 - ₹30000</a></li>
+                  <li><a href="/sort-priceRange/30000-45000">₹30000 - ₹45000</a></li>
+                  <li><a href="/sort-priceRange/45000-60000">₹45000 - ₹60000</a></li>
+                  <li><a href="/sort-priceRange/60000-100000">₹60000 - ₹100000</a></li>
+                  <li><a href="/sort-priceRange/100000-plus">₹100000+</a></li>
                 </ul>
+                
               </div>
               <div
                 class="banner-img wow fadeIn mb-45mb-lg-0 animated d-lg-block d-none"
@@ -1940,14 +1942,14 @@ h2 {
                           </div>
                           <div class="product-action-1 show">
                             <a
-                            aria-label="Add To Cart"
-                            class="action-btn hover-up addToCartButton"
-                            data-product-id="<%= product._id %>"
-                            href="javascript:void(0);"
-                            onclick="openSizeModal()"
-                          >
-                            <i class="fi-rs-shopping-bag-add"></i>
-                          </a>
+                              aria-label="Add To Cart"
+                              class="action-btn hover-up addToCartButton"
+                              data-product-id="<%= product._id %>"
+                              href="javascript:void(0);"
+                              onclick="openSizeModal('<%= product._id %>')"
+                            >
+                              <i class="fi-rs-shopping-bag-add"></i>
+                            </a>
                           </div>
                         </div>
                       </div>
@@ -1979,121 +1981,87 @@ h2 {
                 </div>
 
                 <div id="sizeModal" class="modal">
-                  <div class="modal-content">
-                    <span class="close" onclick="closeSizeModal()"
-                      >&times;</span>
-                    <h2>Available Sizes</h2>
-                    <ul>
-                      <li>Small</li>
-                      <li>Medium</li>
-                      <li>Large</li>
-                    </ul>
-                  </div>
-                </div>
-<script>
-function openSizeModal() {
-  var modal = document.getElementById('sizeModal');
-  modal.style.display = 'block';
-}
+    <div class="modal-content">
+      <span class="close" onclick="closeSizeModal()">&times;</span>
+      <h2>Available Sizes</h2>
+      <form id="sizeForm" class="radio-group" onsubmit="addToCartWithSize(event)">
+        <label>
+          <input type="radio" name="size" value="small">
+          Small
+        </label>
+        <label>
+          <input type="radio" name="size" value="medium">
+          Medium
+        </label>
+        <label>
+          <input type="radio" name="size" value="large">
+          Large
+        </label>
+        <br><br>
+        <div>
+          <button type="submit" class="addToCartButton">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+    function openSizeModal(productId) {
+      var modal = document.getElementById('sizeModal');
+      modal.style.display = 'block';
+      // Set the current product ID in the form
+      document.getElementById('sizeForm').setAttribute('data-product-id', productId);
+    }
 
-function closeSizeModal() {
-  var modal = document.getElementById('sizeModal');
-  modal.style.display = 'none';
-}
-</script>
-                <script>
-                  document.addEventListener("DOMContentLoaded", function () {
-                    const addToCartButtons =
-                      document.querySelectorAll(".addToCartButton");
-                    const addToWishlistButtons=
-                      document.querySelectorAll(".addToWishlist");
+    function closeSizeModal() {
+      var modal = document.getElementById('sizeModal');
+      modal.style.display = 'none';
+    }
 
+    function addToCartWithSize(event) {
+      event.preventDefault();
+      const productId = document.getElementById('sizeForm').getAttribute('data-product-id');
+      const selectedSize = getSelectedSize();
 
-                    addToCartButtons.forEach((button) => {
-                      button.addEventListener("click", function (event) {
-                        event.preventDefault();
+      if (selectedSize) {
+        fetch(`/addToCart?selectedSize=${selectedSize}&productId=${productId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ productId: productId }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log('Added to cart:', data);
+            Swal.fire({
+              position: 'top-center',
+              icon: 'success',
+              title: 'Product added to cart!',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            closeSizeModal();
+          })
+          .catch((error) => {
+            window.location.href = '/getLogin';
+          });
+      } else {
+        alert('Please select a size.');
+      }
+    }
 
-                        const productId =
-                          button.getAttribute("data-product-id");
-
-                        fetch("/addToCart", {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify({ productId: productId }),
-                        })
-                          .then((response) => {
-                            if (!response.ok) {
-                              throw new Error(
-                                `HTTP error! Status: ${response.status}`
-                              );
-                            }
-                            return response.json();
-                          })
-                          .then((data) => {
-                            // Handle the response data as needed
-                            console.log("Added to cart:", data);
-                            Swal.fire({
-                              position: "top-center",
-                              icon: "success",
-                              title: "Product added to cart!",
-                              showConfirmButton: false,
-                              timer: 1500,
-                            });
-                          })
-                          .catch((error) => {
-                            window.location.href = "/getLogin";
-                            // console.error("Error adding to cart:", error);
-                          });
-                      });
-                    });
-
-                    addToWishlistButtons.forEach((button) => {
-                      button.addEventListener("click", function (event) {
-                        event.preventDefault();
-
-                        const productId =
-                          button.getAttribute("data-product-id");
-
-                        fetch("/addToWishlist", {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify({ productId: productId }),
-                        })
-                          .then((response) => {
-                            if (!response.ok) {
-                              throw new Error(
-                                `HTTP error! Status: ${response.status}`
-                              );
-                            }
-                            return response.json();
-                          })
-                          .then((data) => {
-                            // Handle the response data as needed
-                            console.log("Added to wishlist:", data);
-                            Swal.fire({
-                              position: "top-center",
-                              icon: "success",
-                              title: "Product added to wishlist!",
-                              showConfirmButton: false,
-                              timer: 1500,
-                            });
-                          })
-                          .catch((error) => {
-                            window.location.href = "/getLogin";
-                            // console.error("Error adding to cart:", error);
-                          });
-                      });
-                    });
-
-
-
-                  });
-                </script>
-                <!--En tab one (Featured)-->
+    function getSelectedSize() {
+      const sizeRadios = document.querySelectorAll('#sizeForm input[type="radio"]:checked');
+      return sizeRadios.length > 0 ? sizeRadios[0].value : null;
+    }
+  </script>    
+  
+             
                 <div
                   class="tab-pane fade"
                   id="tab-two"

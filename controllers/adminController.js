@@ -498,12 +498,11 @@ module.exports.saveCoupon= async (req, res)=>{
       discountValue: req.body.discountValue,
       minOrderAmount: req.body.minOrderAmount,
       expirationDate: req.body.expirationDate,
-      isActive: req.body.isActive,
     });
     // Save the new coupon document
     await newCoupon.save();
     // Return the new coupon document
-    return res.json(newCoupon);
+    return res.status(200).json(newCoupon);
   }
   catch(error){
     res.status(500).json({message:"An error happened while saving the coupon details to the database!:"})

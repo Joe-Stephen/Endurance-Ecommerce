@@ -224,7 +224,7 @@ couponForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
   const formData = {
-    code: document.getElementById('code').value.toUpperCase(), // Convert to uppercase
+    code: document.getElementById('code').value.toUpperCase(),
     discountType: document.getElementById('discountType').value,
     discountValue: document.getElementById('discountValue').value,
     minOrderAmount: document.getElementById('minOrderAmount').value,
@@ -253,7 +253,17 @@ couponForm.addEventListener('submit', async (event) => {
   // Handle the response as needed
   if (response.ok) {
     // Success!
-    window.location.href = "/admin/couponManagement";
+    Swal.fire({
+                    position: "top-center",
+                    icon: "success",
+                    title: "Coupon edited successfully",
+                    showConfirmButton: false,
+                    timer: 1500,
+                  });
+
+                  setTimeout(() => {
+                    window.location.href = "/admin/couponManagement";
+                  }, 1500);
   } else {
     // Error handling
     alert("An error occurred while saving the coupon. Please try again.");
@@ -338,6 +348,8 @@ couponForm.addEventListener('submit', async (event) => {
             </div>
         </footer>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script src="/adminAssets/assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/adminAssets/assets/js/vendors/bootstrap.bundle.min.js"></script>
     <script src="/adminAssets/assets/js/vendors/select2.min.js"></script>
