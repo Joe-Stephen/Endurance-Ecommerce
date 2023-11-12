@@ -29,7 +29,9 @@ userRouter.get("/filterByEndurance", userController.filterByEndurance);
 //sorting routes
 userRouter.get("/sort-LowToHigh", userController.sortLowToHigh);
 userRouter.get("/sort-HighToLow", userController.sortHighToLow);
-userRouter.get("/sort-priceRange/:priceRange", userController.sortPriceRange);
+userRouter.get('/sort-priceRange/:priceRange', userController.sortPriceRange);
+userRouter.get('/sortByBrand', userController.sortByBrand);
+
 
 
 
