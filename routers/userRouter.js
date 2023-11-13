@@ -17,7 +17,7 @@ userRouter.post("/postLogin", userController.postLogin);
 
 
 
-userRouter.get("/page-signup", userController.getUserSignup);
+userRouter.get("/page-signup", userController.getUserSignup); 
 userRouter.get("/logout", userController.logout);
 userRouter.get("/product/:productId", userController.findProduct);
 

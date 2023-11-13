@@ -59,8 +59,22 @@ module.exports.getUsers = async (req, res) => {
 //getting the product list
 module.exports.getProductsList = async (req, res) => {
   try {
-    const products = await product.find({});
-    res.render("admin-products-list", { products });
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if pageNo is not provided
+    const no_of_docs_each_page = 10; 
+    
+    const totalProducts = await product.countDocuments({
+      status: { $ne: "hide" },
+    });
+    const totalPages = Math.ceil(totalProducts / no_of_docs_each_page);
+
+    const skip = (page - 1) * no_of_docs_each_page;
+
+    const products = await product.find()
+      .skip(skip)
+      .limit(no_of_docs_each_page);
+
+    // const products = await product.find({});
+    res.render("admin-products-list", { products, page, totalPages });
   } catch (error) {
     console.log(error);
     res.status(500).send("Error retrieving user data");

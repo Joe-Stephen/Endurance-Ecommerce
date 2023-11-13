@@ -56,7 +56,7 @@
     <div class="screen-overlay"></div>
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
-            <a href="index.html" class="brand-wrap">
+            <a href="/admin/admin-dashboard" class="brand-wrap">
                 <img src="/adminAssets/assets/imgs/theme/Endurance3.webp" class="logo" alt="Evara Dashboard">
             </a>
             <div>
@@ -66,7 +66,7 @@
         <nav>
             <ul class="menu-aside">
                 <li class="menu-item active">
-                    <a class="menu-link" href="index.html"> <i class="icon material-icons md-home"></i>
+                    <a class="menu-link" href="/admin/admin-dashboard"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
@@ -82,11 +82,11 @@
                     </div> -->
                 </li>
                 <li class="">
-                    <a class="menu-link" href="page-orders-1.html"> <i class="icon material-icons md-shopping_cart"></i>
+                    <a class="menu-link" href="/admin/orderList"> <i class="icon material-icons md-shopping_cart"></i>
                         <span class="text">Orders</span>
                     </a>
                     <div class="submenu">
-                        <a href="page-orders-1.html">Order list 1</a>
+                        <a href="/admin/orderList">Order list 1</a>
                         <!-- <a href="page-orders-detail.html">Order detail</a> -->
                     </div>
                 </li>
@@ -228,7 +228,7 @@
                 <div class="card mb-4">
                     <header class="card-header">
                         <div class="table-responsive">
-                            <table class="table">
+                            <table id="order-table" class="table">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -289,6 +289,30 @@
                         </div>
                     </header> <!-- card-header end// -->
                 </div>
+                    <!-- pagination  -->
+
+                    <div class="page-buttons">
+                        <p>Pages</p>
+                        <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
+                        page) { %>
+                        <button type="button" class="page-btn active">
+                          <%= i %>
+                        </button>
+                        <% } else { %>
+                        <a href="/admin/admin-products-list?page=<%= i %>"
+                          ><button type="button" class="page-btn">
+                            <%= i %>
+                          </button></a
+                        >
+                        <% } %> <% } %>
+                      </div>
+                      <br />
+  
+                      <!-- pagination ends here -->
+
+                    
+
+    
                  
  <script>
     function deleteProduct(productId) {
@@ -367,6 +391,7 @@
         });
     }
 </script>
+
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">
@@ -383,6 +408,8 @@
             </div>
         </footer>
     </main>
+
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="/adminAssets/assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/adminAssets/assets/js/vendors/bootstrap.bundle.min.js"></script>
@@ -396,5 +423,5 @@
 </body>
 
 
-<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:57 GMT -->
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend//admin/admin-dashboard by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:57 GMT -->
 </html>
