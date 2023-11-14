@@ -19,6 +19,10 @@ const couponSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
+  maxRedeemableAmt:{
+    type: Number,
+    default:0,
+  },
   expirationDate: {
     type: Date,
     required: true,

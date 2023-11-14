@@ -189,14 +189,16 @@
                         <% if(!couponList){ %>
                             <h5>Currently there are no coupons to show...</h5>
                             <% }else{ %>
-                        <table class="table table-hover">
-                            <thead>
+                                
+                                <table class="table table-hover">
+                                    <thead>
                                 <tr>
                                     <th scope="col">Sl.no</th>
                                     <th scope="col">Code</th>
                                     <th scope="col">Discount Type</th>
                                     <th scope="col">Discount Value</th>
                                     <th scope="col">Minimum Order Amount</th>
+                                    <th scope="col">Maximum Redeemable Amount</th>
                                     <th scope="col">Expiration Date</th>
                                     <th scope="col">Is Active</th>
                                     <th scope="col">Actions</th>
@@ -210,17 +212,19 @@
                                             <td><b><%=coupon.discountType%></b></td>
                                         <td><%=coupon.discountValue%></td>
                                         <td>₹ <%=coupon.minOrderAmount%></td>
+                                        <td>₹ <%= coupon.discountType==="fixedAmount"?coupon.discountValue:coupon.maxRedeemableAmt%></td>
                                         <td><%=coupon.expirationDate.toLocaleDateString()%></td>
                                         <td id="status-<%= coupon._id %>"><%=coupon.isActive%></td>
                                         
                                             <td class="text-end">
-                                                <button class="btn btn-sm<%= coupon.isActive === 'Active' ? ' red-button' : (coupon.isActive === 'Inactive' ? ' green-button' : '') %>" onclick="toggleCouponStatus('<%= coupon._id %>', '<%= coupon.isActive %>')">
+                                                <button class="mb-5 btn btn-sm<%= coupon.isActive === 'Active' ? ' red-button' : (coupon.isActive === 'Inactive' ? ' green-button' : '') %>" onclick="toggleCouponStatus('<%= coupon._id %>', '<%= coupon.isActive %>')">
                                                     <% if (coupon.isActive === 'Inactive') { %>
                                                         Unblock
                                                     <% } else { %>
                                                         Block
                                                     <% } %>
                                                 </button>
+                                                <br>
                                                 <a href="/admin/getEditCoupon/?couponId=<%=coupon._id%>" class="btn btn-md rounded font-sm">Edit</a>
                                             </td>
                                         

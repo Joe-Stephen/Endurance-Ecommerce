@@ -253,7 +253,7 @@
                         <div class="header-action-right">
                             <div class="header-action-2">
                                 <div class="header-action-icon-2">
-                                    <a href="shop-wishlist.html">
+                                    <a href="/wishlist">
                                         <img class="svgInject" alt="Evara"
                                             src="/userAssets/assets/imgs/theme/icons/icon-heart.svg">
                                         <span class="pro-count blue">4</span>
@@ -1058,8 +1058,13 @@
                                             cart</button>
                                         </form>
                                     <a href="/verify-user-authentication">click me</a>
-                                    <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                        href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                    <a
+                                    aria-label="Add To Wishlist"
+                                    class="action-btn hover-up addToWishlist"
+                                    data-product-id="<%= products._id %>"
+                                    href="javascript:void(0);"
+                                    ><i class="fi-rs-heart"></i
+                                  ></a>
                                     <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i
                                             class="fi-rs-shuffle"></i></a>
                                 </div>
@@ -1111,6 +1116,49 @@
 
                 </script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const addToWishlistButtons = document.querySelectorAll(".addToWishlist");
+  
+    addToWishlistButtons.forEach((button) => {
+      button.addEventListener("click", function (event) {
+        event.preventDefault();
+  
+        const productId = button.dataset.productId;
+  
+        fetch("/addToWishlist", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ productId: productId }),
+        })
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+          })
+          .then((data) => {
+            console.log("Added to wishlist:", data);
+            Swal.fire({
+              position: "top-center",
+              icon: "success",
+              title: "Product added to wishlist!",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          })
+          .catch((error) => {
+            // window.location.href = "/getLogin";
+          });
+      });
+    });
+  });
+      
+    </script>    
+  
 
                 <div class="row">
                     <div class="col-lg-10 m-auto entry-main-content">

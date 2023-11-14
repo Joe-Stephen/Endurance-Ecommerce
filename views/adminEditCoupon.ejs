@@ -211,14 +211,61 @@
                             <input value="<%= couponDoc.discountValue %>" type="number" id="discountValue" name="discountValue" placeholder="Enter the discount value" required>
                             <label for="minOrderAmount">Minimum Order Amount:</label>
                             <input value="<%= couponDoc.minOrderAmount %>" type="number" id="minOrderAmount" name="minOrderAmount" placeholder="Enter the minimum order amount (optional)" min="0">
+                            <div id="redeemInput" style="display: none;" >
+                                <label for="maxRedeemableAmount">Maximum Redeemable Amount:</label>
+                                <input 
+                                disabled
+                                value="<%= couponDoc.discountType==="fixedAmount"?couponDoc.discountValue:couponDoc.maxRedeemableAmt%>"
+                                  type="number"
+                                  id="maxRedeemableAmount"
+                                  name="maxRedeemableAmount"
+                                  placeholder="Enter the maximum redeemable amount"
+                                  min="1"
+                                />
+                              </div>
                             <label for="expirationDate">Expiration Date:</label>
-                            <input value="<%= couponDoc.expirationDate.toISOString().split('T')[0] %>" type="date" id="expirationDate" name="expirationDate" placeholder="Select the expiration date" required>
+                            <input  value="<%= couponDoc.expirationDate.toISOString().split('T')[0] %>" type="date" id="expirationDate" name="expirationDate" placeholder="Select the expiration date" required>
                             <button type="submit">Save changes</button>
                         </form>
                          </div>
                     </div>
                     <script>
-  const couponForm = document.querySelector('#coupon-form');
+const couponForm = document.querySelector('#coupon-form');
+const discountTypeSelect = document.getElementById("discountType");
+const maxRedeemableAmountInput = document.getElementById("maxRedeemableAmount");
+const redeemInput = document.getElementById("redeemInput");
+
+// Event listener for discountType change
+discountTypeSelect.addEventListener("change", function () {
+  const selectedDiscountType = discountTypeSelect.value;
+  if (selectedDiscountType === "percentage") {
+    redeemInput.style.display = "block";
+    maxRedeemableAmountInput.removeAttribute("disabled");
+    maxRedeemableAmountInput.setAttribute("required", "required");
+  } else {
+    redeemInput.style.display = "none";
+    maxRedeemableAmountInput.setAttribute("disabled", "disabled");
+    maxRedeemableAmountInput.removeAttribute("required");
+  }
+});
+
+// Ensure correct initial state on page load
+updateMaxRedeemableAmountInput();
+
+function updateMaxRedeemableAmountInput() {
+  const selectedDiscountType = discountTypeSelect.value;
+  if (selectedDiscountType === "percentage") {
+    redeemInput.style.display = "block";
+    maxRedeemableAmountInput.removeAttribute("disabled");
+    maxRedeemableAmountInput.setAttribute("required", "required");
+  } else {
+    redeemInput.style.display = "none";
+    maxRedeemableAmountInput.setAttribute("disabled", "disabled");
+    maxRedeemableAmountInput.removeAttribute("required");
+  }
+}
+
+
 
 couponForm.addEventListener('submit', async (event) => {
   event.preventDefault();

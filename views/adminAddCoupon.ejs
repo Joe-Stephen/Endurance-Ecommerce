@@ -264,8 +264,8 @@
 
                 <label for="discountType">Discount Type:</label>
                 <select name="discountType" id="discountType">
-                  <option value="percentage">Percentage Discount</option>
                   <option value="fixedAmount">Fixed Amount Discount</option>
+                  <option value="percentage">Percentage Discount</option>
                 </select>
 
                 <label for="discountValue">Discount Value:</label>
@@ -285,6 +285,16 @@
                   placeholder="Enter the minimum order amount (optional)"
                   min="0"
                 />
+                <div id="redeemInput" style="display: none">
+                  <label for="minOrderAmount">Maximum Redeemable Amount:</label>
+                  <input
+                    type="number"
+                    id="maxRedeemableAmount"
+                    name="maxRedeemableAmount"
+                    placeholder="Enter the maximum redeemable amount"
+                    min="1"
+                  />
+                </div>
 
                 <label for="expirationDate">Expiration Date:</label>
                 <input
@@ -302,6 +312,24 @@
           <script>
             document.addEventListener("DOMContentLoaded", function () {
               const couponForm = document.querySelector("#coupon-form");
+              const discountTypeSelect =
+                document.getElementById("discountType");
+              const maxRedeemableAmountInput = document.getElementById(
+                "maxRedeemableAmount"
+              );
+              const redeemInput = document.getElementById("redeemInput");
+
+              // Event listener for discountType change
+              discountTypeSelect.addEventListener("change", function () {
+                const selectedDiscountType = discountTypeSelect.value;
+                if (selectedDiscountType === "percentage") {
+                  redeemInput.style.display = "block";
+                  maxRedeemableAmountInput.setAttribute("required", "required");
+                } else {
+                  redeemInput.style.display = "none";
+                  maxRedeemableAmountInput.removeAttribute("required");
+                }
+              });
 
               couponForm.addEventListener("submit", async (event) => {
                 event.preventDefault();
@@ -312,6 +340,9 @@
                   discountValue: document.getElementById("discountValue").value,
                   minOrderAmount:
                     document.getElementById("minOrderAmount").value,
+                  maxRedeemableAmount: document.getElementById(
+                    "maxRedeemableAmount"
+                  ).value,
                   expirationDate:
                     document.getElementById("expirationDate").value,
                 };

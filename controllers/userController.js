@@ -1523,34 +1523,48 @@ const getWishlist= async (req, res)=>{
   }
   };
 
-  //add to wishlist
-const addToWishlist= async (req, res)=>{
-  try{
+
+//add to wishlist
+const addToWishlist = async (req, res) => {
+  try {
     const loggedIn = req.user ? true : false;
-    const userData= await user.findOne({email:req.user});
-    let userWishlist = await wishlist.findOne({ userId: userData._id }).populate({
-      path: "products.productId",
-      model: "product",
-    });
-    if(!userWishlist){
-      userWishlist = new wishlist({
-        userId: userData._id,
-        products: [],
-      });     
-    }else{
-      const productId= req.body.productId;
-      console.log("product ID  "+productId);
-      userWishlist.products.push({
-        productId: new mongoose.Types.ObjectId(productId),
-      }); 
-    }
-    await userWishlist.save();
-    res.json({ message: "Product added to the wishlist." });
-  }
-  catch(error){
-    console.log("An error happened while adding the product to wishlist!:"+error);
-  }
-};
+    const userData = await user.findOne({ email: req.user });
+    const productId = req.body.productId;
+    let userWishlist = await wishlist
+      .findOne({ userId: userData._id });
+
+      if (userWishlist) {
+        const existingProduct = userWishlist.products.find(
+          (product) => product.productId.toString() === productId
+        );
+  
+        if (existingProduct) {
+          return res.status(500).json({ message: "Product already in the Wishlist" });
+        }
+  
+        userWishlist.products.push({
+          productId: new mongoose.Types.ObjectId(productId),
+        });
+  
+        await userWishlist.save();
+      } else {
+        const newWishlist = new wishlist({
+          userId: userData._id,
+          products: [{ productId }],
+        });
+  
+        await newWishlist.save();
+      }
+  
+      res.json({ message: "Product added to the Wishlist" });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ error: "Failed to add the product to the Wishlist" });
+    }
+  };
+
 
 //move to cart from wishlist
 const moveToCart= async (req, res)=>{

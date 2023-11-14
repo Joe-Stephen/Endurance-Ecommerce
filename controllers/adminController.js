@@ -511,6 +511,7 @@ module.exports.saveCoupon= async (req, res)=>{
       discountType: req.body.discountType,
       discountValue: req.body.discountValue,
       minOrderAmount: req.body.minOrderAmount,
+      maxRedeemableAmt: req.body.maxRedeemableAmount,
       expirationDate: req.body.expirationDate,
     });
     // Save the new coupon document
