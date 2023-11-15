@@ -7,14 +7,15 @@ const user = require("../model/userModel");
 const multer = require("multer");
 
 //error page loading
-module.exports.getErrorPage = (req, res)=>{
-  try{
+module.exports.getErrorPage = (req, res) => {
+  try {
     res.render("error-page");
+  } catch (err) {
+    console.error("An error happened while loading the error page! :" + err);
+    res.status(500).render("error-page", { message: "An error happened while loading the error page!", errorMessage: err.message });
   }
-  catch(error){
-    console.log("An error happened while loading the error page! :"+error);
-  }
-}
+};
+
 
 module.exports.getAdminLogin = (req, res) => {
   res.render("admin-login-page");
@@ -52,7 +53,8 @@ module.exports.getUsers = async (req, res) => {
     res.render("admin-user-management", { users });
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error retrieving user data");
+    res.status(500).render("error-page", { message: "Error retrieving user data!", errorMessage: err.message });
+
   }
 };
 
@@ -77,7 +79,7 @@ module.exports.getProductsList = async (req, res) => {
     res.render("admin-products-list", { products, page, totalPages });
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error retrieving user data");
+    res.status(500).render("error-page", { message: "Error retrieving user data!", errorMessage: err.message });
   }
 };
 
@@ -87,8 +89,10 @@ module.exports.getAddProduct = async (req, res) => {
     const categories= await category.find();
     res.render("admin-add-product", {categories});
   }
-  catch(error){
-    console.log("An error happened while loading the add product page!:"+error)
+  catch(err){
+    console.log("An error happened while loading the add product page!:"+err)
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
+
   }
 };
 
@@ -165,8 +169,9 @@ console.log("Haiiii   "+newProduct)
   newProduct.save();
       res.redirect("/admin/admin-products-list"); // Redirect to the product list page or perform other actions
     }
-    catch(error){
-      console.log("error  "+error);
+    catch(err){
+      console.log("error  "+err);
+      res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
     }
 };
 
@@ -183,7 +188,7 @@ module.exports.postUserStatus = async (req, res) => {
     res.status(200).json({ status: updatedUser.status });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error updating user status.");
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -199,7 +204,7 @@ module.exports.postUserStatus = async (req, res) => {
     res.status(200).json({ status: UpdatedCoupon.isActive });    }
     catch (error) {
       console.error(error);
-      res.status(500).send("Error updating coupon status.");
+      res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
     }
   };
 
@@ -211,9 +216,9 @@ module.exports.postProductStatus =async(req,res)=>{
      status:newStatus 
     });
     res.status(200).json({status:updateProduct.status});
-  }catch(error){
-    console.error(error);
-    res.status(500).send("Error updating Product status")
+  }catch(err){
+    console.error(err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 //geting edit product
@@ -237,7 +242,7 @@ module.exports.getEditProduct = async (req, res) => {
     res.render("admin-prdouct-edit-page", { editProduct, categories});
   } catch (error) {
     console.error(error);
-    res.send("Error fetching product details");
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -325,7 +330,7 @@ module.exports.deleteProduct = async (req, res) => {
     res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
     console.error("An error occurred while deleting the product:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -340,7 +345,7 @@ module.exports.getCategories = async (req, res) => {
   } catch (error) {
     // Handle the error
     console.error(error);
-    res.render('admin-dashboard'); // Render an error page
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -367,8 +372,8 @@ module.exports.postAddCategory = async (req, res) => {
       console.error("An error occurred while adding the category: " + error);
 
       // Redirect to an error page or show an error message
-      res.status(500).render('error-page'); // Change this URL to your error page
-  }
+      res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
+    }
 };
 
 
@@ -378,8 +383,9 @@ module.exports.editCategory= async (req, res)=>{
   const categoryDetails= await category.findById(req.params.categoryId);
   res.render("admin-category-edit", {categoryDetails});
   }
-  catch(error){
-    console.log("An error happened while getting edit category! :"+error);
+  catch(err){
+    console.log("An error happened while getting edit category! :"+err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 }
 
@@ -399,8 +405,8 @@ module.exports.postEditCategory = async (req, res) => {
       res.redirect('/admin/admin-category-management');
   } catch (error) {
       console.log('An error has occurred while editing the category: ' + error);
-      res.status(500).send('An error occurred');
-  }
+      res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
+    }
 };
 
 // Deleting category
@@ -410,7 +416,7 @@ module.exports.deleteCategory = async (req, res) => {
     res.status(200).json({ message: "Category deleted successfully" });
   } catch (error) {
     console.log("An error happened while deleting the category:" + error);
-    res.status(500).json({ message: "An error occurred while deleting the category" });
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 }
 
@@ -421,9 +427,9 @@ module.exports.getCouponManagement= async (req, res)=>{
     const couponList= await coupon.find();
     res.render("admin-coupon-management", {couponList});
   }
-  catch(error){
-    console.log("An error happened while loading the coupon page! :"+error);
-    res.redirect("/errorPage")
+  catch(err){
+    console.log("An error happened while loading the coupon page! :"+err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -432,9 +438,9 @@ module.exports.getAddCoupon = async (req, res)=>{
   try{
     res.render("adminAddCoupon")
   }
-  catch(error){
-    console.log("An error happened while loading the add-coupon page! :"+error);
-    res.redirect("/errorPage")
+  catch(err){
+    console.log("An error happened while loading the add-coupon page! :"+err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -444,9 +450,9 @@ module.exports.getEditCoupon= async (req, res)=>{
     const couponDoc= await coupon.findById(req.query.couponId)
     res.render("adminEditCoupon", {couponDoc});
   }
-  catch(error){
-    console.log("An error occured while loading the edit coupon page! : "+error);
-    res.redirect("/admin/couponManagement");
+  catch(err){
+    console.log("An error occured while loading the edit coupon page! : "+err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -491,7 +497,7 @@ module.exports.saveEditedCoupon = async (req, res) => {
     res.json(updatedCoupon);
   } catch (error) {
     console.error("An error occurred while saving the edited coupons: " + error);
-    res.status(500).json({ message: "An error happened while saving the coupon details to the database" });
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -519,40 +525,10 @@ module.exports.saveCoupon= async (req, res)=>{
     // Return the new coupon document
     return res.status(200).json(newCoupon);
   }
-  catch(error){
-    res.status(500).json({message:"An error happened while saving the coupon details to the database!:"})
+  catch(err){
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //getting order list
 module.exports.getOrderList = async (req, res) => {
@@ -576,6 +552,7 @@ module.exports.getOrderList = async (req, res) => {
     res.render("admin-order-management", { orderList, userData});
   } catch (error) {
     console.log("An error happened while loading order list!:" + error);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 //getting order details and edit
@@ -589,8 +566,9 @@ module.exports.getOrderDetails= async (req, res)=>{
     const userData=await user.findById(userId);
     res.render("admin-order-edit", {orderDetails, userData});
   }
-  catch(error){
-    console.log("An error happened while accessing order details! :"+error);
+  catch(err){
+    console.log("An error happened while accessing order details! :"+err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 }
 
@@ -600,7 +578,8 @@ module.exports.editOrderStatus= async(req, res) =>{
     await order.updateOne({_id:req.body.orderId}, {$set:{orderStatus:req.body.orderStatus}});
     res.redirect("/admin/orderList");
   }
-  catch(error){
-    console.log("An error happened while editing the order status! :");
+  catch(err){
+    console.log("An error happened while editing the order status! :"+err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 }

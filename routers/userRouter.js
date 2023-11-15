@@ -181,7 +181,6 @@ userRouter.post("/changePassword", userController.changePassword);
 
 // test routes
 userRouter.route("/test").get(userController.testmid);
-
 // adminRouter.use(express.static("public/adminAssets/assets"));
 // const multer = require("multer");
 // const path = require("path");

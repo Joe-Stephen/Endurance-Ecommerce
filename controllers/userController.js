@@ -44,6 +44,7 @@ const getHomePage = async (req, res) => {
     res.render("index-4", { products, loggedIn, page, totalPages }); // Pass the 'totalPages' variable to the template
   } catch (error) {
     console.error(error);
+    res.render("error-page")
     res.send("Error fetching products");
   }
 };
