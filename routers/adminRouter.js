@@ -1,19 +1,19 @@
 const express = require("express");
 const adminRouter = express.Router();
-// const adminRouter = express.Router();
 const adminController = require("../controllers/adminController");
-const productManagement = require("../controllers/productManagement");
+const productManagement = require("../controllers/adminProductManagement");
+const categoryManagement = require("../controllers/adminCategoryManagement");
+const couponManagement = require("../controllers/adminCouponManagement");
+const orderManagement = require("../controllers/adminOrderManagement");
+
 const multer = require("multer");
 const multerMiddleware = require("../middlewares/admin/multerMiddleware");
 
 const path = require("path");
 // const cookieParser = require('cookie-parser')
 
-
 adminRouter.use(express.static("public/adminAssets/assets"));
-
-adminRouter.use("/uploads",express.static('uploads'));
-
+adminRouter.use("/uploads", express.static("uploads"));
 
 //error page
 adminRouter.get("/errorPage", adminController.getErrorPage);
@@ -29,31 +29,30 @@ adminRouter.post("/update-user-status/:userId", adminController.postUserStatus);
 //product management
 adminRouter.get("/admin-products-list", productManagement.getProductsList);
 adminRouter.get("/admin-add-product", productManagement.getAddProduct);
-adminRouter.post("/add-product",multerMiddleware.array("photo"), productManagement.postAddProduct);
-adminRouter.post("/product/:productId",productManagement.postProductStatus);
-adminRouter.get("/edit-product",productManagement.getEditProduct);
-adminRouter.post("/post-edit-product/:productId",multerMiddleware.array("photo"),productManagement.postEditProduct);
-adminRouter.delete("/delete-product/:productId",productManagement.deleteProduct);
+adminRouter.post("/add-product", multerMiddleware.array("photo"), productManagement.postAddProduct);
+adminRouter.post("/product/:productId", productManagement.postProductStatus);
+adminRouter.get("/edit-product", productManagement.getEditProduct);
+adminRouter.post("/post-edit-product/:productId", multerMiddleware.array("photo"), productManagement.postEditProduct);
+adminRouter.delete("/delete-product/:productId", productManagement.deleteProduct);
 
 //category management
-adminRouter.get("/admin-category-management",adminController.getCategories);
-adminRouter.post("/add-category", adminController.postAddCategory);
-adminRouter.get("/edit-category/:categoryId", adminController.editCategory);
-adminRouter.post("/edit-category",multerMiddleware.single("icon"), adminController.postEditCategory);
-adminRouter.delete("/delete-category/:categoryId", adminController.deleteCategory);
+adminRouter.get("/admin-category-management", categoryManagement.getCategories);
+adminRouter.post("/add-category", categoryManagement.postAddCategory);
+adminRouter.get("/edit-category/:categoryId", categoryManagement.editCategory);
+adminRouter.post("/edit-category", multerMiddleware.single("icon"), categoryManagement.postEditCategory);
+adminRouter.delete("/delete-category/:categoryId", categoryManagement.deleteCategory);
 
-//coupon management 
-adminRouter.get("/couponManagement", adminController.getCouponManagement);
-adminRouter.get("/adminAddCoupon", adminController.getAddCoupon);
-adminRouter.get("/getEditCoupon", adminController.getEditCoupon);
-adminRouter.post("/saveEditedCoupon", adminController.saveEditedCoupon);
-adminRouter.post("/saveCoupon", adminController.saveCoupon);
-adminRouter.post("/update-coupon-status/:couponId", adminController.toggleCouponStatus);
-
+//coupon management
+adminRouter.get("/couponManagement", couponManagement.getCouponManagement);
+adminRouter.get("/adminAddCoupon", couponManagement.getAddCoupon);
+adminRouter.get("/getEditCoupon", couponManagement.getEditCoupon);
+adminRouter.post("/saveEditedCoupon", couponManagement.saveEditedCoupon);
+adminRouter.post("/saveCoupon", couponManagement.saveCoupon);
+adminRouter.post("/update-coupon-status/:couponId", couponManagement.toggleCouponStatus);
 
 //order management
-adminRouter.get("/orderList", adminController.getOrderList);
-adminRouter.get("/editOrder/:orderId", adminController.getOrderDetails);
-adminRouter.post("/editOrderStatus", adminController.editOrderStatus);
+adminRouter.get("/orderList", orderManagement.getOrderList);
+adminRouter.get("/editOrder/:orderId", orderManagement.getOrderDetails);
+adminRouter.post("/editOrderStatus", orderManagement.editOrderStatus);
 
 module.exports = adminRouter;

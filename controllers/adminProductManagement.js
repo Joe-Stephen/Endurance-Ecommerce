@@ -28,12 +28,10 @@ const getProductsList = async (req, res) => {
     res.render("admin-products-list", { products, page, totalPages });
   } catch (error) {
     console.log(error);
-    res
-      .status(500)
-      .render("error-page", {
-        message: "Error retrieving user data!",
-        errorMessage: err.message,
-      });
+    res.status(500).render("error-page", {
+      message: "Error retrieving user data!",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -44,12 +42,10 @@ const getAddProduct = async (req, res) => {
     res.render("admin-add-product", { categories });
   } catch (err) {
     console.log("An error happened while loading the add product page!:" + err);
-    res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -121,12 +117,10 @@ const postAddProduct = async (req, res) => {
     res.redirect("/admin/admin-products-list"); // Redirect to the product list page or perform other actions
   } catch (err) {
     console.log("error  " + err);
-    res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -141,12 +135,10 @@ const postProductStatus = async (req, res) => {
     res.status(200).json({ status: updateProduct.status });
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -171,12 +163,10 @@ const getEditProduct = async (req, res) => {
     res.render("admin-prdouct-edit-page", { editProduct, categories });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -261,12 +251,10 @@ const deleteProduct = async (req, res) => {
     res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
     console.error("An error occurred while deleting the product:", error);
-    res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 

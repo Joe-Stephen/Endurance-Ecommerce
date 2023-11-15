@@ -2,6 +2,19 @@ const express = require("express");
 const adminRouter = express.Router();
 const userRouter = express.Router();
 const userController = require("../controllers/userController");
+const userFilterAndSort = require("../controllers/userFilterAndSort");
+const userAddress = require("../controllers/userAddress");
+const userOrder = require("../controllers/userOrder");
+const userCart = require("../controllers/userCart");
+const userWishlist = require("../controllers/userWishlist");
+const userPassword = require("../controllers/userPassword");
+
+
+
+
+
+
+
 const product = require("../model/productModel");
 const jwt = require("jsonwebtoken");
 const userMiddleware = require("../middlewares/user/userAuthentication");
@@ -17,15 +30,15 @@ userRouter.get("/logout", userController.logout);
 userRouter.get("/product/:productId", userController.findProduct);
 
 //filter by category
-userRouter.get("/filterByMTB", userController.filterByMTB);
-userRouter.get("/filterByElectric", userController.filterByElectric);
-userRouter.get("/filterByEndurance", userController.filterByEndurance);
+userRouter.get("/filterByMTB", userFilterAndSort.filterByMTB);
+userRouter.get("/filterByElectric", userFilterAndSort.filterByElectric);
+userRouter.get("/filterByEndurance", userFilterAndSort.filterByEndurance);
 
 //sorting routes
-userRouter.get("/sort-LowToHigh", userController.sortLowToHigh);
-userRouter.get("/sort-HighToLow", userController.sortHighToLow);
-userRouter.get("/sort-priceRange/:priceRange", userController.sortPriceRange);
-userRouter.get("/sortByBrand", userController.sortByBrand);
+userRouter.get("/sort-LowToHigh", userFilterAndSort.sortLowToHigh);
+userRouter.get("/sort-HighToLow", userFilterAndSort.sortHighToLow);
+userRouter.get("/sort-priceRange/:priceRange", userFilterAndSort.sortPriceRange);
+userRouter.get("/sortByBrand", userFilterAndSort.sortByBrand);
 
 //search product
 userRouter.get(
@@ -57,25 +70,27 @@ userRouter.post(
     userMiddleware.verifyUser,
     userController.editUserDetails
 );
+
+//address handlers
 userRouter.get(
     "/addAddress",
     userMiddleware.verifyUser,
-    userController.getAddAddress
+    userAddress.getAddAddress
 );
 userRouter.post(
     "/postAddress",
     userMiddleware.verifyUser,
-    userController.postAddAddress
+    userAddress.postAddAddress
 );
 userRouter.get(
     "/editAddress",
     userMiddleware.verifyUser,
-    userController.getEditAddress
+    userAddress.getEditAddress
 );
 userRouter.post(
     "/postEditAddress",
     userMiddleware.verifyUser,
-    userController.postEditAddress
+    userAddress.postEditAddress
 );
 
 //coupon
@@ -89,95 +104,95 @@ userRouter.post(
 userRouter.get(
     "/orderDetails/:orderId",
     userMiddleware.verifyUser,
-    userController.getOrderDetails
+    userOrder.getOrderDetails
 );
 userRouter.post(
     "/codOrder",
     userMiddleware.verifyUser,
-    userController.cartOrder
+    userOrder.cartOrder
 );
 userRouter.post(
     "/razorpayOrder",
     userMiddleware.verifyUser,
-    userController.razorpayOrder
+    userOrder.razorpayOrder
 );
 userRouter.post(
     "/walletOrder",
     userMiddleware.verifyUser,
-    userController.walletOrder
+    userOrder.walletOrder
 );
 userRouter.get(
     "/orderPlaced",
     userMiddleware.verifyUser,
-    userController.getOrderPlaced
+    userOrder.getOrderPlaced
 );
 userRouter.get(
     "/paymentStatus",
     userMiddleware.verifyUser,
-    userController.paymentStatus
+    userOrder.paymentStatus
 );
 userRouter.post(
     "/returnOrder",
     userMiddleware.verifyUser,
-    userController.productReturn
+    userOrder.productReturn
 );
 userRouter.post(
     "/cancelOrder",
     userMiddleware.verifyUser,
-    userController.productCancel
+    userOrder.productCancel
 );
 
 //cart
-userRouter.get("/cart", userMiddleware.verifyUser, userController.getCart);
+userRouter.get("/cart", userMiddleware.verifyUser, userCart.getCart);
 userRouter.post(
     "/addToCart",
     userMiddleware.verifyUser,
-    userController.addToCartController
+    userCart.addToCartController
 );
 userRouter.post(
     "/cartQtyChange",
     userMiddleware.verifyUser,
-    userController.postCartQty
+    userCart.postCartQty
 );
 userRouter.delete(
     "/removeProductFromCart/:productId",
     userMiddleware.verifyUser,
-    userController.removeProductFromCart
+    userCart.removeProductFromCart
 );
 userRouter.get(
     "/checkoutFromCart",
     userMiddleware.verifyUser,
-    userController.getCartCheckout
+    userCart.getCartCheckout
 );
 
 //wishlist
 userRouter.get(
     "/wishlist",
     userMiddleware.verifyUser,
-    userController.getWishlist
+    userWishlist.getWishlist
 );
 userRouter.post(
     "/addToWishlist",
     userMiddleware.verifyUser,
-    userController.addToWishlist
+    userWishlist.addToWishlist
 );
 userRouter.get(
     "/moveToCart",
     userMiddleware.verifyUser,
-    userController.moveToCart
+    userWishlist.moveToCart
 );
 userRouter.get(
     "/deleteFromWishlist",
     userMiddleware.verifyUser,
-    userController.deleteFromWishlist
+    userWishlist.deleteFromWishlist
 );
 
 //password change
-userRouter.get("/forgot_password", userController.getForgotPassword);
-userRouter.post("/sendOTPRoute", userController.getResetPasswordOtp);
-userRouter.post("/verifyOTPRoute", userController.verifyForgotPasswordOtp);
-userRouter.get("/resetPassword/:phoneNumber", userController.getResetPassword);
-userRouter.post("/changePassword", userController.changePassword);
+userRouter.get("/forgot_password", userPassword.getForgotPassword);
+userRouter.post("/sendOTPRoute", userPassword.getResetPasswordOtp);
+userRouter.post("/verifyOTPRoute", userPassword.verifyForgotPasswordOtp);
+userRouter.get("/resetPassword/:phoneNumber", userPassword.getResetPassword);
+userRouter.post("/changePassword", userPassword.changePassword);
 
 // test routes
 userRouter.route("/test").get(userController.testmid);
