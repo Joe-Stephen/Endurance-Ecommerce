@@ -495,22 +495,28 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Id</th>
                         <th>Date</th>
-                        <th>Type</th>
                         <th>Amount</th>
                         <th>Payment status</th>
-                        <th>Transaction ID</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>[Date]</td>
-                        <td>[Type]</td>
-                        <td>$[Amount]</td>
-                        <td>[Payment status]</td>
-                        <td>[Transaction ID]</td>
-                    </tr>
-                </tbody>
+  <% if (!orders) { %>
+    <h3>No wallet orders placed yet.</h3>
+  <% } else { %>
+    <% orders.forEach((order) => { %>
+      <% if (order.paymentMethod === 'Wallet payment') { %>
+        <tr>
+          <td><%= order._id %></td>
+          <td><%= order.orderDate.toLocaleDateString() %></td>
+          <td>₹<%= order.totalAmount %></td>
+          <td><%= order.paymentStatus %></td>
+        </tr>
+      <% } %>
+    <% }); %>
+  <% } %>
+</tbody>
             </table>
         </section>
 
