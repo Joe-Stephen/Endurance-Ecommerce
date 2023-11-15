@@ -42,10 +42,10 @@ const getHomePage = async (req, res) => {
       .limit(no_of_docs_each_page);
 
     res.render("index-4", { products, loggedIn, page, totalPages }); // Pass the 'totalPages' variable to the template
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     res.render("error-page")
-    res.send("Error fetching products");
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -66,8 +66,9 @@ const filterByMTB = async (req, res) => {
     const loggedIn = req.cookies.loggedIn;
     const products = await product.find({ category: "MTB", status: { $ne: "hide" } });
     res.render("index-4", { products, loggedIn, totalPages, page});
-  } catch (error) {
-    console.log("An error occured while applying filter! " + error);
+  } catch (err) {
+    console.log("An error occured while applying filter! " + err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -85,8 +86,9 @@ const filterByElectric = async (req, res) => {
     const loggedIn = req.cookies.loggedIn;
     const products = await product.find({ category: "E- bikes", status: { $ne: "hide" } });
     res.render("index-4", { products, loggedIn, totalPages, page });
-  } catch (error) {
-    console.log("An error occured while applying filter! " + error);
+  } catch (err) {
+    console.log("An error occured while applying filter! " + err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -104,8 +106,9 @@ const filterByEndurance = async (req, res) => {
     const loggedIn = req.cookies.loggedIn;
     const products = await product.find({ category: "Endurance bikes", status: { $ne: "hide" }});
     res.render("index-4", { products, loggedIn, totalPages, page });
-  } catch (error) {
-    console.log("An error occured while applying filter! " + error);
+  } catch (err) {
+    console.log("An error occured while applying filter! " + err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -132,8 +135,9 @@ const sortLowToHigh = async (req, res) => {
       .limit(no_of_docs_each_page);
 
     res.render("index-4", { products, loggedIn, totalPages, page });
-  } catch (error) {
-    console.log("An error occurred while applying filter! " + error);
+  } catch (err) {
+    console.log("An error occurred while applying filter! " + err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -159,8 +163,9 @@ const sortHighToLow = async (req, res) => {
       .limit(no_of_docs_each_page);
 
     res.render("index-4", { products, loggedIn, totalPages, page });
-  } catch (error) {
-    console.log("An error occurred while applying filter! " + error);
+  } catch (err) {
+    console.log("An error occurred while applying filter! " + err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -189,8 +194,9 @@ const sortPriceRange= async (req, res)=>{
       .limit(no_of_docs_each_page);
     res.render("index-4", { products, loggedIn, page, totalPages });
   }
-  catch(error){
-    console.log("An error occured while sorting according to price range! "+error);
+  catch(err){
+    console.log("An error occured while sorting according to price range! "+err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
     res.redirect("/");
   }
 };
@@ -212,8 +218,9 @@ const sortByBrand= async (req, res)=>{
     console.log(products);
     res.render("index-4", { products, loggedIn, totalPages, page });
   }
-  catch(error){
-    console.log("An error happened while loading the brand results! :"+error);
+  catch(err){
+    console.log("An error happened while loading the brand results! :"+err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 }
 
@@ -248,8 +255,9 @@ const searchResults = async (req, res) => {
       result = "We found these...";
     }
     res.render("index-4", { result, products, loggedIn, totalPages, page });
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -279,8 +287,9 @@ const getUserAccount = async (req, res) => {
     });
 
     res.render("userDashboard", { userData, userAddress, orders, loggedIn, userWallet });
-  } catch (error) {
-    console.log("An error happened in fetching user dashboard " + error);
+  } catch (err) {
+    console.log("An error happened in fetching user dashboard " + err);
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -329,8 +338,9 @@ const logout = (req, res) => {
 //       }
 //       console.log("hia");
 //     });
-//   } catch (error) {
-//     console.log(error.message);
+//   } catch (err) {
+//     console.log(err.message);
+// res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
 //   }
 // };
 
@@ -344,8 +354,9 @@ const logout = (req, res) => {
 //     res.render("page-login-register", {
 //       verified: "Your email has been verified, please login.",
 //     });
-//   } catch (error) {
-//     console.log(error.message);
+//   } catch (err) {
+//     console.log(err.message);
+// res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
 //   }
 // };
 
@@ -387,9 +398,9 @@ const getResetPasswordOtp = async (req, res) => {
       phoneNumber: phoneNumber,
     };
     return res.json(response);
-  } catch (error) {
-    console.error("An error happened while sending the OTP: " + error);
-    return res.status(500).json({ error: "Failed to send OTP" });
+  } catch (err) {
+    console.error("An error happened while sending the OTP: " + err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -407,8 +418,8 @@ const verifyForgotPasswordOtp = async (req, res) => {
     if (verifyOTP.valid) {
       console.log("VERIFIED");
     }
-  } catch (error) {
-    console.log("An error occured " + error);
+  } catch (err) {
+    console.log("An error occured " + err);
     res.render("forgot-password");
   }
 };
@@ -442,11 +453,9 @@ const changePassword = async (req, res) => {
         res.redirect("/getLogin");
       }
     });
-  } catch (error) {
-    console.error("An error occurred while changing the password: " + error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while changing the password" });
+  } catch (err) {
+    console.error("An error occurred while changing the password: " + err);
+    res.status(500).render("error-page", { message: "An error occurred while changing the password !", errorMessage: err.message });
   }
 };
 
@@ -526,8 +535,11 @@ const editUserDetails = async (req, res) => {
     } else {
       res.redirect("/userAccount");
     }
-  } catch (error) {
-    console.log("An error occurred while updating the user details: " + error);
+  } catch (err) {
+    console.log("An error occurred while updating the user details: " + err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
+
+    
   }
 };
 
@@ -566,8 +578,9 @@ const postLogin = async (req, res) => {
               res.cookie("loggedIn", true, { maxAge: 24 * 60 * 60 * 1000 });
               userEmail = verifyStatus.email;
               res.redirect("/");
-            } catch (error) {
-              console.error(error);
+            } catch (err) {
+              console.error(err);
+              return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
             }
           }
         });
@@ -593,6 +606,7 @@ const getSendOtp = async (req, res) => {
     res.json({ phoneNumber: phoneNumber });
   } catch (err) {
     console.error(err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -638,6 +652,8 @@ const getVerifyOtp = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
+
   }
 };
 
@@ -682,6 +698,7 @@ const phoneNumberChange = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -756,12 +773,10 @@ const postAddAddress = async (req, res) => {
 
     // Redirect to a success page or send a success response
     res.redirect("/userAccount");
-  } catch (error) {
-    console.error("Error while saving address:", error);
+  } catch (err) {
+    console.error("Error while saving address:", err);
     // Handle the error and send an error response
-    res
-      .status(500)
-      .json({ error: "An error occurred while saving the address." });
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -777,8 +792,9 @@ const getEditAddress = async (req, res) => {
       }
     });
     res.render("editAddress", { newAddress });
-  } catch (error) {
+  } catch (err) {
     console.log("An error");
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -812,8 +828,9 @@ const postEditAddress = async (req, res) => {
     });
     await newAddress.save();
     res.redirect("/userAccount");
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -856,9 +873,9 @@ const getCouponDiscount = async (req, res) => {
       discountValue,
       discountedPrice: grandTotal - discountValue
     });
-  } catch (error) {
-    console.error('An error occurred while calculating the discount!', error);
-    res.status(500).json({ error: 'An error occurred while calculating the discount!.' });
+  } catch (err) {
+    console.error('An error occurred while calculating the discount!', err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -971,11 +988,9 @@ await product.updateOne(
     await cart.deleteOne({ userId: userData._id });
 
     res.status(200).json({ message: "Order placed successfully." });
-  } catch (error) {
-    console.error("An error occurred while placing the order: ", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while placing the order." });
+  } catch (err) {
+    console.error("An error occurred while placing the order: ", err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -1087,10 +1102,9 @@ await product.updateOne(
         res.status(200).json({ message: "Order placed successfully.", razorOrder });
       }
     });
-  } catch (error) {
-    console.error("An error occurred while placing the order: ", error);
-    res.status(500).json({ error: "An error occurred while placing the order." });
-  }
+  } catch (err) {
+    console.error("An error occurred while placing the order: ", err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });  }
 };
 
 //wallet Order
@@ -1207,10 +1221,9 @@ await product.updateOne(
     }
     await cart.deleteOne({ userId: userData._id });
     res.status(200).json({ message: "Order placed successfully." });
-  }} catch (error) {
-    console.error("An error occurred while placing the order: ", error);
-    res.status(500).json({ error: "An error occurred while placing the order." });
-  }
+  }} catch (err) {
+    console.error("An error occurred while placing the order: ", err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });  }
 };
 
 //update payment status
@@ -1223,8 +1236,8 @@ const paymentStatus= async (req, res)=>{
     res.redirect("/orderPlaced")
   }
   }
-  catch(error){
-    res.status(500);
+  catch(err){
+    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 }
 
@@ -1254,8 +1267,9 @@ const getOrderDetails = async (req, res) => {
       model: "product",
     });
     res.render("orderDetails", { orderDetails });
-  } catch (error) {
-    console.log("An error happened while loading the order details! :" + error);
+  } catch (err) {
+    console.log("An error happened while loading the order details! :" + err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -1272,10 +1286,9 @@ const findProduct = async (req, res) => {
     }
     // Render the "product-page" template and pass the product details
     res.render("product-page", { products });
-  } catch (error) {
-    console.error(error);
-    res.send("Error fetching product details");
-  }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });  }
 };
 
 //getting cart
@@ -1291,8 +1304,9 @@ const getCart = async (req, res) => {
     // The 'userCart' now contains the populated 'products' array with product details
     // You can access these details in your template
     res.render("cart", { userCart, loggedIn });
-  } catch (error) {
-    console.error("Error while loading cart:", error);
+  } catch (err) {
+    console.error("Error while loading cart:", err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
     // Handle the error as needed
   }
 };
@@ -1336,10 +1350,9 @@ const getCart = async (req, res) => {
       await userCart.save();
       res.json({ message: "Product added to the cart" });
     
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-      // res.status(500).json({ error: "Failed to add the product to the cart" });
-    }
+    } catch (err) {
+      console.error("Error adding to cart:", err);
+      return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });    }
   };
 
 //updating cart quantity
@@ -1386,11 +1399,9 @@ const postCartQty = async (req, res) => {
     };
 
     return res.json(response);
-  } catch (error) {
-    console.log("An error occurred while modifying quantity: " + error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred while modifying quantity" });
+  } catch (err) {
+    console.log("An error occurred while modifying quantity: " + err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -1416,10 +1427,9 @@ const removeProductFromCart = async (req, res) => {
     // Save the updated cart
     await userCart.save();
     res.sendStatus(200); // Send a success status code
-  } catch (error) {
-    console.error("Error removing the product from the cart: " + error);
-    res.sendStatus(500); // Send a server error status code
-  }
+  } catch (err) {
+    console.error("Error removing the product from the cart: " + err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });  }
 };
 
 //checkout from cart
@@ -1484,8 +1494,9 @@ const getCartCheckout = async (req, res) => {
           console.log("Insufficient quantity for the order");
           insufficientProducts.push(prod.name); // Add the name of the insufficient product
         }
-      } catch (error) {
-        console.error("Error updating product sizes:", error);
+      } catch (err) {
+        console.error("Error updating product sizes:", err);
+        return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
 
         // Handle the error
       }
@@ -1503,8 +1514,9 @@ const getCartCheckout = async (req, res) => {
         res.render("checkout", { userCart, loggedIn, userAddress, coupons });
       }
     }
-  } catch (error) {
-    console.log("An error happened while loading checkout page." + error);
+  } catch (err) {
+    console.log("An error happened while loading checkout page." + err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -1518,7 +1530,7 @@ const getWishlist= async (req, res)=>{
       model: "product",
     }); 
     res.render("wishlist", { userWishlist, loggedIn });
-  } catch (error) {
+  } catch (err) {
     console.error("Error while loading wishlist:", error);
     // Handle the error as needed
   }
@@ -1558,11 +1570,9 @@ const addToWishlist = async (req, res) => {
       }
   
       res.json({ message: "Product added to the Wishlist" });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ error: "Failed to add the product to the Wishlist" });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
     }
   };
 
@@ -1602,10 +1612,9 @@ const moveToCart= async (req, res)=>{
     await userCart.save();
     await wishlist.updateOne({userId:userData._id},{$pull:{products:{productId:productId}}});
     res.redirect("/wishlist")
-  } catch (error) {
-    console.error("Error moving to cart:", error);
-    // res.status(500).json({ error: "Failed to add the product to the cart" });
-  }
+  } catch (err) {
+    console.error("Error moving to cart:", err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });  }
 };
 
 // delete from wishlist
@@ -1627,8 +1636,9 @@ const deleteFromWishlist = async (req, res) => {
     }
 
     res.redirect("/wishlist");
-  } catch (error) {
-    console.log("An error happened while deleting the product from wishlist: " + error);
+  } catch (err) {
+    console.log("An error happened while deleting the product from wishlist: " + err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -1705,8 +1715,9 @@ const productReturn = async (req, res) => {
       }
 
       res.redirect("/userAccount");
-  } catch (error) {
-    console.log("An error happened while processig return! :" + error);
+  } catch (err) {
+    console.log("An error happened while processig return! :" + err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
@@ -1785,8 +1796,9 @@ const productCancel = async (req, res) => {
     );
 
     res.redirect("/userAccount");
-  } catch (error) {
-    console.log("An error happened while processig return! :" + error);
+  } catch (err) {
+    console.log("An error happened while processig return! :" + err);
+    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
   }
 };
 
