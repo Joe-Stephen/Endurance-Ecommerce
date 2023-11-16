@@ -55,4 +55,9 @@ adminRouter.get("/orderList", orderManagement.getOrderList);
 adminRouter.get("/editOrder/:orderId", orderManagement.getOrderDetails);
 adminRouter.post("/editOrderStatus", orderManagement.editOrderStatus);
 
+//transactions
+adminRouter.get("/transactions", adminController.getTransactions);
+
+
+
 module.exports = adminRouter;
