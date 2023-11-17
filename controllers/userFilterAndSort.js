@@ -3,6 +3,7 @@ const adminRouter = express.Router();
 const userRouter = express.Router();
 const userController = require("../controllers/userController");
 const product = require("../model/productModel");
+const banner = require("../model/bannerModel");
 const jwt = require("jsonwebtoken");
 const userMiddleware = require("../middlewares/user/userAuthentication");
 const cookieParser = require("cookie-parser");
@@ -12,6 +13,7 @@ userRouter.use(cookieParser());
 //filter mtb
 const filterByMTB = async (req, res) => {
   try {
+    const banners= await banner.find();
     const page = req.query.page ?? 1; // Default to page 1 if pageNo is not provided
     const no_of_docs_each_page = 6;
     console.log(page);
@@ -25,7 +27,7 @@ const filterByMTB = async (req, res) => {
       category: "MTB",
       status: { $ne: "hide" },
     });
-    res.render("index-4", { products, loggedIn, totalPages, page });
+    res.render("index-4", { products, loggedIn, totalPages, page, banners });
   } catch (err) {
     console.log("An error occured while applying filter! " + err);
     res
@@ -40,6 +42,7 @@ const filterByMTB = async (req, res) => {
 // filter electric
 const filterByElectric = async (req, res) => {
   try {
+    const banners= await banner.find();
     const page = req.query.page ?? 1; // Default to page 1 if pageNo is not provided
     const no_of_docs_each_page = 6;
     console.log(page);
@@ -53,7 +56,7 @@ const filterByElectric = async (req, res) => {
       category: "E- bikes",
       status: { $ne: "hide" },
     });
-    res.render("index-4", { products, loggedIn, totalPages, page });
+    res.render("index-4", { products, loggedIn, totalPages, page, banners });
   } catch (err) {
     console.log("An error occured while applying filter! " + err);
     res
@@ -68,6 +71,7 @@ const filterByElectric = async (req, res) => {
 // filter endurance
 const filterByEndurance = async (req, res) => {
   try {
+    const banners= await banner.find();
     const page = req.query.page ?? 1; // Default to page 1 if pageNo is not provided
     const no_of_docs_each_page = 6;
     console.log(page);
@@ -81,7 +85,7 @@ const filterByEndurance = async (req, res) => {
       category: "Endurance bikes",
       status: { $ne: "hide" },
     });
-    res.render("index-4", { products, loggedIn, totalPages, page });
+    res.render("index-4", { products, loggedIn, totalPages, page, banners });
   } catch (err) {
     console.log("An error occured while applying filter! " + err);
     res
@@ -200,6 +204,7 @@ const sortPriceRange = async (req, res) => {
 //sorting by brand
 const sortByBrand = async (req, res) => {
   try {
+    const banners= await banner.find();
     const brandName = req.query.brand;
     const page = req.query.page ?? 1; // Default to page 1 if pageNo is not provided
     const no_of_docs_each_page = 6;
@@ -215,7 +220,7 @@ const sortByBrand = async (req, res) => {
       status: { $ne: "hide" },
     });
     console.log(products);
-    res.render("index-4", { products, loggedIn, totalPages, page });
+    res.render("index-4", { products, loggedIn, totalPages, page, banners });
   } catch (err) {
     console.log("An error happened while loading the brand results! :" + err);
     res

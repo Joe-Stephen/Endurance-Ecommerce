@@ -21,10 +21,12 @@ const secretKey = process.env.JWT_SECRET;
 const cart = require("../model/cartModel");
 const wishlist = require("../model/wishlistModel");
 const coupon = require("../model/couponModel");
+const banner = require("../model/bannerModel");
 
 const getHomePage = async (req, res) => {
   try {
     const loggedIn = req.cookies.loggedIn;
+    const banners= await banner.find();
 
     const page = parseInt(req.query.page) || 1; // Default to page 1 if pageNo is not provided
     const no_of_docs_each_page = 9; 
@@ -41,7 +43,7 @@ const getHomePage = async (req, res) => {
       .skip(skip)
       .limit(no_of_docs_each_page);
 
-    res.render("index-4", { products, loggedIn, page, totalPages }); // Pass the 'totalPages' variable to the template
+    res.render("index-4", { products, loggedIn, page, totalPages, banners }); // Pass the 'totalPages' variable to the template
   } catch (err) {
     console.error(err);
     res.render("error-page")

@@ -1,0 +1,328 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-orders-1.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
+<head>
+    <meta charset="utf-8">
+    <title>Evara Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/adminAssets/assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/adminAssets/assets/css/main.css" rel="stylesheet" type="text/css" />
+    <style>
+    .red-button {
+        background-color: red;
+        color: white; /* You can adjust the text color as needed */
+    }
+    
+    .green-button {
+        background-color: green;
+        color: white; /* You can adjust the text color as needed */
+    }
+    
+</style>
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="index.html" class="brand-wrap">
+                <img src="/adminAssets/assets/imgs/theme/Endurance3.webp" class="logo" alt="Evara Dashboard">
+            </a>
+            <div>
+                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+            </div>
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item active">
+                    <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a class="menu-link" href="/admin/admin-products-list"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a class="menu-link" href="/admin/admin-category-management"> <i class="icon icon material-icons"><img style="width: 23px;" src="\adminAssets\assets\imgs\icons\categories.png" alt=""></i>
+                        <span class="text">Categories</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a class="menu-link" href="/admin/orderList"> <i class="icon material-icons md-shopping_cart"></i>
+                        <span class="text">Orders</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a class="menu-link" href="/admin/couponManagement"> <i class="icon material-icons md-add_box"></i>
+                        <span class="text">Coupons</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a class="menu-link" href="/admin/bannerManagement"> <i class="icon icon material-icons"><img style="width: 23px;" src="\adminAssets\assets\imgs\icons\ballot.png" alt=""></i>
+                        <span class="text">Banner Management</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a class="menu-link" href="/admin/transactions"> <i class="icon material-icons md-monetization_on"></i>
+                        <span class="text">Transactions</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="/admin/transactions">Transaction</a>
+                    </div>
+                </li>
+
+                <li class="">
+                    <a class="menu-link" href="/admin/admin-user-management"> <i class="icon material-icons md-person"></i>
+                        <span class="text">Users</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="page-account-login.html">User management</a>
+                        <!-- <a href="page-account-register.html">User registration</a>
+                        <a href="page-error-404.html">Error 404</a> -->
+                    </div>
+                </li>
+
+
+                
+                <li class="menu-item">
+                    <a class="menu-link" href="page-reviews.html"> <i class="icon material-icons md-comment"></i>
+                        <span class="text">Reviews</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="page-brands.html"> <i class="icon material-icons md-stars"></i>
+                        <span class="text">Brands</span> </a>
+                </li>
+               
+            </ul>
+            <hr>
+            <ul class="menu-aside">
+                <li>
+                    <a class="menu-link" href="#"> <i class="icon material-icons md-settings"></i>
+                        <span class="text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+            <br>
+            <br>
+        </nav>
+    </aside>
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products">
+                        <option value="New orders">
+                        <option value="Apple iphone">
+                        <option value="Ahmed Hassan">
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="/adminAssets/assets/imgs/theme/flag-us.png" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="/adminAssets/assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="/adminAssets/assets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="/adminAssets/assets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/adminAssets/assets/imgs/people/avatar2.jpg" alt="User"></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Discount Management</h2>
+                    <p>Manage the discounts</p>
+                    <button  class="btn btn-primary btn-sm rounded"><a style="color: aliceblue;" href="/admin/adminAddCoupon">Add discount</a></button>
+                </div>
+                <div>
+                    <input type="text" placeholder="Search order ID" class="form-control bg-white">
+                </div>
+            </div>
+            <div class="card mb-4">
+                <header class="card-header">
+                    <div class="row gx-3">
+                        <div class="col-lg-4 col-md-6 me-auto">
+                            <input type="text" placeholder="Search..." class="form-control">
+                        </div>
+                        <div class="col-lg-2 col-6 col-md-3">
+                            <select class="form-select">
+                                <option>Status</option>
+                                <option>Active</option>
+                                <option>Disabled</option>
+                                <option>Show all</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-6 col-md-3">
+                            <select class="form-select">
+                                <option>Show 20</option>
+                                <option>Show 30</option>
+                                <option>Show 40</option>
+                            </select>
+                        </div>
+                    </div>
+                </header> <!-- card-header end// -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <% if(!discountList){ %>
+                            <h5>Currently there are no coupons to show...</h5>
+                            <% }else{ %>
+                                
+                                <table class="table table-hover">
+                                    <thead>
+                                <tr>
+                                    <th scope="col">Sl.no</th>
+                                    <th scope="col">Code</th>
+                                    <th scope="col">Discount Type</th>
+                                    <th scope="col">Discount Value</th>
+                                    <th scope="col">Minimum Order Amount</th>
+                                    <th scope="col">Maximum Redeemable Amount</th>
+                                    <th scope="col">Expiration Date</th>
+                                    <th scope="col">Is Active</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                                <tbody>
+                                    <% discountList.forEach((coupon)=>{ let i=0 %>
+                                        <tr style="border-bottom: 1px solid rgb(43, 40, 40);">
+                                            <td><%=discountList.indexOf(discount)+1%></td>
+                                        <td><%=discount.code%></td>
+                                            <td><b><%=discount.discountType%></b></td>
+                                        <td><%=discount.discountValue%></td>
+                                        <td>₹ <%=discount.minOrderAmount%></td>
+                                        <td>₹ <%= discount.discountType==="fixedAmount"?discount.discountValue:discount.maxRedeemableAmt%></td>
+                                        <td><%=discount.expirationDate.toLocaleDateString()%></td>
+                                        <td id="status-<%= discount._id %>"><%=discount.isActive%></td>
+                                        
+                                            <td class="text-end">
+                                                <button class="mb-5 btn btn-sm<%= discount.isActive === 'Active' ? ' red-button' : (discount.isActive === 'Inactive' ? ' green-button' : '') %>" onclick="toggleDiscountStatus('<%= coupon._id %>', '<%= coupon.isActive %>')">
+                                                    <% if (discount.isActive === 'Inactive') { %>
+                                                        Unblock
+                                                    <% } else { %>
+                                                        Block
+                                                    <% } %>
+                                                </button>
+                                                <br>
+                                                <a href="/admin/getEditCoupon/?couponId=<%=discount._id%>" class="btn btn-md rounded font-sm">Edit</a>
+                                            </td>
+                                        
+                                    </tr>
+                                    <% });}%>
+                                </tbody>
+                        </table>
+                    </div> <!-- table-responsive //end -->
+                </div> <!-- card-body end// -->
+            </div>
+             <!-- card end// -->
+
+             <script>
+                function toggleCouponStatus(discountId, currentStatus) {
+                    const statusElement = document.querySelector(`#status-${discountId}`);
+                    
+                    // Toggle the user's status
+                    const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+                
+                    fetch(`/admin/update-coupon-status/${discountId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ status: newStatus }),
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            // Handle the error
+                            console.error('Error updating coupon status');
+                        }
+                    })
+                    .then(data => {
+                        // Update the button's text with the new status from the response
+                        statusElement.textContent = data.status;
+                        // Reload the page to reflect the updated status
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+                };
+                </script>
+
+
+
+      
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <script src="/adminAssets/assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/adminAssets/assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/adminAssets/assets/js/vendors/select2.min.js"></script>
+    <script src="/adminAssets/assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/adminAssets/assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/adminAssets/assets/js/main.js" type="text/javascript"></script>
+</body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-orders-1.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:22 GMT -->
+</html>
