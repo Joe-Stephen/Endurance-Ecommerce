@@ -99,9 +99,9 @@ const saveEditedCoupon = async (req, res) => {
 
     // Return the updated coupon document
     res.json(updatedCoupon);
-  } catch (error) {
+  } catch (err) {
     console.error(
-      "An error occurred while saving the edited coupons: " + error
+      "An error occurred while saving the edited coupons: " + err
     );
     res
       .status(500)
@@ -155,8 +155,8 @@ const toggleCouponStatus = async (req, res) => {
       isActive: newStatus,
     });
     res.status(200).json({ status: UpdatedCoupon.isActive });
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     res
       .status(500)
       .render("error-page", {

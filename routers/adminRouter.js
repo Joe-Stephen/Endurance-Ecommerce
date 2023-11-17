@@ -5,6 +5,7 @@ const productManagement = require("../controllers/adminProductManagement");
 const categoryManagement = require("../controllers/adminCategoryManagement");
 const couponManagement = require("../controllers/adminCouponManagement");
 const orderManagement = require("../controllers/adminOrderManagement");
+const bannerManagement = require("../controllers/adminBannerManagement");
 
 const multer = require("multer");
 const multerMiddleware = require("../middlewares/admin/multerMiddleware");
@@ -46,8 +47,8 @@ adminRouter.delete("/delete-category/:categoryId", categoryManagement.deleteCate
 adminRouter.get("/couponManagement", couponManagement.getCouponManagement);
 adminRouter.get("/adminAddCoupon", couponManagement.getAddCoupon);
 adminRouter.get("/getEditCoupon", couponManagement.getEditCoupon);
-adminRouter.post("/saveEditedCoupon", couponManagement.saveEditedCoupon);
 adminRouter.post("/saveCoupon", couponManagement.saveCoupon);
+adminRouter.post("/saveEditedCoupon", couponManagement.saveEditedCoupon);
 adminRouter.post("/update-coupon-status/:couponId", couponManagement.toggleCouponStatus);
 
 //order management
@@ -57,6 +58,17 @@ adminRouter.post("/editOrderStatus", orderManagement.editOrderStatus);
 
 //transactions
 adminRouter.get("/transactions", adminController.getTransactions);
+
+//banner management
+adminRouter.get("/bannerManagement", bannerManagement.getBannerManagement);
+adminRouter.get("/admin-add-banner", bannerManagement.getAddBanner);
+adminRouter.post("/add-Banner", multerMiddleware.single("file"), bannerManagement.postAddBanner);
+adminRouter.get("/getEditBanner", bannerManagement.getEditBanner);
+adminRouter.post("/saveEditedBanner", multerMiddleware.single("file"), bannerManagement.saveEditedBanner);
+adminRouter.post("/update-banner-status/:bannerId", bannerManagement.toggleBannerStatus);
+
+
+
 
 
 

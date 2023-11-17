@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:35 GMT -->
+  <head>
+    <meta charset="utf-8" />
+    <title>Evara Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:title" content="" />
+    <meta property="og:type" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:image" content="" />
+    <!-- Favicon -->
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/adminAssets/assets/imgs/theme/favicon.svg"
+    />
+    <!-- Template CSS -->
+    <link
+      href="/adminAssets/assets/css/main.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <!-- <link rel="stylesheet" type="text/css" href="/adminAssets/assets/css/main.css"> -->
+    <style>
+ 
+  form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+
+  input[type="text"],
+  input[type="date"],
+  input[type="file"],
+  select {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+    box-sizing: border-box;
+  }
+
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: url('data:image/svg+xml;utf8,<svg fill="#000000" height="24" width="24" version="1.1" xmlns="http://www.w3.org/2000/svg"><polygon points="0,8 24,8 12,16"></polygon></svg>') no-repeat;
+    background-position: 95% 50%;
+    cursor: pointer;
+  }
+
+  input[type="radio"] {
+    margin-right: 5px;
+  }
+
+  input[type="submit"] {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  input[type="submit"]:hover {
+    background-color: #45a049;
+  }
+
+
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      form {
+        background-color: #fff;
+        width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      table {
+        width: 100%;
+      }
+
+      table tr {
+        margin-bottom: 10px;
+      }
+
+      table td {
+        padding: 5px;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      textarea,
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+
+      input[type="file"] {
+        width: 100%;
+        padding: 10px;
+      }
+
+      input[type="submit"] {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="screen-overlay"></div>
+    <aside class="navbar-aside" id="offcanvas_aside">
+      <div class="aside-top">
+        <a href="index.html" class="brand-wrap">
+          <img
+            src="/adminAssets/assets/imgs/theme/Endurance3.webp"
+            class="logo"
+            alt="Evara Dashboard"
+          />
+        </a>
+        <div>
+          <button class="btn btn-icon btn-aside-minimize">
+            <i class="text-muted material-icons md-menu_open"></i>
+          </button>
+        </div>
+      </div>
+      <nav>
+        <ul class="menu-aside">
+          <li class="menu-item active">
+            <a class="menu-link" href="/admin">
+              <i class="icon material-icons md-home"></i>
+              <span class="text">Dashboard</span>
+            </a>
+          </li>
+          <li class="">
+            <a class="menu-link" href="/admin/admin-products-list">
+              <i class="icon material-icons md-shopping_bag"></i>
+              <span class="text">Products</span>
+            </a>
+          </li>
+          <li class="">
+            <a class="menu-link" href="/admin/admin-category-management">
+              <i class="icon icon material-icons"
+                ><img
+                  style="width: 23px"
+                  src="\adminAssets\assets\imgs\icons\categories.png"
+                  alt=""
+              /></i>
+              <span class="text">Categories</span>
+            </a>
+          </li>
+          <li class="">
+            <a class="menu-link" href="/admin/orderList">
+              <i class="icon material-icons md-shopping_cart"></i>
+              <span class="text">Orders</span>
+            </a>
+          </li>
+          <li class="">
+            <a class="menu-link" href="/admin/couponManagement">
+              <i class="icon material-icons md-add_box"></i>
+              <span class="text">Coupons</span>
+            </a>
+          </li>
+          <li class="">
+            <a class="menu-link" href="/admin/bannerManagement">
+              <i class="icon icon material-icons"
+                ><img
+                  style="width: 23px"
+                  src="\adminAssets\assets\imgs\icons\ballot.png"
+                  alt=""
+              /></i>
+              <span class="text">Banner Management</span>
+            </a>
+          </li>
+          <li class="">
+            <a class="menu-link" href="/admin/transactions">
+              <i class="icon material-icons md-monetization_on"></i>
+              <span class="text">Transactions</span>
+            </a>
+            <div class="submenu">
+              <a href="/admin/transactions">Transaction</a>
+            </div>
+          </li>
+
+          <li class="">
+            <a class="menu-link" href="/admin/admin-user-management">
+              <i class="icon material-icons md-person"></i>
+              <span class="text">Users</span>
+            </a>
+            <div class="submenu">
+              <a href="page-account-login.html">User management</a>
+              <!-- <a href="page-account-register.html">User registration</a>
+                        <a href="page-error-404.html">Error 404</a> -->
+            </div>
+          </li>
+
+          <li class="menu-item">
+            <a class="menu-link" href="page-reviews.html">
+              <i class="icon material-icons md-comment"></i>
+              <span class="text">Reviews</span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a class="menu-link" href="page-brands.html">
+              <i class="icon material-icons md-stars"></i>
+              <span class="text">Brands</span>
+            </a>
+          </li>
+        </ul>
+        <hr />
+        <ul class="menu-aside">
+          <li class="menu-item has-submenu">
+            <a class="menu-link" href="#">
+              <i class="icon material-icons md-settings"></i>
+              <span class="text">Settings</span>
+            </a>
+            <div class="submenu">
+              <a href="page-settings-1.html">Setting sample 1</a>
+            </div>
+          </li>
+          <li class="menu-item">
+            <a class="menu-link" href="page-blank.html">
+              <i class="icon material-icons md-local_offer"></i>
+              <span class="text"> Starter page </span>
+            </a>
+          </li>
+        </ul>
+        <br />
+        <br />
+      </nav>
+    </aside>
+    <main class="main-wrap">
+      <header class="main-header navbar">
+        <div class="col-nav">
+          <button
+            class="btn btn-icon btn-mobile me-auto"
+            data-trigger="#offcanvas_aside"
+          >
+            <i class="material-icons md-apps"></i>
+          </button>
+          <ul class="nav">
+            <li class="nav-item">
+              <a class="nav-link btn-icon darkmode" href="#">
+                <i class="material-icons md-nights_stay"></i>
+              </a>
+            </li>
+            <li class="dropdown nav-item">
+              <a
+                class="dropdown-toggle"
+                data-bs-toggle="dropdown"
+                href="#"
+                id="dropdownAccount"
+                aria-expanded="false"
+              >
+                <img
+                  class="img-xs rounded-circle"
+                  src="/adminAssets/assets/imgs/people/avatar2.jpg"
+                  alt="User"
+              /></a>
+              <div
+                class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="dropdownAccount"
+              >
+                <a class="dropdown-item" href="#"
+                  ><i class="material-icons md-perm_identity"></i>Edit
+                  Profile</a
+                >
+                <a class="dropdown-item" href="#"
+                  ><i class="material-icons md-settings"></i>Account Settings</a
+                >
+                <a class="dropdown-item" href="#"
+                  ><i class="material-icons md-account_balance_wallet"></i
+                  >Wallet</a
+                >
+                <a class="dropdown-item" href="#"
+                  ><i class="material-icons md-receipt"></i>Billing</a
+                >
+                <a class="dropdown-item" href="#"
+                  ><i class="material-icons md-help_outline"></i>Help center</a
+                >
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-danger" href="#"
+                  ><i class="material-icons md-exit_to_app"></i>Logout</a
+                >
+              </div>
+            </li>
+          </ul>
+        </div>
+      </header>
+      <section class="content-main">
+        <div>
+          <h2 class="content-title card-title">Add Banner</h2>
+        </div>
+        <h5 class="font-sm" style="color: red"><%=locals.error%></h5>
+        <h5 class="font-sm" style="color: rgb(0, 255, 38)">
+          <%=locals.success%>
+        </h5>
+
+        <form
+          action="/admin/add-Banner"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <label>Name:</label>
+          <input type="text" name="name" required />
+
+          <label>Type:</label>
+
+          <select name="type" required>
+            <option value="" disabled>Select one</option>
+
+            <option value="promotion">Promotional Banners</option>
+            <option value="product">Product Banners</option>
+            <option value="category">Category Banners</option>
+            <option value="brand">Brand Banners</option>
+            <option value="feature">Feature Banners</option>
+            <option value="holiday">Holiday Banners</option>
+          </select>
+
+          <label>Photo:</label>
+          <input type="file" name="file" accept="image/*" required />
+          <label>Link:(Optional)</label>
+          <input type="text" name="link">
+          <label>Starting date:</label>
+          <input type="date" name="startDate" required />
+          <label>Ending date:</label>
+          <input type="date" name="endDate" required />
+          <label>Initial status:</label>
+          <input type="radio" name="status" value="active" checked>
+          <label for="active">Active</label>
+          <input type="radio" name="status" value="inactive">
+          <label for="inactive">Inactive</label>
+          
+
+
+          <input type="submit" value="Add Product" />
+        </form>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+              const form = document.querySelector('form');
+          
+              form.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+          
+                // Perform client-side validation
+                if (!validateForm()) {
+                  return;
+                }
+          
+                // If validation passes, submit the form via Fetch
+                submitForm();
+              });
+          
+              function validateForm() {
+                // Validate name field
+                const nameField = form.querySelector('input[name="name"]');
+                if (nameField.value.trim() === '') {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Name cannot be empty or contain only white spaces.',
+                  });
+                  return false;
+                }
+          
+                // Validate starting date
+                const startDateField = form.querySelector('input[name="startDate"]');
+                const startDate = new Date(startDateField.value);
+                const currentDate = new Date();
+                if (startDate < currentDate) {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Starting date should not be in the past.',
+                  });
+                  return false;
+                }
+          
+                // Validate ending date
+                const endDateField = form.querySelector('input[name="endDate"]');
+                const endDate = new Date(endDateField.value);
+                if (endDate < currentDate) {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Ending date should not be in the past.',
+                  });
+                  return false;
+                }
+          
+                return true;
+              }
+          
+              function submitForm() {
+                // Create a FormData object to handle the form data
+                const formData = new FormData(form);
+          
+                // Perform the fetch request
+                fetch('/admin/add-Banner', {
+                  method: 'POST',
+                  body: formData,
+                })
+                  .then(response => response.json())
+                  .then(data => {
+                    // Handle the response from the server
+                    if (data.success) {
+                      Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Banner submitted successfully.',
+                      });
+                    } else {
+                      Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to submit banner. Please try again.',
+                      });
+                    }
+                  })
+                  .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                      icon: 'error',
+                      title: 'Error',
+                      text: 'An unexpected error occurred. Please try again.',
+                    });
+                  });
+              }
+            });
+          </script>          
+          
+
+        <header class="card-header"></header>
+        <!-- card-header end// -->
+
+
+      </section>
+      <!-- content-main end// -->
+      <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+          <div class="col-sm-6">
+            <script>
+              document.write(new Date().getFullYear());
+            </script>
+            ©, Evara - HTML Ecommerce Template .
+          </div>
+          <div class="col-sm-6">
+            <div class="text-sm-end">All rights reserved</div>
+          </div>
+        </div>
+      </footer>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="/adminAssets/assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/adminAssets/assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/adminAssets/assets/js/vendors/select2.min.js"></script>
+    <script src="/adminAssets/assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/adminAssets/assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <script src="/adminAssets/assets/js/vendors/chart.js"></script>
+    <!-- Main Script -->
+    <script
+      src="/adminAssets/assets/js/main.js"
+      type="text/javascript"
+    ></script>
+    <script
+      src="/adminAssets/assets/js/custom-chart.js"
+      type="text/javascript"
+    ></script>
+  </body>
+
+  <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:57 GMT -->
+</html>
