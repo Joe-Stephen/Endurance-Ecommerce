@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const discountSchema = mongoose.Schema({
-  code: {
+  name: {
     type: String,
     unique: true,
     required: true,

@@ -36,10 +36,27 @@ const getDiscountManagement= async (req, res)=>{
           errorMessage: err.message,
         });
       }
+};
 
-}
+//add discount page
+const getAddDiscount= async (req, res)=>{
+    try{
+        const products= await product.find()
+        const categories= await Category.find()
+
+        res.render("adminAddDiscount", {products, categories});
+
+    } catch (err) {
+        console.log("An error happened while loading the add discount page! :" + err);
+        res.status(500).render("error-page", {
+          message: "Error loading add discount page!",
+          errorMessage: err.message,
+        });
+      }
+};
 
 
 module.exports = {
     getDiscountManagement,
+    getAddDiscount,
 };
