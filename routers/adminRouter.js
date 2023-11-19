@@ -71,6 +71,12 @@ adminRouter.post("/update-banner-status/:bannerId", bannerManagement.toggleBanne
 //discount management
 adminRouter.get("/discountManagement", discountManagement.getDiscountManagement);
 adminRouter.get("/getAddDiscount", discountManagement.getAddDiscount);
+adminRouter.post("/postAddDiscount", discountManagement.postAddDiscount);
+adminRouter.post("/update-discount-status/:discountId", discountManagement.toggleDiscountStatus);
+adminRouter.get("/getEditDiscount", discountManagement.getEditDiscount);
+adminRouter.post("/saveEditedDiscount", discountManagement.saveEditedDiscount);
+
+
 
 
 

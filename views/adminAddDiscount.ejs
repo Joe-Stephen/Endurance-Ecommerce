@@ -231,12 +231,11 @@
             <div class="container">
                 <div class="col-md-6 offset-md-2 mt-4">
                   <h2 class="text-center mb-4">Create Discount</h2>
-                  <form onsubmit="return validateForm()">
+                  <form action="/admin/postAddDiscount" method="post" >
                     <div class="form-group">
                       <label for="name">Name:</label>
                       <input type="text" id="name" name="name" class="form-control" required>
                     </div>
-                  
                     <div class="form-group">
                       <label for="discountOn">Discount On:</label>
                       <select id="discountOn" name="discountOn" class="form-control" required onchange="handleDiscountOnChange()">
@@ -244,10 +243,9 @@
                         <option value="category">Category</option>
                       </select>
                     </div>
-                  
                     <div id="productField" class="mt-3">
                       <label for="products">Products:</label>
-                      <select id="products" name="products" class="form-control" style="width: 100%;" required>
+                      <select id="products" name="discountedProduct" class="form-control" style="width: 100%;" required>
                         <% if(products){ %>
                           <% products.forEach((product)=>{ %>
                             <option value="<%= product._id %>"><%= product.name %></option>
@@ -255,10 +253,9 @@
                         <% } %>
                       </select>
                     </div>
-                  
                     <div id="categoryField" class="mt-3" style="display: none;">
                       <label for="categories">Categories:</label>
-                      <select id="categories" name="categories" class="form-control" style="width: 100%;" required>
+                      <select id="categories" name="discountedCategory" class="form-control" style="width: 100%;" required>
                         <% if(categories){ %>
                           <% categories.forEach((category)=>{ %>
                             <option value="<%= category._id %>"><%= category.name %></option>
@@ -266,7 +263,6 @@
                         <% } %>
                       </select>
                     </div>
-                  
                     <div class="form-group">
                         <label for="discountType">Discount Type:</label>
                         <select id="discountType" name="discountType" class="form-control" required onchange="handleDiscountTypeChange()">
@@ -274,34 +270,26 @@
                           <option value="percentage">Percentage</option>
                         </select>
                       </div>
-                  
                     <div class="form-group">
                       <label for="discountValue">Discount Value:</label>
                       <input type="number" id="discountValue" name="discountValue"  class="form-control" required>
                     </div>
-                  
                     <div class="form-group" style="display: none;" id="maxRedeemableAmt">
                         <label for="maxRedeemableAmt">Max Redeemable Amount:</label>
-                        <input type="number" id="maxRedeemableAmt" name="maxRedeemableAmt" s class="form-control">
+                        <input type="number" id="maxRedeemableAmount" name="maxRedeemableAmt" s class="form-control">
                       </div>
-                  
                     <div class="form-group">
                       <label for="startDate">Start Date:</label>
                       <input type="date" id="startDate" name="startDate" class="form-control" required>
                     </div>
-                  
                     <div class="form-group">
                       <label for="endDate">End Date:</label>
                       <input type="date" id="endDate" name="endDate" class="form-control" required>
                     </div>
-                  
                     <button type="submit" class="btn btn-primary btn-block mt-4">Create Discount</button>
-
-                    
-                  
                 </div>
               </div>
-              
+          </form>
               <script>
                 function validateForm() {
                   // Validate name
@@ -365,8 +353,6 @@
                     return false;
                   }
             
- 
-            
                   // Validate startDate
                   var startDate = document.getElementById("startDate").value;
                   var currentDate = new Date().toISOString().split("T")[0]; // Get current date
@@ -407,8 +393,6 @@
       }
     }
   </script>
-            
-          </form>
           
           <script>
             function handleDiscountOnChange() {
@@ -426,6 +410,73 @@
               document.getElementById("maxRedeemableAmt").style.display = discountTypeValue === "percentage" ? "block" : "none";
             }
           </script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById('updateDiscountForm');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      validateForm();
+  
+      const formData = {
+        name: document.getElementById('name').value,
+        discountOn: document.getElementById('discountOn').value,
+        discountedProduct: document.getElementById('products').value,
+        discountedCategory: document.getElementById('categories').value,
+        discountType: document.getElementById('discountType').value,
+        discountValue: document.getElementById('discountValue').value,
+        startDate: document.getElementById('startDate').value,
+        endDate: document.getElementById('endDate').value,
+      };
+  
+      // Only include maxRedeemableAmt in formData if discountType is "percentage"
+      if (formData.discountType === 'percentage') {
+        formData.maxRedeemableAmt = document.getElementById('maxRedeemableAmount').value;
+        console.log('maxRedeemableAmt:', formData.maxRedeemableAmt);
+      }
+  
+      console.log(formData);
+  
+      try {
+        const response = await fetch("/admin/postAddDiscount", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success!',
+              text: 'Discount added successfully!',
+            })
+            setTimeout(() => {
+              window.location.href = '/admin/discountManagement';
+            }, 1500);
+            console.log('Discount added successfully:', data);
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: data.message || 'An unknown error occurred.',
+          })
+        }
+      } catch (error) {
+        console.error('Failed to add discount:', error);
+        // You can show an error message to the user here
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong! Please try again.',
+        });
+      }
+    });
+  });
+  </script>
                          
           
 

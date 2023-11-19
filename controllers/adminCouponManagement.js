@@ -116,7 +116,6 @@ const saveEditedCoupon = async (req, res) => {
 const saveCoupon = async (req, res) => {
   try {
     const couponCode = req.body.code;
-    console.log("codeasdfsadf " + req.body.formData);
     const existingCoupon = await coupon.findOne({ code: couponCode });
     if (existingCoupon) {
       // The coupon code already exists, so return an error

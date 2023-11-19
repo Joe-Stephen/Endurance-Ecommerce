@@ -18,17 +18,17 @@
     <!-- Template CSS -->
     <link href="/adminAssets/assets/css/main.css" rel="stylesheet" type="text/css" />
     <style>
-    .red-button {
-        background-color: red;
-        color: white; /* You can adjust the text color as needed */
-    }
-    
-    .green-button {
-        background-color: green;
-        color: white; /* You can adjust the text color as needed */
-    }
-    
-</style>
+        .red-button {
+            background-color: red;
+            color: white; /* You can adjust the text color as needed */
+        }
+        
+        .green-button {
+            background-color: green;
+            color: white; /* You can adjust the text color as needed */
+        }
+        
+    </style>
 </head>
 
 <body>
@@ -210,6 +210,119 @@
                 </header> <!-- card-header end// -->
                 <div class="card-body">
                     <div class="table-responsive">
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <% if(!discountList){ %>
+                                    <h5>Currently there are no coupons to show...</h5>
+                                    <% }else{ %>
+                                        
+                                        <table class="table table-hover">
+                                            <thead>
+                                        <tr>
+                                            <th scope="col">Sl.no</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Discount On</th>
+                                            <th scope="col">Item Name</th>
+                                            <th scope="col">Discount Type</th>
+                                            <th scope="col">Discount Value</th>
+                                            <th scope="col">Maximum Redeemable Amount</th>
+                                            <th scope="col">Valid From</th>
+                                            <th scope="col">Valid Till</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                        <tbody>
+                                            <% discountList.forEach((discount)=>{ let i=0 %>
+                                                <tr style="border-bottom: 1px solid rgb(43, 40, 40);">
+
+                                                    <td><%=discountList.indexOf(discount)+1%></td>
+
+                                                <td><%=discount.name%></td>
+
+                                                <td><%=discount.discountOn%></td>
+
+                                                <td>
+                                                    <% if (discount.discountOn === "product" && discount.discountedProduct) { %>
+                                                      <%= discount.discountedProduct.name %>
+                                                    <% } else if (discount.discountOn === "category" && discount.discountedCategory) { %>
+                                                      <%= discount.discountedCategory.name %>
+                                                    <% } else { %>
+<h5>nil</h5>                                              
+                                                    <% } %>
+                                                  </td>
+                                                  
+                                                <td><%=discount.discountType%></td>
+
+                                                <td><%= discount.discountType==="fixedAmount"?discount.discountValue:discount.maxRedeemableAmt%></td>
+
+                                                <td>₹<%=discount.discountType==="percentage"?discount.maxRedeemableAmt:discount.discountValue%></td>
+
+                                                <td><%= discount.startDate.toLocaleDateString() %></td>
+
+                                                <td><%= discount.endDate.toLocaleDateString() %></td>                                                
+
+                                                <td id="status-<%= discount._id %>"><%=discount.isActive%></td>
+
+
+
+                                                
+                                                    <td class="text-end">
+                                                        <button class="mb-5 btn btn-sm<%= discount.isActive === 'Active' ? ' red-button' : (discount.isActive === 'Inactive' ? ' green-button' : '') %>" onclick="toggleDiscountStatus('<%= discount._id %>', '<%= discount.isActive %>')">
+                                                            <% if (discount.isActive === 'Inactive') { %>
+                                                                Unblock
+                                                            <% } else { %>
+                                                                Block
+                                                            <% } %>
+                                                        </button>
+                                                        <br>
+                                                        <a href="/admin/getEditDiscount/?discountId=<%=discount._id%>" class="btn btn-md rounded font-sm">Edit</a>
+                                                    </td>
+                                                
+                                            </tr>
+                                            <% });}%>
+                                        </tbody>
+                                </table>
+                            </div> <!-- table-responsive //end -->
+                        </div> <!-- card-body end// -->
+                    </div>
+                     <!-- card end// -->
+        
+                     <script>
+                        function toggleDiscountStatus(discountId, currentStatus) {
+                            const statusElement = document.querySelector(`#status-${discountId}`);
+                            
+                            // Toggle the user's status
+                            const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+                        
+                            fetch(`/admin/update-discount-status/${discountId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ status: newStatus }),
+                            })
+                            .then(response => {
+                                if (response.ok) {
+                                    return response.json();
+                                } else {
+                                    // Handle the error
+                                    console.error('Error updating coupon status');
+                                }
+                            })
+                            .then(data => {
+                                // Update the button's text with the new status from the response
+                                statusElement.textContent = data.status;
+                                // Reload the page to reflect the updated status
+                                location.reload();
+                            })
+                            .catch(error => {
+                                console.error(error);
+                            });
+                        };
+                        </script>
+        
                        
 
 

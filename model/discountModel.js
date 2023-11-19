@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const discountSchema = mongoose.Schema({
   name: {
@@ -8,21 +8,21 @@ const discountSchema = mongoose.Schema({
   },
   discountOn: {
     type: String,
-    enum: ['product', 'category', 'brand'],
+    enum: ["product", "category"],
     required: true,
   },
   discountType: {
     type: String,
-    enum: ['percentage', 'fixedAmount'],
+    enum: ["percentage", "fixedAmount"],
     required: true,
   },
   discountValue: {
     type: Number,
     required: true,
   },
-  maxRedeemableAmt:{
+  maxRedeemableAmt: {
     type: Number,
-    default:0,
+    default: 0,
   },
   startDate: {
     type: Date,
@@ -36,19 +36,15 @@ const discountSchema = mongoose.Schema({
     type: String,
     default: "Active",
   },
-  discountedProducts:[{
-    type : mongoose.Schema.Types.ObjectId,
-    ref:'product'
-}],
-discountedCategories:[{
-    type : mongoose.Schema.Types.ObjectId,
-    ref:'Category'
-}],
-discountedBrands:[{
-    type : mongoose.Schema.Types.ObjectId,
-    ref:'brand'
-}],
+  discountedProduct: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "product",
+  },
+  discountedCategory: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+  },
 });
 
-const discount = mongoose.model('discount', discountSchema);
+const discount = mongoose.model("discount", discountSchema);
 module.exports = discount;
