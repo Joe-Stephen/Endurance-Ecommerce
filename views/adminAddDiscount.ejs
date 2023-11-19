@@ -231,7 +231,7 @@
             <div class="container">
                 <div class="col-md-6 offset-md-2 mt-4">
                   <h2 class="text-center mb-4">Create Discount</h2>
-                  <form action="/admin/postAddDiscount" method="post" >
+                  <form action="/admin/postAddDiscount" method="post" id="addDiscountForm" >
                     <div class="form-group">
                       <label for="name">Name:</label>
                       <input type="text" id="name" name="name" class="form-control" required>
@@ -413,7 +413,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById('updateDiscountForm');
+    const form = document.getElementById('addDiscountForm');
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       validateForm();

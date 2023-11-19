@@ -69,6 +69,7 @@ const getAddDiscount= async (req, res)=>{
 const postAddDiscount = async (req, res) => {
   try {
     const { name, discountOn, discountedProduct, discountedCategory, discountType, discountValue, maxRedeemableAmt, startDate, endDate } = req.body;
+    console.log("the disc value for percentage option =  "+discountValue);
 
     // Check if a discount with the same name already exists
     const existingName = await discount.find({ name: name });
@@ -123,16 +124,20 @@ const postAddDiscount = async (req, res) => {
 
     // Handle success response
     return res.status(200).json({
-      status: "success",
-      data: newDiscount,
-    });
-  } catch (err) {
-    console.log("An error happened while adding discount! :" + err);
-    res.status(500).render("error-page", {
-      message: "Error adding discount!",
-      errorMessage: err.message,
-    });
-  }
+      status: 'success',
+      data: savedDiscount,
+     }); 
+   } catch (err) {
+       console.log(
+         "An error occured while loading the edit discount page! : " + err
+       );
+       res
+         .status(500)
+         .render("error-page", {
+           message: "An error happened !",
+           errorMessage: err.message,
+         });
+     }
 };
 
 //toggle discount status

@@ -254,10 +254,20 @@
                                                   </td>
                                                   
                                                 <td><%=discount.discountType%></td>
+                                                <td><%= discount.discountValue%></td>
 
-                                                <td><%= discount.discountType==="fixedAmount"?discount.discountValue:discount.maxRedeemableAmt%></td>
+                                                
 
-                                                <td>₹<%=discount.discountType==="percentage"?discount.maxRedeemableAmt:discount.discountValue%></td>
+                                                <% if(discount.discountType==="percentage") {%>
+
+                                                    <td><%= discount.maxRedeemableAmt%></td>
+                                                    <% }else{ %>
+                                                        <td><%= discount.discountValue%></td>
+                                                        <% } %>
+
+
+
+
 
                                                 <td><%= discount.startDate.toLocaleDateString() %></td>
 
