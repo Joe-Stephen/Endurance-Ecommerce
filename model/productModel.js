@@ -21,6 +21,12 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    discount: {
+        type: Number,
+        default: 0,
+      },
+      offerStart: Date,
+      offerEnd: Date,
     category: {
         type: String,
         required: true,

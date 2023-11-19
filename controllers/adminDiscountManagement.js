@@ -113,14 +113,25 @@ const postAddDiscount = async (req, res) => {
 
     if (discountOn === "product") {
       const discProd = await product.findById(discountedProduct);
-      newDiscount.discountedProduct = discProd;
+      newDiscount.discountedProduct = discProd; 
+      if(discountType === "fixedAmount"){ 
+    const itemDoc= await product.findByIdAndUpdate(discountedProduct,{$set:{discount:discountValue, offerStart:startDate, offerEnd:endDate}});
+      }else{
+        const itemDoc= await product.findByIdAndUpdate(discountedProduct,{$set:{discount:maxRedeemableAmt, offerStart:startDate, offerEnd:endDate}});
+      }
     } else {
       const discCat = await Category.findById(discountedCategory);
       newDiscount.discountedCategory = discCat;
+      if(discountType === "fixedAmount"){ 
+        const itemDoc= await Category.findByIdAndUpdate(discountedCategory,{$set:{discount:discountValue, offerStart:startDate, offerEnd:endDate}});
+          }else{
+            const itemDoc= await Category.findByIdAndUpdate(discountedCategory,{$set:{discount:maxRedeemableAmt, offerStart:startDate, offerEnd:endDate}});
+          }
     }
 
     // Save the document to the MongoDB collection
     const savedDiscount = await newDiscount.save();
+
 
     // Handle success response
     return res.status(200).json({
@@ -200,28 +211,34 @@ const saveEditedDiscount= async (req, res) => {
     console.log("old doc == "+existingDiscount)
     let existingName= await discount.find({name:name, _id: { $ne: discountId }});
     console.log("name== "+existingName)
-    if(existingName.length>0){
+    if(existingName&&existingName.length>0){
       return res.status(404).json({ message:"There is already a discount with that name!"});
     }
     let existingCategory;
     let existingProduct;
-    if (discountedCategory) {
+    if (discountOn === 'category') {
+      console.log("entered the category condition!!")
       const existingCategoryPeriod = await discount.findOne({
         discountedCategory: discountedCategory,
-        endDate: { $gte: new Date() }, // Existing discount's end date is greater than or equal to the current date
+        endDate: { $gte: new Date() },
+        _id: { $ne: discountId }
+        // Existing discount's end date is greater than or equal to the current date
       });
       if (existingCategoryPeriod && new Date(startDate) <= existingCategoryPeriod.endDate) {
         return res.status(404).json({ message: "The category already has an active discount." });
       }
     }
      else {
-      if (discountedProduct) {
+      if (discountOn === 'product') {
+        console.log("entered the product condition!!")
         const existingProductPeriod = await discount.findOne({
           discountedProduct: discountedProduct,
-          endDate: { $gte: new Date() }, // Existing discount's end date is greater than or equal to the current date
+          endDate: { $gte: new Date() },
+           _id: { $ne: discountId }
+           // Existing discount's end date is greater than or equal to the current date
         });
         if (existingProductPeriod && new Date(startDate) <= existingProductPeriod.endDate) {
-          return res.status(404).json({ message: "The product already has an active discount. Start date should come after the existing discount's end date." });
+          return res.status(404).json({ message: "The product already has an active discount." });
         }
       }
     }
@@ -232,8 +249,18 @@ const saveEditedDiscount= async (req, res) => {
     discountDoc.discountValue = discountValue;
     if (discountOn === 'category') {
      discountDoc.discountedCategory = discountedCategory;
+     if(discountType === "fixedAmount"){ 
+      const itemDoc= await Category.findByIdAndUpdate(discountedCategory,{$set:{discount:discountValue, offerStart:startDate, offerEnd:endDate}});
+        }else{
+          const itemDoc= await Category.findByIdAndUpdate(discountedCategory,{$set:{discount:maxRedeemableAmt, offerStart:startDate, offerEnd:endDate}});
+        }
     } else if (discountOn === 'product') {
      discountDoc.discountedProduct = discountedProduct;
+     if(discountType === "fixedAmount"){ 
+      const itemDoc= await product.findByIdAndUpdate(discountedProduct,{$set:{discount:discountValue, offerStart:startDate, offerEnd:endDate}});
+        }else{
+          const itemDoc= await product.findByIdAndUpdate(discountedProduct,{$set:{discount:maxRedeemableAmt, offerStart:startDate, offerEnd:endDate}});
+        }
     }
     if (discountType === 'percentage') {
      discountDoc.maxRedeemableAmt = maxRedeemableAmt;

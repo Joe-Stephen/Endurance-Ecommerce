@@ -7,6 +7,12 @@ const categorySchema = new mongoose.Schema({
     unique: true,
   },
   description: String,
+  discount: {
+    type: Number,
+    default: 0,
+  },
+  offerStart: Date,
+  offerEnd: Date,
   status: {
     type: String,
     default: 'Active',
