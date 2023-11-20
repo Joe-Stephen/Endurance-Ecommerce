@@ -117,6 +117,7 @@ const postAddDiscount = async (req, res) => {
       if(discountType === "fixedAmount"){ 
     const itemDoc= await product.findByIdAndUpdate(discountedProduct,{$set:{discount:discountValue, offerStart:startDate, offerEnd:endDate}});
       }else{
+
         const productWithDisc= await product.findById(discountedProduct);
             // Calculate the discount value for the case of percentage
     const discountedValue = calculateDiscount(discountType, discountValue,productWithDisc.selling_price);
@@ -287,13 +288,23 @@ const saveEditedDiscount= async (req, res) => {
      discountDoc.discountedProduct = discountedProduct;
      if(discountType === "fixedAmount"){ 
       const itemDoc= await product.findByIdAndUpdate(discountedProduct,{$set:{discount:discountValue, offerStart:startDate, offerEnd:endDate}});
-        }else{
-          const itemDoc= await product.findByIdAndUpdate(discountedProduct,{$set:{discount:maxRedeemableAmt, offerStart:startDate, offerEnd:endDate}});
+        }else{  
+
+          const productWithDisc= await product.findById(discountedProduct);
+          // Calculate the discount value for the case of percentage
+  const discountedValue = calculateDiscount(discountType, discountValue,productWithDisc.selling_price);
+  console.log("calculated value  ="+discountedValue);
+  let actualDisocunt;
+  if(discountedValue>maxRedeemableAmt){
+    actualDisocunt=maxRedeemableAmt;
+  }else{
+    actualDisocunt=discountedValue;
+  }
+          const itemDoc= await product.findByIdAndUpdate(discountedProduct,{$set:{discount:actualDisocunt, offerStart:startDate, offerEnd:endDate}});
+          discountDoc.maxRedeemableAmt=actualDisocunt;
         }
     }
-    if (discountType === 'percentage') {
-     discountDoc.maxRedeemableAmt = maxRedeemableAmt;
-    }
+
     discountDoc.startDate = startDate;
     discountDoc.endDate = endDate;
     if(existingDiscount.discountedCategory&&discountedProduct){
