@@ -595,6 +595,21 @@ const productCancel = async (req, res) => {
     }
   };
 
+  //loading invoice page
+  const getInvoicePage= async (req, res)=>{
+    try{
+      const orderId = req.query.orderId;
+      const orderDocument= await order.findById(orderId).populate({
+        path: "products.productId",
+        model: "product",
+      });
+      res.render("invoiceDownloadPage",{orderDocument})
+    } catch (err) {
+      console.log("An error happened while processig return! :" + err);
+      return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
+    }
+  }
+
 module.exports = {
     cartOrder,
     razorpayOrder,
@@ -604,4 +619,5 @@ module.exports = {
     productReturn,
     getOrderPlaced,
     paymentStatus,
+    getInvoicePage,
   };

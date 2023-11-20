@@ -41,9 +41,9 @@ const postAddCategory = async (req, res) => {
 
     // Redirect to a success page
     res.redirect("/admin/admin-category-management"); // Change this URL as needed
-  } catch (error) {
+  } catch (err) {
     // Handle any errors that occur during category creation
-    console.error("An error occurred while adding the category: " + error);
+    console.error("An error occurred while adding the category: " + err);
 
     // Redirect to an error page or show an error message
     res

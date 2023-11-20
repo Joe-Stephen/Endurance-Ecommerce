@@ -65,6 +65,8 @@ userRouter.get("/orderPlaced", userMiddleware.verifyUser, userOrder.getOrderPlac
 userRouter.get("/paymentStatus", userMiddleware.verifyUser, userOrder.paymentStatus);
 userRouter.post("/returnOrder", userMiddleware.verifyUser, userOrder.productReturn);
 userRouter.post("/cancelOrder", userMiddleware.verifyUser, userOrder.productCancel);
+userRouter.get("/getInvoicePage", userMiddleware.verifyUser, userOrder.getInvoicePage);
+
 
 //cart
 userRouter.get("/cart", userMiddleware.verifyUser, userCart.getCart);

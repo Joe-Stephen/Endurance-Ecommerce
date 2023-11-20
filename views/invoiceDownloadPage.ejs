@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice</title>
+  <!-- Add any additional styles or CSS links here -->
+  <style>
+    body { 
+        font-family: Arial, sans-serif; 
+    }
+
+    #invoice-container { 
+        max-width: 800px; 
+        margin: 0 auto; 
+        padding: 20px; 
+        border: 1px solid #cccccc; 
+    }
+
+    h1 { 
+        text-align: center; 
+        margin-bottom: 20px; 
+    }
+
+    #company-details, #order-details, #invoice-details, #invoice-summary { 
+        background-color: #f2f2f2; 
+        padding: 15px; 
+        margin-bottom: 20px; 
+    }
+
+    #invoice-items { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-bottom: 20px; 
+    }
+
+    #invoice-items th, #invoice-items td { 
+        border: 1px solid #cccccc; 
+        padding: 8px; 
+        text-align: center; 
+    }
+
+    #invoice-items th { 
+        background-color: #f2f2f2; 
+    }
+
+    #print-button { 
+        display: block; 
+        margin: 20px auto; 
+        background-color: #4CAF50; 
+        color: white; 
+        padding: 10px 15px; 
+        font-size: 16px; 
+        cursor: pointer; 
+        border: none; 
+        border-radius: 5px; 
+    }
+
+    @media print {
+        #print-button {
+            display: none;
+        }
+    }
+</style>
+
+</head>
+<body>
+    <div id="invoice-container">
+        <button id="print-button" >Print</button>
+
+        <h1>Invoice</h1>
+
+    <div id="company-details">
+      <p><strong>ENDURANCE</strong> </p>
+      <p><strong>From:  </strong><br>Edathuruthikaran Holdings, <br> 10/450-2, Kundannoor, <br> Maradu, <br> Ernakulam, <br> Kerala 682304</p>
+    </div>
+
+    <div id="order-details">
+        <p><strong>Order Address:</strong><br>
+            <%= orderDocument.orderAddress %>      
+
+        </p>
+      </div>
+      
+    
+
+    <div id="invoice-details">
+        
+      <p><strong>Invoice Number:</strong><%= orderDocument.paymentMethod==="Razorpay"?orderDocument.orderId:orderDocument._id %></p>
+      <p><strong>Date:</strong> <%= orderDocument.orderDate.toLocaleDateString()%></p>
+      <!-- Add more details as needed -->
+    </div>
+
+    <table id="invoice-items">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Description</th>
+          <th>Size</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Payment metheod</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% orderDocument.products.forEach(product => { %>
+          <tr>
+            <td><%= product.productId.name %></td>
+            <td><%= product.productId.description %></td>
+            <td><%= product.size %></td>
+            <td><%= product.quantity %></td>
+            <td>₹ <%= product.price %></td>
+            <td><%= orderDocument.paymentMethod %></td>
+            <td>₹ <%= product.quantity * product.price %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <div id="invoice-summary">
+      <p><strong>Total Amount:</strong>₹ <%= orderDocument.totalAmount %></p>
+      <!-- Add more summary details as needed -->
+    </div>
+  </div>
+
+  <script>
+    // Function to print the invoice
+    function printInvoice() {
+        // Call the print function
+        window.print();
+    }
+
+    // Attach the printInvoice function to the print button
+    document.getElementById('print-button').addEventListener('click', printInvoice);
+</script>
+
+   
+  <!-- Add any additional scripts or JS links here -->
+</body>
+</html>
