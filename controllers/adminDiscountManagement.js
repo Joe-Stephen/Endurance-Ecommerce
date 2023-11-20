@@ -117,7 +117,18 @@ const postAddDiscount = async (req, res) => {
       if(discountType === "fixedAmount"){ 
     const itemDoc= await product.findByIdAndUpdate(discountedProduct,{$set:{discount:discountValue, offerStart:startDate, offerEnd:endDate}});
       }else{
-        const itemDoc= await product.findByIdAndUpdate(discountedProduct,{$set:{discount:maxRedeemableAmt, offerStart:startDate, offerEnd:endDate}});
+        const productWithDisc= await product.findById(discountedProduct);
+            // Calculate the discount value for the case of percentage
+    const discountedValue = calculateDiscount(discountType, discountValue,productWithDisc.selling_price);
+    console.log("calculated value  ="+discountedValue);
+    let actualDisocunt;
+    if(discountedValue>maxRedeemableAmt){
+      actualDisocunt=maxRedeemableAmt;
+    }else{
+      actualDisocunt=discountedValue;
+    }
+
+        const itemDoc= await product.findByIdAndUpdate(discountedProduct,{$set:{discount:actualDisocunt, offerStart:startDate, offerEnd:endDate}});
       }
     } else {
       const discCat = await Category.findById(discountedCategory);
@@ -149,6 +160,18 @@ const postAddDiscount = async (req, res) => {
            errorMessage: err.message,
          });
      }
+};
+
+//function for calculating the discount value in percentage
+const calculateDiscount = (discountType, discountValue, grandTotal) => {
+  switch (discountType) {
+    case 'fixedAmount':
+      return discountValue;
+    case 'percentage':
+      return (discountValue / 100) * grandTotal;
+    default:
+      return 0;
+  }
 };
 
 //toggle discount status

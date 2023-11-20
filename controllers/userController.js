@@ -51,18 +51,6 @@ const getHomePage = async (req, res) => {
   }
 };
 
-module.exports = { getHomePage };
-
-
-
-
-
-
-
-
-
-
-
 //search results in the home page
 const searchResults = async (req, res) => {
   try {
