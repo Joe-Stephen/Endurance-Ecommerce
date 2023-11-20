@@ -60,10 +60,24 @@ const cartOrder = async (req, res) => {
       userCart.products.forEach((product) => {
         const orderProduct = {
           productId: product.productId._id,
-          price: product.productId.selling_price,
           quantity: product.quantity,
           size: product.size,
         };
+        
+        if (product.productId.discount && product.productId.discountStatus === "Active") {
+          if (
+            product.productId.offerStart &&
+            product.productId.offerEnd &&
+            new Date() >= new Date(product.productId.offerStart) &&
+            new Date() <= new Date(product.productId.offerEnd)
+          ) {
+            orderProduct.price = product.productId.selling_price - product.productId.discount;
+          }
+        } else {
+          orderProduct.price = product.productId.selling_price;
+        }
+        console.log(orderProduct.price);
+        
         console.log("Processing product:", orderProduct);
         const userId = userData._id;
         orderTotal += orderProduct.price * orderProduct.quantity;
@@ -97,7 +111,7 @@ const cartOrder = async (req, res) => {
   await product.updateOne(
     {
       _id: prod.productId,
-      "sizes._id": sizeObject._id // Make sure to include the _id of the sizes array element
+      "sizes._id": sizeObject._id 
     },
     { $set: { [`sizes.$.${sizeToUpdate}`]: updatedQuantity } }
   );

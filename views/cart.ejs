@@ -426,14 +426,12 @@
                       </td>
                       <td class="price" data-title="Price">     
                         <% if (product.productId.discountStatus === "Active") { %>
-
                         <% if (product.productId.offerStart && product.productId.offerEnd && new Date() >= new Date(product.productId.offerStart) && new Date() <= new Date(product.productId.offerEnd)) { %>
                           <span>₹<%= product.productId.selling_price - product.productId.discount %></span>
                         <% } %>
                         <% }else { %>
                         <span>₹<%= product.productId.selling_price %></span>
-                      <% } %>
-                        
+                      <% } %>                        
                       </td>
                       <td class="text-center" data-title="Stock">
                         <!-- Modify the HTML to include a data attribute for the product index -->

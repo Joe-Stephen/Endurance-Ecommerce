@@ -1484,8 +1484,14 @@
                             <%= product.productId.name %>
                           </h5>
                         </td>
-                        <td class="price" data-title="Price">
-                          <span><%= product.productId.selling_price %></span>
+                        <td class="price" data-title="Price">     
+                          <% if (product.productId.discountStatus === "Active") { %>
+                          <% if (product.productId.offerStart && product.productId.offerEnd && new Date() >= new Date(product.productId.offerStart) && new Date() <= new Date(product.productId.offerEnd)) { %>
+                            <span>₹<%= product.productId.selling_price - product.productId.discount %></span>
+                          <% } %>
+                          <% }else { %>
+                          <span>₹<%= product.productId.selling_price %></span>
+                        <% } %>                        
                         </td>
                         <td class="text-center" data-title="Stock">
                           <a
@@ -1508,10 +1514,19 @@
                           </a>
                         </td>
                         <td class="text-right" data-title="Cart">
+                          <% if (product.productId.discountStatus === "Active") { %>
+                            <% if (product.productId.offerStart && product.productId.offerEnd && new Date() >= new Date(product.productId.offerStart) && new Date() <= new Date(product.productId.offerEnd)) { %>
+  
                           <span class="price-span"
-                            ><%= product.productId.selling_price *
-                            product.quantity %></span
-                          >
+                            ><%=(product.productId.selling_price - product.productId.discount)
+                            *
+                            product.quantity %></span>
+                            <% }}else{ %>
+  
+                            <span class="price-span"
+                            ><%=product.productId.selling_price *
+                            product.quantity %></span>
+                            <% } %>
                         </td>
                       </tr>
                       <% }); %>
