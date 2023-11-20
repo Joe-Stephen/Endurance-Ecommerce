@@ -1,9 +1,10 @@
 require("dotenv").config();
 const user = require("../model/userModel");
+const { v4: uuidv4 } = require('uuid');
 const address = require("../model/addressModel");
-const razorpay= require("../razorPay"); 
-const razorPay_key_id= process.env.razorPay_key_id;
-const razorPay_key_secret= process.env.razorPay_key_secret;
+const razorpay = require("../razorPay");
+const razorPay_key_id = process.env.razorPay_key_id;
+const razorPay_key_secret = process.env.razorPay_key_secret;
 const wallet = require("../model/walletModel");
 const order = require("../model/orderModel");
 const returns = require("../model/returnModel");
@@ -26,11 +27,11 @@ const banner = require("../model/bannerModel");
 const getHomePage = async (req, res) => {
   try {
     const loggedIn = req.cookies.loggedIn;
-    const banners= await banner.find();
+    const banners = await banner.find();
 
     const page = parseInt(req.query.page) || 1; // Default to page 1 if pageNo is not provided
-    const no_of_docs_each_page = 9; 
-    
+    const no_of_docs_each_page = 9;
+
     const totalProducts = await product.countDocuments({
       status: { $ne: "hide" },
     });
@@ -46,8 +47,13 @@ const getHomePage = async (req, res) => {
     res.render("index-4", { products, loggedIn, page, totalPages, banners }); // Pass the 'totalPages' variable to the template
   } catch (err) {
     console.error(err);
-    res.render("error-page")
-    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
+    res.render("error-page");
+    res
+      .status(500)
+      .render("error-page", {
+        message: "An error happened !",
+        errorMessage: err.message,
+      });
   }
 };
 
@@ -77,7 +83,12 @@ const searchResults = async (req, res) => {
     res.render("index-4", { result, products, loggedIn, totalPages, page });
   } catch (err) {
     console.log(err);
-    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
+    res
+      .status(500)
+      .render("error-page", {
+        message: "An error happened !",
+        errorMessage: err.message,
+      });
   }
 };
 
@@ -89,8 +100,8 @@ const getUserAccount = async (req, res) => {
     const userData = await user.findOne({ email: req.user });
     console.log("User data   " + userData);
     const userAddress = await address.findOne({ userId: userData._id });
-    const userWallet = await wallet.findOne({userId:userData._id});
-    console.log("wallet details  "+userWallet);
+    const userWallet = await wallet.findOne({ userId: userData._id });
+    console.log("wallet details  " + userWallet);
     console.log("Address    " + userAddress);
     const orders = await order
       .find({ userId: userData._id })
@@ -106,10 +117,21 @@ const getUserAccount = async (req, res) => {
       );
     });
 
-    res.render("userDashboard", { userData, userAddress, orders, loggedIn, userWallet });
+    res.render("userDashboard", {
+      userData,
+      userAddress,
+      orders,
+      loggedIn,
+      userWallet,
+    });
   } catch (err) {
     console.log("An error happened in fetching user dashboard " + err);
-    res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
+    res
+      .status(500)
+      .render("error-page", {
+        message: "An error happened !",
+        errorMessage: err.message,
+      });
   }
 };
 
@@ -191,7 +213,6 @@ const getUserLogin = (req, res) => {
   }
 };
 
-
 //getting user signup page
 const getUserSignup = (req, res) => {
   res.render("page-signup");
@@ -270,9 +291,12 @@ const editUserDetails = async (req, res) => {
     }
   } catch (err) {
     console.log("An error occurred while updating the user details: " + err);
-    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
-
-    
+    return res
+      .status(500)
+      .render("error-page", {
+        message: "An error happened !",
+        errorMessage: err.message,
+      });
   }
 };
 
@@ -313,7 +337,12 @@ const postLogin = async (req, res) => {
               res.redirect("/");
             } catch (err) {
               console.error(err);
-              return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
+              return res
+                .status(500)
+                .render("error-page", {
+                  message: "An error happened !",
+                  errorMessage: err.message,
+                });
             }
           }
         });
@@ -339,7 +368,12 @@ const getSendOtp = async (req, res) => {
     res.json({ phoneNumber: phoneNumber });
   } catch (err) {
     console.error(err);
-    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
+    return res
+      .status(500)
+      .render("error-page", {
+        message: "An error happened !",
+        errorMessage: err.message,
+      });
   }
 };
 
@@ -357,20 +391,23 @@ const getVerifyOtp = async (req, res) => {
         code: otp,
       });
     if (verifyOTP.valid) {
+      const referalCode = uuidv4();
+      console.log("the referalCode  ="+referalCode);
+
       console.log("VERIFIED");
       bcrypt.hash(userData.password, 10, async (error, hash) => {
-        await user
+        await user.create({
+          username: userData.username,
+          password: hash,
+          email: userData.email,
+          phoneNumber: userData.phoneNumber,
+          status: "Unblocked",
+          isVerified: 0,
+        });
+        await wallet
           .create({
-            username: userData.username,
-            password: hash,
-            email: userData.email,
-            phoneNumber: userData.phoneNumber,
-            status: "Unblocked",
-            isVerified: 0,
-          })
-          await wallet.create({
-            userId:userData._id,
-            amount:0,
+            userId: userData._id,
+            amount: 0,
           })
           .then((data) => {
             if (data) {
@@ -385,8 +422,12 @@ const getVerifyOtp = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
-
+    return res
+      .status(500)
+      .render("error-page", {
+        message: "An error happened !",
+        errorMessage: err.message,
+      });
   }
 };
 
@@ -431,7 +472,12 @@ const phoneNumberChange = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
+    return res
+      .status(500)
+      .render("error-page", {
+        message: "An error happened !",
+        errorMessage: err.message,
+      });
   }
 };
 
@@ -447,83 +493,74 @@ const testmid = (req, res) => {
   res.render("mail-verification-login");
 };
 
-
-
 const getCouponDiscount = async (req, res) => {
   try {
-    const userData= await user.findOne({email:req.user});
+    const userData = await user.findOne({ email: req.user });
     const couponCode = req.query.couponCode;
     const grandTotal = req.query.grandTotal;
-    console.log(couponCode,grandTotal);
+    console.log(couponCode, grandTotal);
 
     // Find the coupon document in the database
     const couponDoc = await coupon.findOne({ code: couponCode }).exec();
     console.log(couponDoc);
 
-    const dateNow= new Date();
+    const dateNow = new Date();
 
     if (!couponDoc) {
-      return res.status(404).json({ error: 'Invalid coupon code' });
-    }
-    else if(couponDoc.redeemedUsers.includes(userData._id)){
-      return res.status(404).json({ error: 'You have already redeemed this coupon.' });
-    }
-    else if(couponDoc.isActive=="Inactive"){
-      return res.status(404).json({ error: 'Sorry, this coupon is currently unavailable.' });
-    }
-    else if (couponDoc.expirationDate < dateNow) {
-      return res.status(404).json({ error: `Coupon is expired on ${couponDoc.expirationDate}`  });
-    }
-    else if(couponDoc.minOrderAmount>grandTotal){
-      return res.status(404).json({ error: `Minimum order amount is ${couponDoc.minOrderAmount}` });
+      return res.status(404).json({ error: "Invalid coupon code" });
+    } else if (couponDoc.redeemedUsers.includes(userData._id)) {
+      return res
+        .status(404)
+        .json({ error: "You have already redeemed this coupon." });
+    } else if (couponDoc.isActive == "Inactive") {
+      return res
+        .status(404)
+        .json({ error: "Sorry, this coupon is currently unavailable." });
+    } else if (couponDoc.expirationDate < dateNow) {
+      return res
+        .status(404)
+        .json({ error: `Coupon is expired on ${couponDoc.expirationDate}` });
+    } else if (couponDoc.minOrderAmount > grandTotal) {
+      return res
+        .status(404)
+        .json({ error: `Minimum order amount is ${couponDoc.minOrderAmount}` });
     }
 
     // Calculate the discount value
-    const discountValue = calculateDiscount(couponDoc.discountType, couponDoc.discountValue,grandTotal);
-    console.log("calculated value  ="+discountValue);
+    const discountValue = calculateDiscount(
+      couponDoc.discountType,
+      couponDoc.discountValue,
+      grandTotal
+    );
+    console.log("calculated value  =" + discountValue);
     couponDoc.redeemedUsers.push(userData._id);
     await couponDoc.save();
     // Return the discount value and the discounted price to the client
     res.status(200).json({
       discountValue,
-      discountedPrice: grandTotal - discountValue
+      discountedPrice: grandTotal - discountValue,
     });
   } catch (err) {
-    console.error('An error occurred while calculating the discount!', err);
-    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
+    console.error("An error occurred while calculating the discount!", err);
+    return res
+      .status(500)
+      .render("error-page", {
+        message: "An error happened !",
+        errorMessage: err.message,
+      });
   }
 };
 
 const calculateDiscount = (discountType, discountValue, grandTotal) => {
   switch (discountType) {
-    case 'fixedAmount':
+    case "fixedAmount":
       return discountValue;
-    case 'percentage':
+    case "percentage":
       return (discountValue / 100) * grandTotal;
     default:
       return 0;
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //finding product
 const findProduct = async (req, res) => {
@@ -540,15 +577,43 @@ const findProduct = async (req, res) => {
     res.render("product-page", { products });
   } catch (err) {
     console.error(err);
-    return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });  }
+    return res
+      .status(500)
+      .render("error-page", {
+        message: "An error happened !",
+        errorMessage: err.message,
+      });
+  }
 };
 
-
-
-
-
-
-
+//verifying referal code
+const verifyReferalCode= async (req, res)=>{
+  try{
+    const refCode=req.body.referalToCheck;
+    const userDoc= await user.findOne({email:req.user.email});
+    const codeOwner=await user.findOne({referalCode:refCode});
+    if(!codeOwner){
+      return res.status(404).json({message:"Invalid referal code!"})
+    }
+    const alreadyRedeemed= await user.findOne({referalCode:refCode, redeemedUsers: userDoc._id})
+    if(alreadyRedeemed){
+      return res.status(404).json({message:"You have already used this referral code!"})
+    }else{
+      const userWallet= await wallet.updateOne({_id:userDoc._id},{$inc:{amount:100}});
+      const ownerWallet= await wallet.updateOne({_id:codeOwner},{$inc:{amount:200}});
+      await user.findOneAndUpdate({ referalCode: refCode }, { $push: { redeemedUsers: userDoc._id } });
+      return res.status(200).json({ message: "Referral code verified successfully!" });
+    }
+} catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .render("error-page", {
+        message: "An error happened !",
+        errorMessage: err.message,
+      });
+  }
+}
 
 //exporting functions
 module.exports = {
@@ -568,4 +633,5 @@ module.exports = {
   getPhoneNumberChange,
   searchResults,
   getCouponDiscount,
+  verifyReferalCode,
 };

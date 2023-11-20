@@ -531,7 +531,7 @@
                                         <div class="row">
                                             <div class="row">
                                                 <% if (!userAddress) { %>
-                                                    <h4>no address to show, get out stupid!!</h4>
+                                                    <h4>No address added added yet..</h4>
                                                     <% } else { %>
                                                         <% for (let i=0; i < userAddress.address.length; i++) { %>
                                                             <div class="col-lg-6">
@@ -555,12 +555,12 @@
                                                                         <p>India</p>
                                                                         <a href="/editAddress?addressId=<%=userAddress.address[i]._id%>" class="btn-small">Edit</a>
                                                                     </div>
+                                                                    </div>
+                                                                    </div>
+                                                                    <% } %>
+                                                                    <% } %>
                                                                     <a style="width: fit-content;" href="/addAddress" class="btn btn-primary" id="addAddressBtn">Add
                                                                         Address</a>
-                                                                </div>
-                                                            </div>
-                                                            <% } %>
-                                                                <% } %>
                                             </div>
                                         </div>
 
@@ -742,57 +742,79 @@
 
 
                                                 </script>
+                                                <br><br>
+<h5>Your Referal Code</h5>
+<% if(userData.referalCode){%>
+    <br>
+<h6><%=userData.referalCode%></h6>
+<%}else{%>
+    <br>
+    <h6>No referal code found!</h6>
+    <%}%>
+    <br>
 
-                                                <script>
+    <h5>Do you have a code?</h5>
+    <h5>Enter here:</h5>
+    
+    <form action="/checkReferalcode" id="referalForm" method="post">
+    <input id="reffCode" type="text" name="referalToCheck" required>
+    <br><br>
+    <button  type="submit">Get reward</button>
+</form>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById('referalForm');
+    const submitButton = form.querySelector('button');
 
-                                                </script>
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
 
+        // Disable the submit button to prevent multiple submissions
+        submitButton.disabled = true;
 
+        const formData = {
+            referalCode: document.getElementById('reffCode').value,
+        };
 
+        try {
+            const response = await fetch('/checkReferalcode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
 
+            const data = await response.json();
 
+            if (response.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Discount details have been updated successfully!',
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message || 'An unknown error occurred.',
+                });
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'An error occurred. Please try again later.',
+            });
+        } finally {
+            // Re-enable the submit button after handling the response
+            submitButton.disabled = false;
+        }
+    });
+});
+</script>
 
-
-
-
-
-
-
-                                                <!-- <form method="post" name="userAccoutEdit">
-                                                    <div class="row">
-                                                        <div class="form-group col-md-6">
-                                                            <label>Username <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" value="<%=userData.userName%>" name="userName" type="text">
-                                                        </div>
-                                                        <div class="form-group col-md-6">
-                                                            <label>Email<span class="required">*</span></label>
-                                                            <input required="" value="<%=userData.userName%>" class="form-control square" name="phone">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Display Name <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="dname" type="text">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Email Address <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="email" type="email">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Current Password <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="password" type="password">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>New Password <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="npassword" type="password">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Confirm Password <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="cpassword" type="password">
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <button type="submit" class="btn btn-fill-out submit" name="submit" value="Submit">Save</button>
-                                                        </div>
-                                                    </div>
-                                                </form> -->
                                             </div>
                                         </div>
                                     </div>
@@ -939,7 +961,7 @@
         </div>
     </div>
     <!-- pagination -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/userAssets/assets/js/vendor/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script>
@@ -955,7 +977,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Vendor JS-->
     <script src="/userAssets/assets/js/vendor/modernizr-3.6.0.min.js"></script>
-    <script src="/userAssets/assets/js/vendor/jquery-3.6.0.min.js"></script>
     <script src="/userAssets/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
     <script src="/userAssets/assets/js/vendor/bootstrap.bundle.min.js"></script>
     <script src="/userAssets/assets/js/plugins/slick.js"></script>

@@ -29,6 +29,17 @@ const userSchema=new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    referalCode:{
+        type:String,
+        required:true,
+    },
+    redeemedUsers:[
+        {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+        required: true,
+    }
+],
     walletBalance:{
         type:Number,
         default:0,

@@ -22,6 +22,7 @@ const cart = require("../model/cartModel");
 const wishlist = require("../model/wishlistModel");
 const coupon = require("../model/couponModel");
 
+
 //getting cart
 const getCart = async (req, res) => {
     try {
@@ -79,8 +80,6 @@ const getCart = async (req, res) => {
         }
         // Save the updated cart document
         await userCart.save();
-        res.json({ message: "Product added to the cart" });
-      
       } catch (err) {
         console.error("Error adding to cart:", err);
         return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });    }
