@@ -231,8 +231,7 @@
                                             <% if(products){ %>
                                                 <% products.forEach((product)=>{ %>
                                                     <option value="<%= product._id %>"
-                                                        <%=discountDoc.discountedProduct==product._id ? 'selected' : ''
-                                                        %>><%= product.name %>
+                                                        <%=discountDoc.discountedProduct==product._id ? 'selected' : ''%>><%= product.name %>
                                                     </option>
                                                     <% }) %>
                                                         <% } %>
@@ -328,7 +327,7 @@
     
         const formData = {
           discountId: document.getElementById('discountId').value,
-          name: document.getElementById('name').value,
+          name: document.getElementById('name').value.toUpperCase(),
           discountOn: document.getElementById('discountOn').value,
           discountedProduct: document.getElementById('products').value,
           discountedCategory: document.getElementById('categories').value,

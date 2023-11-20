@@ -1369,8 +1369,8 @@
                     <%=locals.result%>
                   </h1>
 
-                  <%if (products) { %>
-                    <% products.forEach(product=> {%>
+                  <% if (products) { %>
+                    <% products.forEach(product => { %>
                       <div class="col-lg-4 col-md-4 col-12 col-sm-6">
                         <div class="product-cart-wrap mb-30">
                           <div class="product-img-action-wrap">
@@ -1381,26 +1381,20 @@
                               </a>
                             </div>
                             <div class="product-action-1">
-                              <!-- <a
-                              aria-label="Quick view"
-                              class="action-btn hover-up"
-                              data-bs-toggle="modal"
-                              data-bs-target="#quickViewModal"
-                              ><i class="fi-rs-eye"></i
-                            ></a> -->
-                              <a aria-label="Add To Wishlist" class="action-btn hover-up addToWishlist"
-                                data-product-id="<%= product._id %>" href="javascript:void(0);"><i
-                                  class="fi-rs-heart"></i></a>
-                              <!-- <a
-                              aria-label="Compare"
-                              class="action-btn hover-up"
-                              href="shop-compare.html"
-                              ><i class="fi-rs-shuffle"></i
-                            ></a> -->
+                              <a aria-label="Add To Wishlist" class="action-btn hover-up addToWishlist" data-product-id="<%= product._id %>" href="javascript:void(0);">
+                                <i class="fi-rs-heart"></i>
+                              </a>
                             </div>
                             <div class="product-badges product-badges-position product-badges-mrg">
-                              <span class="hot">Hot</span>
+                              <% if (product.discountStatus === "Active") { %>
+                                <% console.log("isActive is true"); %>
+                                <% if (product.offerStart && product.offerEnd && new Date() >= new Date(product.offerStart) && new Date() <= new Date(product.offerEnd)) { %>
+                                  <% console.log("Active offer is true"); %>
+                                  <span class="hot">Hot</span>
+                                <% } %>
+                              <% } %>
                             </div>
+                            
                           </div>
                           <div class="product-content-wrap">
                             <div class="product-category">
@@ -1419,22 +1413,32 @@
                               </span>
                             </div>
                             <div class="product-price">
-                              <span>₹<%= product.selling_price %></span>
-                              <span class="old-price">₹<%= product.regular_price%></span>
+                              <% if (product.discountStatus === "Active") { %>
+                                <% if (product.offerStart && product.offerEnd && new Date() >= new Date(product.offerStart) && new Date() <= new Date(product.offerEnd)) { %>
+                                  <span>₹<%= product.selling_price - product.discount %></span>
+                                  <span class="old-price">₹<%= product.regular_price %></span>
+                                <% } else { %>
+                                  <span>₹<%= product.selling_price %></span>
+                                  <span class="old-price">₹<%= product.regular_price %></span>
+                                <% } %>
+                              <% } else { %>
+                                <span>₹<%= product.selling_price %></span>
+                              <% } %>
                             </div>
+                            
                             <div class="product-action-1 show">
-                              <a aria-label="Add To Cart" class="action-btn hover-up addToCartButton"
-                                data-product-id="<%= product._id %>" href="javascript:void(0);"
-                                onclick="openSizeModal('<%= product._id %>')">
+                              <a aria-label="Add To Cart" class="action-btn hover-up addToCartButton" data-product-id="<%= product._id %>" href="javascript:void(0);" onclick="openSizeModal('<%= product._id %>')">
                                 <i class="fi-rs-shopping-bag-add"></i>
                               </a>
                             </div>
                           </div>
                         </div>
                       </div>
-                      <% });}else{%>
-                        <h4>No products found..</h4>
-                        <% } %>
+                    <% }); %>
+                  <% } else { %>
+                    <h4>No products found..</h4>
+                  <% } %>
+                  
 
                           <!-- pagination  -->
 

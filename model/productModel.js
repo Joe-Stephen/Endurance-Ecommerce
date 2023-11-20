@@ -27,12 +27,16 @@ const productSchema = new mongoose.Schema({
       },
       offerStart: Date,
       offerEnd: Date,
+      discountStatus:{
+        type: String,
+        default:"Active",
+      },
     category: {
         type: String,
         required: true,
     },
     photos: {
-        type: Array, // You can store the URL or file path to the product photo
+        type: Array, 
     },
     sizes: [{
         small:{
@@ -49,12 +53,11 @@ const productSchema = new mongoose.Schema({
         },
     }],
     status: {
-        type: String, // You can use 'Available', 'Out of Stock', etc.
+        type: String, 
         default:"show",
         required: true,
 
     },
-    // You can add more fields as needed
 });
 
 const product = mongoose.model('product', productSchema);

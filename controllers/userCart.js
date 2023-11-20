@@ -120,8 +120,12 @@ const getCart = async (req, res) => {
       await userCart.save();
   
       // Calculate the updatedSubtotal as a number
-      const updatedSubtotal =
-        Number(productInCart.productId.selling_price) * productInCart.quantity;
+      let updatedSubtotal=0;
+      if(productInCart.productId.discount&&productInCart.productId.discountStatus==="Active"){
+        updatedSubtotal=Number((productInCart.productId.selling_price)-productInCart.productId.discount) * productInCart.quantity;
+            }else{
+              updatedSubtotal=Number(productInCart.productId.selling_price) * productInCart.quantity;
+      }
   
       // Create a response object with the updated quantity and subtotal
       const response = {

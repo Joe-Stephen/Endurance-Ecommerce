@@ -419,7 +419,7 @@
       validateForm();
   
       const formData = {
-        name: document.getElementById('name').value,
+        name: document.getElementById('name').value.toUpperCase(),
         discountOn: document.getElementById('discountOn').value,
         discountedProduct: document.getElementById('products').value,
         discountedCategory: document.getElementById('categories').value,

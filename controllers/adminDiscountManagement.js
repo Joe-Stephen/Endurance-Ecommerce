@@ -161,6 +161,11 @@ const toggleDiscountStatus= async (req, res)=>{
     const UpdatedDiscount = await discount.findByIdAndUpdate(discountId, {
       isActive: newStatus,
     });
+    if(UpdatedDiscount.discountedProduct){
+      const productStatus= await product.findByIdAndUpdate(UpdatedDiscount.discountedProduct,{discountStatus: newStatus,});
+    }else{
+      const categoryStatus= await Category.findByIdAndUpdate(UpdatedDiscount.discountedCategory,{discountStatus: newStatus,});
+    }
     res.status(200).json({ status: UpdatedDiscount.isActive });
 
 
@@ -188,6 +193,7 @@ const getEditDiscount = async (req, res) => {
         model: "Category",
       },
     ]);
+
     res.render("adminEditDiscount", { discountDoc, products, categories });
   } catch (err) {
     console.log(
