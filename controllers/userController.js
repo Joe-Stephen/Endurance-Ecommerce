@@ -586,34 +586,61 @@ const findProduct = async (req, res) => {
   }
 };
 
-//verifying referal code
-const verifyReferalCode= async (req, res)=>{
-  try{
-    const refCode=req.body.referalToCheck;
-    const userDoc= await user.findOne({email:req.user.email});
-    const codeOwner=await user.findOne({referalCode:refCode});
-    if(!codeOwner){
-      return res.status(404).json({message:"Invalid referal code!"})
+const verifyReferalCode = async (req, res) => {
+  try {
+    const refCode = req.body.referalCode;
+    const userDoc = await user.findOne({ email: req.user });
+    const codeOwner = await user.findOne({ referalCode: refCode});
+
+
+
+    if (!codeOwner||codeOwner._id.equals(userDoc._id)) {
+      console.log("No user with that code!");
+      return res.status(404).json({ message: "Invalid referral code!" });
     }
-    const alreadyRedeemed= await user.findOne({referalCode:refCode, redeemedUsers: userDoc._id})
-    if(alreadyRedeemed){
-      return res.status(404).json({message:"You have already used this referral code!"})
-    }else{
-      const userWallet= await wallet.updateOne({_id:userDoc._id},{$inc:{amount:100}});
-      const ownerWallet= await wallet.updateOne({_id:codeOwner},{$inc:{amount:200}});
-      await user.findOneAndUpdate({ referalCode: refCode }, { $push: { redeemedUsers: userDoc._id } });
-      return res.status(200).json({ message: "Referral code verified successfully!" });
+
+    const alreadyRedeemed = codeOwner.redeemedUsers.includes(userDoc._id);
+    if (alreadyRedeemed) {
+      console.log("Redeemed already: " + alreadyRedeemed);
+      return res
+        .status(404)
+        .json({ message: "You have already used this referral code!" });
+    } else {
+      console.log("Not redeemed yet! Adding to wallet ");
+
+      const userWallet = await wallet.updateOne(
+        {userId:userDoc._id},
+        { $inc: { amount: 200 } },
+        { new: true }
+        );
+      console.log("User wallet =  " + userWallet.amount);
+
+      const ownerWallet = await wallet.updateOne(
+        { userId: codeOwner._id },
+        { $inc: { amount: 200 } },
+        { new: true }
+      );
+      console.log("Owner wallet =  " + ownerWallet.amount);
+
+      const pushedToArry = await user.findOneAndUpdate(
+        { referalCode: refCode },
+        { $push: { redeemedUsers: userDoc._id } },
+        { new: true }
+      );
+      console.log("Pushed to array doc =  " + pushedToArry);
+
+      return res
+        .status(200)
+        .json({ message: "Referral code verified successfully!" });
     }
-} catch (err) {
+  } catch (err) {
     console.error(err);
-    return res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    return res.status(500).render("error-page", {
+      message: "An error happened!",
+      errorMessage: err.message,
+    });
   }
-}
+};
 
 //exporting functions
 module.exports = {

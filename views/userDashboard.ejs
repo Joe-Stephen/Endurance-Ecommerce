@@ -797,7 +797,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: data.message || 'An unknown error occurred.',
+                    text: data.message || 'else case worked',
                 });
             }
         } catch (error) {
@@ -805,7 +805,7 @@ document.addEventListener("DOMContentLoaded", function () {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: 'An error occurred. Please try again later.',
+                text: 'catch case worked!',
             });
         } finally {
             // Re-enable the submit button after handling the response
