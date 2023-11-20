@@ -175,10 +175,24 @@ const razorpayOrder = async (req, res) => {
       userCart.products.forEach((product) => {
         const orderProduct = {
           productId: product.productId._id,
-          price: product.productId.selling_price,
           quantity: product.quantity,
           size: product.size,
         };
+
+        if (product.productId.discount && product.productId.discountStatus === "Active") {
+          if (
+            product.productId.offerStart &&
+            product.productId.offerEnd &&
+            new Date() >= new Date(product.productId.offerStart) &&
+            new Date() <= new Date(product.productId.offerEnd)
+          ) {
+            orderProduct.price = product.productId.selling_price - product.productId.discount;
+          }
+        } else {
+          orderProduct.price = product.productId.selling_price;
+        }
+        console.log(orderProduct.price);
+
         console.log("Processing product:", orderProduct);
         const userId = userData._id;
         orderTotal += orderProduct.price * orderProduct.quantity;
