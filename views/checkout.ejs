@@ -1484,14 +1484,19 @@
                             <%= product.productId.name %>
                           </h5>
                         </td>
-                        <td class="price" data-title="Price">     
-                          <% if (product.productId.discountStatus === "Active") { %>
-                          <% if (product.productId.offerStart && product.productId.offerEnd && new Date() >= new Date(product.productId.offerStart) && new Date() <= new Date(product.productId.offerEnd)) { %>
-                            <span>₹<%= product.productId.selling_price - product.productId.discount %></span>
-                          <% } %>
-                          <% }else { %>
+                        <td class="price" data-title="Price">
+                          <% if (product.productId.discountStatus === "Active")
+                          { %> <% if (product.productId.offerStart &&
+                          product.productId.offerEnd && new Date() >= new
+                          Date(product.productId.offerStart) && new Date() <=
+                          new Date(product.productId.offerEnd)) { %>
+                          <span
+                            >₹<%= product.productId.selling_price -
+                            product.productId.discount %></span
+                          >
+                          <% } %> <% }else { %>
                           <span>₹<%= product.productId.selling_price %></span>
-                        <% } %>                        
+                          <% } %>
                         </td>
                         <td class="text-center" data-title="Stock">
                           <a
@@ -1514,19 +1519,24 @@
                           </a>
                         </td>
                         <td class="text-right" data-title="Cart">
-                          <% if (product.productId.discountStatus === "Active") { %>
-                            <% if (product.productId.offerStart && product.productId.offerEnd && new Date() >= new Date(product.productId.offerStart) && new Date() <= new Date(product.productId.offerEnd)) { %>
-  
+                          <% if (product.productId.discountStatus === "Active")
+                          { %> <% if (product.productId.offerStart &&
+                          product.productId.offerEnd && new Date() >= new
+                          Date(product.productId.offerStart) && new Date() <=
+                          new Date(product.productId.offerEnd)) { %>
+
                           <span class="price-span"
-                            ><%=(product.productId.selling_price - product.productId.discount)
-                            *
-                            product.quantity %></span>
-                            <% }}else{ %>
-  
-                            <span class="price-span"
+                            ><%=(product.productId.selling_price -
+                            product.productId.discount) * product.quantity
+                            %></span
+                          >
+                          <% }}else{ %>
+
+                          <span class="price-span"
                             ><%=product.productId.selling_price *
-                            product.quantity %></span>
-                            <% } %>
+                            product.quantity %></span
+                          >
+                          <% } %>
                         </td>
                       </tr>
                       <% }); %>
@@ -1847,7 +1857,7 @@
         const couponDiscountElement = document.getElementById("couponDiscount");
         const codButton = document.getElementById("codButton");
 
-        codButton.addEventListener("click", function (event) {
+        codButton.addEventListener("click", async function (event) {
           event.preventDefault();
 
           // Move the coupon code retrieval inside the event listener
@@ -1866,26 +1876,55 @@
           console.log(requestBody.discount);
 
           // Send the data to your server using the Fetch API
-          fetch(`/codOrder?couponCode=${couponCode}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          }).then((response) => {
-            if (!response) {
-              console.log("An error happened");
-            } else {
-              Swal.fire({
-                position: "top-center",
-                icon: "success",
-                title: "Order placed",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-              window.location.href = "/orderPlaced";
-            }
-          });
+          const response = await fetch(`/codOrder?couponCode=${couponCode}`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(requestBody),
+});
+try {
+  const data = await response.json();
+
+  if (response.ok) {
+    Swal.fire({
+      position: "top-center",
+      icon: "success",
+      title: "Order placed",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    window.location.href = "/orderPlaced";
+  } else {
+    console.log("An error happened");
+    if (response.status === 404) {
+      Swal.fire({
+        position: "top-center",
+        icon: "error",
+        title: "Insufficient Stock",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } else {
+      Swal.fire({
+        position: "top-center",
+        icon: "error",
+        title: data.message || "Failed to place the order",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  }
+} catch (error) {
+  console.error("Error parsing JSON: ", error);
+  Swal.fire({
+    position: "top-center",
+    icon: "error",
+    title: "Failed to place the order",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+}
         });
         //razorpay button
         const razorpayButton = document.getElementById("razorpayButton");

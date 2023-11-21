@@ -240,7 +240,12 @@
                                             <td><%=couponList.indexOf(coupon)+1%></td>
                                         <td><%=coupon.code%></td>
                                             <td><b><%=coupon.discountType%></b></td>
-                                        <td><%=coupon.discountValue%></td>
+                                            <% if(coupon.discountType==="percentage"){ %>
+                                        <td><%=coupon.discountValue%>%</td>
+                                        <% }else{ %>
+                                            <td>₹<%=coupon.discountValue%></td>
+                                            <% } %>
+
                                         <td>₹ <%=coupon.minOrderAmount%></td>
                                         <td>₹ <%= coupon.discountType==="fixedAmount"?coupon.discountValue:coupon.maxRedeemableAmt%></td>
                                         <td><%=coupon.expirationDate.toLocaleDateString()%></td>

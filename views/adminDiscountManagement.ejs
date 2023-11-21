@@ -237,8 +237,11 @@
                                                   </td>
                                                   
                                                 <td><%=discount.discountType%></td>
-                                                <td><%= discount.discountValue%></td>
-
+                                                <% if(discount.discountType==="percentage"){ %>
+                                                    <td><%=discount.discountValue%>%</td>
+                                                    <% }else{ %>
+                                                        <td>₹<%=discount.discountValue%></td>
+                                                        <% } %>
                                                 
 
                                                 <% if(discount.discountType==="percentage") {%>
