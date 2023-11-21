@@ -248,6 +248,11 @@ const razorpayOrder = async (req, res) => {
 
         console.log("updated quantity =  ", updatedQuantity);
 
+        if(updatedQuantity<0){
+         return res.status(404).json({ message: "Insufficient stock" });
+        }
+
+
         // Update the product sizes using $set to set the updated quantity
         // Update the product sizes using $set to set the updated quantity
         await product.updateOne(
@@ -312,7 +317,7 @@ const razorpayOrder = async (req, res) => {
   }
 };
 
-//wallet Order
+// wallet Order
 const walletOrder = async (req, res) => {
   try {
     const couponCode = req.body.couponCode;
@@ -369,15 +374,13 @@ const walletOrder = async (req, res) => {
       console.log("wallet final = " + userWallet.amount);
     }
     if (totalAmount > userWallet.amount) {
-      res
-        .status(500)
-        .json({ error: "Insufficient balance! Please use another method." });
+      res.status(404).json({ message: "Insufficient balance" });
     } else {
       userWallet.amount -= totalAmount;
       await userWallet.save();
 
       for (const prod of orderProducts) {
-        let currentProduct = await product.findById(prod.productId);
+                let currentProduct = await product.findById(prod.productId);
 
         console.log("this product =  ", currentProduct);
 
@@ -398,7 +401,10 @@ const walletOrder = async (req, res) => {
 
           console.log("updated quantity =  ", updatedQuantity);
 
-          // Update the product sizes using $set to set the updated quantity
+          if (updatedQuantity < 0) {
+            return res.status(404).json({ message: "Insufficient stock" });
+          }
+
           // Update the product sizes using $set to set the updated quantity
           await product.updateOne(
             {

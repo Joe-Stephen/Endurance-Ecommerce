@@ -1926,146 +1926,178 @@ try {
   });
 }
         });
-        //razorpay button
-        const razorpayButton = document.getElementById("razorpayButton");
-        razorpayButton.addEventListener("click", function (event) {
-          event.preventDefault();
+//razorpay button
+const razorpayButton = document.getElementById("razorpayButton");
+razorpayButton.addEventListener("click", async function (event) {
+  event.preventDefault();
 
-          const selectedAddress =
-            document.getElementById("selected_address").value;
-          const userCart = document.getElementById("userCart").value;
-          const couponCode = document.getElementById("couponCode").value; // Get the coupon code
+  const selectedAddress = document.getElementById("selected_address").value;
+  const userCart = document.getElementById("userCart").value;
+  const couponCode = document.getElementById("couponCode").value; // Get the coupon code
 
-          const requestBody = {
-            selected_address: selectedAddress,
-            userCart: userCart,
-            discount: parseFloat(couponDiscountElement.textContent.trim()),
-            couponCode: couponCode, // Include the coupon code in the request body
-          };
+  const requestBody = {
+    selected_address: selectedAddress,
+    userCart: userCart,
+    discount: parseFloat(couponDiscountElement.textContent.trim()),
+    couponCode: couponCode, // Include the coupon code in the request body
+  };
 
-          // Send the data to your server using the Fetch API
-          fetch("/razorpayOrder", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          })
-            .then((response) => {
-              if (response.ok) {
-                return response.json();
-              } else {
-                console.log("An error happened");
-              }
-            })
-            .then((data) => {
-              if (data && data.razorOrder) {
-                const order = data.razorOrder;
-                const orderId = order.id;
-                const amount = order.amount;
-                console.log(orderId);
-                var options = {
-                  key: "rzp_test_hF6WGmggeA2qso",
-                  amount: amount,
-                  currency: "INR",
-                  name: "Joe",
-                  description: "Test Transaction",
-                  image: "",
-                  order_id: orderId,
-                  handler: function (response) {
-                    // alert(response.razorpay_payment_id);
-                    // alert(response.razorpay_order_id);
-                    // alert(response.razorpay_signature);
-                    Swal.fire({
-                      position: "top-end",
-                      icon: "success",
-                      title: "Payment successful",
-                      showConfirmButton: false,
-                      timer: 1500,
-                    });
-                    window.location.href = `/paymentStatus?orderId=${data.razorOrder.id}&status=Success`;
-                  },
-                  prefill: {
-                    name: "Joe",
-                    email: "joestephenk10@example.com",
-                    contact: "9207149607",
-                  },
-                  notes: {
-                    address: "Razorpay Corporate Office",
-                  },
-                  theme: {
-                    color: "#3399cc",
-                  },
-                };
-                var rzp1 = new Razorpay(options);
-                rzp1.on("payment.failed", function (response) {
-                  Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Payment failed!",
-                    footer: '<a href="#">Why do I have this issue?</a>',
-                  });
-                  window.location.href = `/paymentStatus?orderId=${data.razorOrder.id}&status=Failed`;
-                });
-                rzp1.open();
-              }
+  try {
+    // Send the data to your server using the Fetch API
+    const response = await fetch("/razorpayOrder", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.razorOrder) {
+        const order = data.razorOrder;
+        const orderId = order.id;
+        const amount = order.amount;
+        console.log(orderId);
+        var options = {
+          key: "rzp_test_hF6WGmggeA2qso",
+          amount: amount,
+          currency: "INR",
+          name: "Joe",
+          description: "Test Transaction",
+          image: "",
+          order_id: orderId,
+          handler: function (response) {
+            Swal.fire({
+              position: "top-end",
+              icon: "success",
+              title: "Payment successful",
+              showConfirmButton: false,
+              timer: 1500,
             });
+            window.location.href = `/paymentStatus?orderId=${data.razorOrder.id}&status=Success`;
+          },
+          prefill: {
+            name: "Joe",
+            email: "joestephenk10@example.com",
+            contact: "9207149607",
+          },
+          notes: {
+            address: "Razorpay Corporate Office",
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.on("payment.failed", function (response) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Payment failed!",
+            footer: '<a href="#">Why do I have this issue?</a>',
+          });
+          window.location.href = `/paymentStatus?orderId=${data.razorOrder.id}&status=Failed`;
         });
-
-        //wallet payment
-
-        const walletButton = document.getElementById("walletButton");
-
-        walletButton.addEventListener("click", function (event) {
-          event.preventDefault();
-
-          const selectedAddress =
-            document.getElementById("selected_address").value;
-          const userCart = document.getElementById("userCart").value;
-          const couponCode = document.getElementById("couponCode").value; // Get the coupon code
-
-          const requestBody = {
-            selected_address: selectedAddress,
-            userCart: userCart,
-            discount: parseFloat(couponDiscountElement.textContent.trim()),
-            couponCode: couponCode, // Include the coupon code in the request body
-          };
-          console.log(requestBody.discount);
-          // Send the data to your server using the Fetch API
-          fetch("/walletOrder", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          })
-            .then((response) => {
-              if (!response.ok) {
-                // throw new Error("Insufficent Balance")
-                Swal.fire({
-                  icon: "error",
-                  title: "Oops...",
-                  text: "Insufficient balance! Please use another method.",
-                  footer: "",
-                });
-              }
-              if (response.ok) {
-                console.log("Wallet payment successful");
-                Swal.fire({
-                  position: "top-center",
-                  icon: "success",
-                  title: "Order placed",
-                  showConfirmButton: false,
-                  timer: 1500,
-                });
-                window.location.href = "/orderPlaced";
-              }
-            })
-            .catch((error) => {
-              console.log("Wallet payment failed:", error);
-            });
+        rzp1.open();
+      }
+    } else {
+      const errorData = await response.json();
+      if (response.status === 404 && errorData.message === "Insufficient stock") {
+        Swal.fire({
+          icon: "error",
+          title: "Insufficient Stock",
+          showConfirmButton: false,
+          timer: 1500,
         });
+      } else {
+        console.log("An error happened");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    }
+  } catch (error) {
+    console.error("Error during Razorpay payment:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Failed to process the payment",
+      timer: 1500,
+    });
+  }
+});
+
+// wallet payment
+const walletButton = document.getElementById("walletButton");
+
+walletButton.addEventListener("click", async function (event) {
+  event.preventDefault();
+
+  const selectedAddress = document.getElementById("selected_address").value;
+  const userCart = document.getElementById("userCart").value;
+  const couponCode = document.getElementById("couponCode").value; // Get the coupon code
+
+  let response; // Declare the variable outside the try block
+
+  try {
+    // Send the data to your server using the Fetch API
+    response = await fetch("/walletOrder", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        selected_address: selectedAddress,
+        userCart: userCart,
+        discount: parseFloat(couponDiscountElement.textContent.trim()),
+        couponCode: couponCode,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      Swal.fire({
+        position: "top-center",
+        icon: "success",
+        title: "Order placed",
+        showConfirmButton: false,
+        timer: 1500,
       });
+      window.location.href = "/orderPlaced";
+    } else {
+      console.log("An error happened");
+      if (response.status === 404 && data.message === "Insufficient stock") {
+        Swal.fire({
+          position: "top-center",
+          icon: "error",
+          title: "Insufficient Stock",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else if (response.status === 404 && data.message === "Insufficient balance") {
+        Swal.fire({
+          position: "top-center",
+          icon: "error",
+          title: "Insufficient balance! Please use another method.",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error parsing JSON: ", error);
+    Swal.fire({
+      position: "top-center",
+      icon: "error",
+      title: "Failed to place the order",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  }
+});
+      });
+
+
     </script>
 
     <footer class="main">
