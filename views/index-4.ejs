@@ -1509,6 +1509,8 @@
                   const selectedSize = getSelectedSize();
 
                   if (selectedSize) {
+                    console.log("entered the fetch ")
+
                     fetch(`/addToCart?selectedSize=${selectedSize}&productId=${productId}`, {
                       method: 'POST',
                       headers: {
@@ -1517,6 +1519,8 @@
                       body: JSON.stringify({ productId: productId }),
                     })
                       .then((response) => {
+                        console.log("got response")
+
                         if (!response.ok) {
                           throw new Error(`HTTP error! Status: ${response.status}`);
                         }
@@ -1524,13 +1528,18 @@
                       })
                       .then((data) => {
                         console.log('Added to cart:', data);
-                        Swal.fire({
-                          position: 'top-center',
-                          icon: 'success',
-                          title: 'Product added to cart!',
-                          showConfirmButton: false,
-                          timer: 1500,
-                        });
+                        setTimeout(() => {
+                          console.log("entered the swaal")
+  Swal.fire({
+    position: 'top-center',
+    icon: 'success',
+    title: 'Product added to cart!',
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  console.log("exited from the swaal")
+  closeSizeModal();
+}, 100);
                         closeSizeModal();
                       })
                       .catch((error) => {
@@ -1889,7 +1898,8 @@
     </div>
   </div>
   <!-- Vendor JS-->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <script src="userAssets/assets/js/vendor/modernizr-3.6.0.min.js"></script>
   <script src="userAssets/assets/js/vendor/jquery-3.6.0.min.js"></script>
   <script src="userAssets/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>

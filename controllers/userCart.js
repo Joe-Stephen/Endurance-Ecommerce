@@ -80,6 +80,7 @@ const getCart = async (req, res) => {
         }
         // Save the updated cart document
         await userCart.save();
+        res.json({ message: "Product added to the cart" });
       } catch (err) {
         console.error("Error adding to cart:", err);
         return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });    }
