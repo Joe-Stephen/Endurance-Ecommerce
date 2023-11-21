@@ -1204,6 +1204,7 @@
       <section class="home-slider position-relative pt-50">
         <div class="hero-slider-1 dot-style-1 dot-style-1-position-1">
           <%banners.forEach((banner)=>{%>
+            <%if(banner.isActive===true){%>
             <%if(banner.endDate> Date.now()){%>
         <div class="single-hero-slider single-animation-wrap">
           <div class="container">
@@ -1231,6 +1232,7 @@
           </div>
         </div>
         <%}%>
+        <% } %>
         <%})%>
       </div>
       <div class="slider-arrow hero-slider-1-arrow"></div>
@@ -1606,6 +1608,7 @@
       <section class="home-slider position-relative pt-50">
         <div class="hero-slider-1 dot-style-1 dot-style-1-position-1">
           <%banners.forEach((banner)=>{%>
+            <%if(banner.isActive===true){%>
             <%if(banner.endDate> Date.now()){%>
         <div class="single-hero-slider single-animation-wrap">
           <div class="container">
@@ -1633,6 +1636,7 @@
           </div>
         </div>
         <%}%>
+        <% } %>
         <%})%>
       </div>
       <div class="slider-arrow hero-slider-1-arrow"></div>
