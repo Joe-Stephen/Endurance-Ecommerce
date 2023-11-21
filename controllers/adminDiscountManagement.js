@@ -295,10 +295,10 @@ const saveEditedDiscount= async (req, res) => {
   const discountedValue = calculateDiscount(discountType, discountValue,productWithDisc.selling_price);
   console.log("calculated value  ="+discountedValue);
   let actualDisocunt;
-  if(discountedValue>maxRedeemableAmt){
+  if(discountedValue>=maxRedeemableAmt){
     actualDisocunt=maxRedeemableAmt;
   }else{
-    actualDisocunt=discountedValue;
+    actualDisocunt= discountedValue;
   }
           const itemDoc= await product.findByIdAndUpdate(discountedProduct,{$set:{discount:actualDisocunt, offerStart:startDate, offerEnd:endDate}});
           discountDoc.maxRedeemableAmt=actualDisocunt;
