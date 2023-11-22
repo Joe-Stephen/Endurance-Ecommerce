@@ -1389,9 +1389,7 @@
                             </div>
                             <div class="product-badges product-badges-position product-badges-mrg">
                               <% if (product.discountStatus === "Active") { %>
-                                <% console.log("isActive is true"); %>
                                 <% if (product.offerStart && product.offerEnd && new Date() >= new Date(product.offerStart) && new Date() <= new Date(product.offerEnd)) { %>
-                                  <% console.log("Active offer is true"); %>
                                   <span class="hot">In offer!</span>
                                 <% } %>
                               <% } %>
@@ -1509,7 +1507,6 @@
                   const selectedSize = getSelectedSize();
 
                   if (selectedSize) {
-                    console.log("entered the fetch ")
 
                     fetch(`/addToCart?selectedSize=${selectedSize}&productId=${productId}`, {
                       method: 'POST',
@@ -1519,7 +1516,6 @@
                       body: JSON.stringify({ productId: productId }),
                     })
                       .then((response) => {
-                        console.log("got response")
 
                         if (!response.ok) {
                           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -1527,9 +1523,7 @@
                         return response.json();
                       })
                       .then((data) => {
-                        console.log('Added to cart:', data);
                         setTimeout(() => {
-                          console.log("entered the swaal")
   Swal.fire({
     position: 'top-center',
     icon: 'success',
@@ -1537,7 +1531,6 @@
     showConfirmButton: false,
     timer: 1500,
   });
-  console.log("exited from the swaal")
   closeSizeModal();
 }, 100);
                         closeSizeModal();
@@ -1581,7 +1574,6 @@
                                                     return response.json();
                                                 })
                                                 .then((data) => {
-                                                    console.log("Added to wishlist:", data);
                             
                                                     Swal.fire({
                                                         position: 'top-centre',

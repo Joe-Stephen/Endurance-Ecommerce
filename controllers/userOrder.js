@@ -9,6 +9,7 @@ const order = require("../model/orderModel");
 const returns = require("../model/returnModel");
 const cancels = require("../model/cancelModel");
 const bcrypt = require("bcrypt");
+const Category = require("../model/categoryModel");
 // const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const twilio_account_sid = process.env.twilio_account_sid;
@@ -61,6 +62,8 @@ const cartOrder = async (req, res) => {
     console.log("discount = " + req.body.discount);
     let orderTotal = 0;
     let orderProducts = [];
+    const categoriesList = await Category.find();
+
 
     userCart.products.forEach((product) => {
       const orderProduct = {
@@ -68,30 +71,70 @@ const cartOrder = async (req, res) => {
         quantity: product.quantity,
         size: product.size,
       };
-
-      if (
-        product.productId.discount &&
-        product.productId.discountStatus === "Active"
-      ) {
-        if (
-          product.productId.offerStart &&
-          product.productId.offerEnd &&
+    
+      // Initialize variables to store product and category discounts
+      let productDiscount = 0;
+      let categoryDiscount = 0;
+    
+      // Check if the product has an active offer
+      if (product.productId.discount && product.productId.discountStatus === "Active") {
+        if (product.productId.offerStart && product.productId.offerEnd &&
           new Date() >= new Date(product.productId.offerStart) &&
-          new Date() <= new Date(product.productId.offerEnd)
-        ) {
-          orderProduct.price =
-            product.productId.selling_price - product.productId.discount;
+          new Date() <= new Date(product.productId.offerEnd)) {
+          if (product.productId.discountType === "percentage") {
+            productDiscount = calculateDiscount(product.productId.discountType, product.productId.discountValue, product.productId.selling_price);
+            console.log("product discount percentage== "+productDiscount);
+          } else {
+            productDiscount = product.productId.discount;
+            console.log("product discount fixed== "+productDiscount);
+          }
         }
+      }
+    
+      const productCategory = product.productId.category;
+
+    
+      // Find the corresponding category in the categoriesList
+      const category = categoriesList.find(category => category.name === productCategory);
+
+      console.log("this is the category       ==== "+category);
+    
+      // Check if the category has an active offer
+      if (category.discount && category.discountStatus === "Active") {
+        if (category.offerStart && category.offerEnd &&
+          new Date() >= new Date(category.offerStart) &&
+          new Date() <= new Date(category.offerEnd)) {
+          if (category.discountType === "percentage") {
+            console.log("cat disc type    =="+category.discountType);
+  categoryDiscount = calculateDiscount(category.discountType, category.discount, product.productId.selling_price);
+  let temp=categoryDiscount;
+  categoryDiscount = temp>category.maxRedeemableAmt?category.maxRedeemableAmt:temp;
+            console.log("category discount percentage== "+categoryDiscount);
+          } else {
+            categoryDiscount = category.discount;
+            console.log("category discount percentage== "+category.discount);
+          }
+        }
+      }
+    
+      // Choose the higher discount between product and category
+      const higherDiscount = Math.max(productDiscount, categoryDiscount);
+    
+      // Calculate the order product price with the chosen discount
+      if (higherDiscount > 0) {
+        orderProduct.price = product.productId.selling_price - higherDiscount;
       } else {
         orderProduct.price = product.productId.selling_price;
       }
+    
       console.log(orderProduct.price);
-
+    
       console.log("Processing product:", orderProduct);
       const userId = userData._id;
       orderTotal += orderProduct.price * orderProduct.quantity;
       orderProducts.push(orderProduct);
     });
+    
 
     for (const prod of orderProducts) {
       let currentProduct = await product.findById(prod.productId);
@@ -173,9 +216,22 @@ const cartOrder = async (req, res) => {
   }
 };
 
+//function for calculating the discount value in percentage
+const calculateDiscount = (discountType, discountValue, grandTotal) => {
+  switch (discountType) {
+    case 'fixedAmount':
+      return discountValue;
+    case 'percentage':
+      return (discountValue / 100) * grandTotal;
+    default:
+      return 0;
+  }
+};
+
 // razorpay order placing
 const razorpayOrder = async (req, res) => {
   try {
+    const categoriesList = await Category.find();
     const couponCode = req.body.couponCode;
     console.log("code=  " + couponCode);
     const discount = req.body.discount;
@@ -195,30 +251,69 @@ const razorpayOrder = async (req, res) => {
         quantity: product.quantity,
         size: product.size,
       };
-
-      if (
-        product.productId.discount &&
-        product.productId.discountStatus === "Active"
-      ) {
-        if (
-          product.productId.offerStart &&
-          product.productId.offerEnd &&
+      // Initialize variables to store product and category discounts
+      let productDiscount = 0;
+      let categoryDiscount = 0;
+    
+      // Check if the product has an active offer
+      if (product.productId.discount && product.productId.discountStatus === "Active") {
+        if (product.productId.offerStart && product.productId.offerEnd &&
           new Date() >= new Date(product.productId.offerStart) &&
-          new Date() <= new Date(product.productId.offerEnd)
-        ) {
-          orderProduct.price =
-            product.productId.selling_price - product.productId.discount;
+          new Date() <= new Date(product.productId.offerEnd)) {
+          if (product.productId.discountType === "percentage") {
+            productDiscount = calculateDiscount(product.productId.discountType, product.productId.discountValue, product.productId.selling_price);
+            console.log("product discount percentage== "+productDiscount);
+          } else {
+            productDiscount = product.productId.discount;
+            console.log("product discount fixed== "+productDiscount);
+          }
         }
+      }
+    
+      const productCategory = product.productId.category;
+
+    
+      // Find the corresponding category in the categoriesList
+      const category = categoriesList.find(category => category.name === productCategory);
+
+      console.log("this is the category       ==== "+category);
+    
+      // Check if the category has an active offer
+      if (category.discount && category.discountStatus === "Active") {
+        if (category.offerStart && category.offerEnd &&
+          new Date() >= new Date(category.offerStart) &&
+          new Date() <= new Date(category.offerEnd)) {
+          if (category.discountType === "percentage") {
+            console.log("cat disc type    =="+category.discountType);
+  categoryDiscount = calculateDiscount(category.discountType, category.discount, product.productId.selling_price);
+  let temp=categoryDiscount;
+  categoryDiscount = temp>category.maxRedeemableAmt?category.maxRedeemableAmt:temp;
+            console.log("category discount percentage== "+categoryDiscount);
+          } else {
+            categoryDiscount = category.discount;
+            console.log("category discount percentage== "+category.discount);
+          }
+        }
+      }
+    
+      // Choose the higher discount between product and category
+      const higherDiscount = Math.max(productDiscount, categoryDiscount);
+    
+      // Calculate the order product price with the chosen discount
+      if (higherDiscount > 0) {
+        orderProduct.price = product.productId.selling_price - higherDiscount;
       } else {
         orderProduct.price = product.productId.selling_price;
       }
+    
       console.log(orderProduct.price);
-
+    
       console.log("Processing product:", orderProduct);
       const userId = userData._id;
       orderTotal += orderProduct.price * orderProduct.quantity;
       orderProducts.push(orderProduct);
     });
+
 
     var options = {
       amount: orderTotal * 100, // Amount in the smallest currency unit
@@ -320,6 +415,7 @@ const razorpayOrder = async (req, res) => {
 // wallet Order
 const walletOrder = async (req, res) => {
   try {
+    const categoriesList = await Category.find();
     const couponCode = req.body.couponCode;
     console.log("in wallet.log");
     const userData = await user.findOne({ email: req.user });
@@ -342,24 +438,64 @@ const walletOrder = async (req, res) => {
         quantity: product.quantity,
         size: product.size,
       };
-      if (
-        product.productId.discount &&
-        product.productId.discountStatus === "Active"
-      ) {
-        if (
-          product.productId.offerStart &&
-          product.productId.offerEnd &&
+
+      // Initialize variables to store product and category discounts
+      let productDiscount = 0;
+      let categoryDiscount = 0;
+    
+      // Check if the product has an active offer
+      if (product.productId.discount && product.productId.discountStatus === "Active") {
+        if (product.productId.offerStart && product.productId.offerEnd &&
           new Date() >= new Date(product.productId.offerStart) &&
-          new Date() <= new Date(product.productId.offerEnd)
-        ) {
-          orderProduct.price =
-            product.productId.selling_price - product.productId.discount;
+          new Date() <= new Date(product.productId.offerEnd)) {
+          if (product.productId.discountType === "percentage") {
+            productDiscount = calculateDiscount(product.productId.discountType, product.productId.discountValue, product.productId.selling_price);
+            console.log("product discount percentage== "+productDiscount);
+          } else {
+            productDiscount = product.productId.discount;
+            console.log("product discount fixed== "+productDiscount);
+          }
         }
+      }
+    
+      const productCategory = product.productId.category;
+
+    
+      // Find the corresponding category in the categoriesList
+      const category = categoriesList.find(category => category.name === productCategory);
+
+      console.log("this is the category       ==== "+category);
+    
+      // Check if the category has an active offer
+      if (category.discount && category.discountStatus === "Active") {
+        if (category.offerStart && category.offerEnd &&
+          new Date() >= new Date(category.offerStart) &&
+          new Date() <= new Date(category.offerEnd)) {
+          if (category.discountType === "percentage") {
+            console.log("cat disc type    =="+category.discountType);
+  categoryDiscount = calculateDiscount(category.discountType, category.discount, product.productId.selling_price);
+  let temp=categoryDiscount;
+  categoryDiscount = temp>category.maxRedeemableAmt?category.maxRedeemableAmt:temp;
+            console.log("category discount percentage== "+categoryDiscount);
+          } else {
+            categoryDiscount = category.discount;
+            console.log("category discount percentage== "+category.discount);
+          }
+        }
+      }
+    
+      // Choose the higher discount between product and category
+      const higherDiscount = Math.max(productDiscount, categoryDiscount);
+    
+      // Calculate the order product price with the chosen discount
+      if (higherDiscount > 0) {
+        orderProduct.price = product.productId.selling_price - higherDiscount;
       } else {
         orderProduct.price = product.productId.selling_price;
       }
+    
       console.log(orderProduct.price);
-
+    
       console.log("Processing product:", orderProduct);
       const userId = userData._id;
       orderTotal += orderProduct.price * orderProduct.quantity;

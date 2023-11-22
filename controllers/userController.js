@@ -96,13 +96,9 @@ const searchResults = async (req, res) => {
 const getUserAccount = async (req, res) => {
   try {
     const loggedIn = req.user ? true : false;
-    console.log("User data IN REQ   " + req.user);
     const userData = await user.findOne({ email: req.user });
-    console.log("User data   " + userData);
     const userAddress = await address.findOne({ userId: userData._id });
     const userWallet = await wallet.findOne({ userId: userData._id });
-    console.log("wallet details  " + userWallet);
-    console.log("Address    " + userAddress);
     const orders = await order
       .find({ userId: userData._id })
       .sort({ orderDate: -1 })
@@ -110,12 +106,6 @@ const getUserAccount = async (req, res) => {
         path: "products.productId",
         model: "product",
       });
-
-    orders.forEach((order) => {
-      console.log(
-        "orderss  here    " + order.totalAmount + "  " + order.orderDate
-      );
-    });
 
     res.render("userDashboard", {
       userData,

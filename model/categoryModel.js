@@ -11,6 +11,12 @@ const categorySchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  discountType:{
+    type:String,
+  },
+  maxRedeemableAmt:{
+    type:Number,
+  },
   offerStart: Date,
   offerEnd: Date,
   discountStatus:{

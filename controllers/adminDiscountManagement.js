@@ -137,7 +137,7 @@ const postAddDiscount = async (req, res) => {
       if(discountType === "fixedAmount"){ 
         const itemDoc= await Category.findByIdAndUpdate(discountedCategory,{$set:{discount:discountValue, offerStart:startDate, offerEnd:endDate}});
           }else{
-            const itemDoc= await Category.findByIdAndUpdate(discountedCategory,{$set:{discount:maxRedeemableAmt, offerStart:startDate, offerEnd:endDate}});
+            const updatedItemDoc= await Category.findByIdAndUpdate(discountedCategory,{$set:{discount:discountValue, offerStart:startDate, offerEnd:endDate, discountType:discountType, maxRedeemableAmt:maxRedeemableAmt}});
           }
     }
 
@@ -282,7 +282,7 @@ const saveEditedDiscount= async (req, res) => {
      if(discountType === "fixedAmount"){ 
       const itemDoc= await Category.findByIdAndUpdate(discountedCategory,{$set:{discount:discountValue, offerStart:startDate, offerEnd:endDate}});
         }else{
-          const itemDoc= await Category.findByIdAndUpdate(discountedCategory,{$set:{discount:maxRedeemableAmt, offerStart:startDate, offerEnd:endDate}});
+          const updatedItemDoc= await Category.findByIdAndUpdate(discountedCategory,{$set:{discount:discountValue, offerStart:startDate, offerEnd:endDate, discountType:discountType, maxRedeemableAmt:maxRedeemableAmt}});
         }
     } else if (discountOn === 'product') {
      discountDoc.discountedProduct = discountedProduct;
