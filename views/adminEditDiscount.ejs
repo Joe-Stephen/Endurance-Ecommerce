@@ -323,7 +323,11 @@
       const form = document.getElementById('updateDiscountForm');
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-    
+  
+        if (!validateForm()) {
+          return;
+        }
+  
         const formData = {
           discountId: document.getElementById('discountId').value,
           name: document.getElementById('name').value.toUpperCase(),
@@ -335,15 +339,15 @@
           startDate: document.getElementById('startDate').value,
           endDate: document.getElementById('endDate').value,
         };
-    
+  
         // Only include maxRedeemableAmt in formData if discountType is "percentage"
         if (formData.discountType === 'percentage') {
           formData.maxRedeemableAmt = document.getElementById('maxRedeemableAmount').value;
           console.log('maxRedeemableAmt:', formData.maxRedeemableAmt);
         }
-    
+  
         console.log(formData);
-    
+  
         try {
           const response = await fetch("/admin/saveEditedDiscount", {
             method: 'POST',
@@ -352,19 +356,19 @@
             },
             body: JSON.stringify(formData),
           });
-    
+  
           const data = await response.json();
-    
+  
           if (response.ok) {
-              Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Discount details have been updated successfully!',
-              })
-              setTimeout(() => {
-                window.location.href = '/admin/discountManagement';
-              }, 1500);
-              console.log('Discount updated successfully:', data);
+            Swal.fire({
+              icon: 'success',
+              title: 'Success!',
+              text: 'Discount details have been updated successfully!',
+            })
+            setTimeout(() => {
+              window.location.href = '/admin/discountManagement';
+            }, 1000);
+            console.log('Discount updated successfully:', data);
           } else {
             Swal.fire({
               icon: 'error',
@@ -382,7 +386,70 @@
         }
       });
     });
-    </script>
+  
+    function validateForm() {
+      // Validate start date and end date
+      var startDate = document.getElementById("startDate").value.trim();
+      var endDate = document.getElementById("endDate").value.trim();
+  
+      var currentDate = new Date().toISOString().split("T")[0];
+      
+      if (!startDate || new Date(startDate) < new Date(currentDate)) {
+        Swal.fire({
+          icon: "error",
+          title: "Validation Error",
+          text: "Start Date should not be in the past",
+        });
+        return false;
+      }
+  
+      if (!endDate || new Date(endDate) < new Date(startDate)) {
+        Swal.fire({
+          icon: "error",
+          title: "Validation Error",
+          text: "End Date should be after the Start Date",
+        });
+        return false;
+      }
+  
+      // Validate other fields
+      var name = document.getElementById("name").value.trim();
+      var discountOn = document.getElementById("discountOn").value.trim();
+      var discountType = document.getElementById("discountType").value.trim();
+      var discountValue = document.getElementById("discountValue").value.trim();
+      var maxRedeemableAmount = document.getElementById("maxRedeemableAmount").value.trim();
+  
+      if (!name || !discountOn || !discountType || !discountValue) {
+        Swal.fire({
+          icon: "error",
+          title: "Validation Error",
+          text: "All fields are required",
+        });
+        return false;
+      }
+  
+      if (name.includes(' ')) {
+        Swal.fire({
+          icon: "error",
+          title: "Validation Error",
+          text: "Name should not contain only spaces",
+        });
+        return false;
+      }
+  
+      if (discountValue < 0 || (maxRedeemableAmount !== "" && maxRedeemableAmount < 0)) {
+        Swal.fire({
+          icon: "error",
+          title: "Validation Error",
+          text: "Discount values must not be negative",
+        });
+        return false;
+      }
+  
+      return true;
+    }
+  </script>
+  
     
 
 

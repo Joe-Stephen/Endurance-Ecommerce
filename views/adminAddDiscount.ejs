@@ -278,94 +278,9 @@
               </div>
           </form>
               <script>
-                function validateForm() {
-                  // Validate name
-                  var name = document.getElementById("name").value;
-                  if (!name) {
-                    Swal.fire({
-                      icon: "error",
-                      title: "Validation Error",
-                      text: "Name is required",
-                    });
-                    return false;
-                  }
-            
-                  // Validate discountOn
-                  var discountOn = document.getElementById("discountOn").value;
-                  if (!discountOn) {
-                    Swal.fire({
-                      icon: "error",
-                      title: "Validation Error",
-                      text: "Discount On is required",
-                    });
-                    return false;
-                  }
-            
-                  // Validate productField or categoryField based on discountOn value
-                  if (discountOn === "product" && !document.getElementById("products").value) {
-                    Swal.fire({
-                      icon: "error",
-                      title: "Validation Error",
-                      text: "Products is required",
-                    });
-                    return false;
-                  } else if (discountOn === "category" && !document.getElementById("categories").value) {
-                    Swal.fire({
-                      icon: "error",
-                      title: "Validation Error",
-                      text: "Categories is required",
-                    });
-                    return false;
-                  }
-            
-                  // Validate discountType
-                  var discountType = document.getElementById("discountType").value;
-                  if (!discountType) {
-                    Swal.fire({
-                      icon: "error",
-                      title: "Validation Error",
-                      text: "Discount Type is required",
-                    });
-                    return false;
-                  }
-            
-                  // Validate discountValue
-                  var discountValue = document.getElementById("discountValue").value;
-                  if (!discountValue || isNaN(parseFloat(discountValue))) {
-                    Swal.fire({
-                      icon: "error",
-                      title: "Validation Error",
-                      text: "Discount Value is required and must be a valid number",
-                    });
-                    return false;
-                  }
-            
-                  // Validate startDate
-                  var startDate = document.getElementById("startDate").value;
-                  var currentDate = new Date().toISOString().split("T")[0]; // Get current date
-                  if (!startDate || startDate < currentDate) {
-                    Swal.fire({
-                      icon: "error",
-                      title: "Validation Error",
-                      text: "Start Date is required and should not be in the past",
-                    });
-                    return false;
-                  }
-            
-                  // Validate endDate
-                  var endDate = document.getElementById("endDate").value;
-                  if (!endDate || endDate < startDate) {
-                    Swal.fire({
-                      icon: "error",
-                      title: "Validation Error",
-                      text: "End Date is required and should be after the Start Date",
-                    });
-                    return false;
-                  }
-            
-                  // All validations passed, submit the form
-                  return true;
-                }
+
+
+
             
                 function handleDiscountTypeChange() {
       var discountTypeValue = document.getElementById("discountType").value;
@@ -400,69 +315,164 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById('addDiscountForm');
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      validateForm();
-  
-      const formData = {
-        name: document.getElementById('name').value.toUpperCase(),
-        discountOn: document.getElementById('discountOn').value,
-        discountedProduct: document.getElementById('products').value,
-        discountedCategory: document.getElementById('categories').value,
-        discountType: document.getElementById('discountType').value,
-        discountValue: document.getElementById('discountValue').value,
-        startDate: document.getElementById('startDate').value,
-        endDate: document.getElementById('endDate').value,
-      };
-  
-      // Only include maxRedeemableAmt in formData if discountType is "percentage"
-      if (formData.discountType === 'percentage') {
-        formData.maxRedeemableAmt = document.getElementById('maxRedeemableAmount').value;
-        console.log('maxRedeemableAmt:', formData.maxRedeemableAmt);
-      }
-  
-      console.log(formData);
-  
-      try {
-        const response = await fetch("/admin/postAddDiscount", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
-  
-        const data = await response.json();
-  
-        if (response.ok) {
-            Swal.fire({
-              icon: 'success',
-              title: 'Success!',
-              text: 'Discount added successfully!',
-            })
-            setTimeout(() => {
-              window.location.href = '/admin/discountManagement';
-            }, 1500);
-            console.log('Discount added successfully:', data);
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: data.message || 'An unknown error occurred.',
-          })
-        }
-      } catch (error) {
-        console.error('Failed to add discount:', error);
-        // You can show an error message to the user here
+  const form = document.getElementById('addDiscountForm');
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    // Validate the form
+    if (!validateForm()) {
+      // Form is not valid, return without submitting
+      return;
+    }
+
+    const formData = {
+      name: document.getElementById('name').value.toUpperCase(),
+      discountOn: document.getElementById('discountOn').value,
+      discountedProduct: document.getElementById('products').value,
+      discountedCategory: document.getElementById('categories').value,
+      discountType: document.getElementById('discountType').value,
+      discountValue: document.getElementById('discountValue').value,
+      startDate: document.getElementById('startDate').value,
+      endDate: document.getElementById('endDate').value,
+    };
+
+    // Only include maxRedeemableAmt in formData if discountType is "percentage"
+    if (formData.discountType === 'percentage') {
+      formData.maxRedeemableAmt = document.getElementById('maxRedeemableAmount').value;
+      console.log('maxRedeemableAmt:', formData.maxRedeemableAmt);
+    }
+
+    console.log(formData);
+
+    try {
+      const response = await fetch("/admin/postAddDiscount", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'Discount added successfully!',
+        })
+        setTimeout(() => {
+          window.location.href = '/admin/discountManagement';
+        }, 1500);
+        console.log('Discount added successfully:', data);
+      } else {
         Swal.fire({
           icon: 'error',
-          title: 'Oops...',
-          text: 'Something went wrong! Please try again.',
-        });
+          title: 'Error!',
+          text: data.message || 'An unknown error occurred.',
+        })
       }
-    });
+    } catch (error) {
+      console.error('Failed to add discount:', error);
+      // You can show an error message to the user here
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong! Please try again.',
+      });
+    }
   });
+});
+
+function validateForm() {
+  var name = document.getElementById("name").value.trim();
+  if (!name) {
+    Swal.fire({
+      icon: "error",
+      title: "Validation Error",
+      text: "Name is required",
+    });
+    return false;
+  }
+
+  var discountOn = document.getElementById("discountOn").value.trim();
+  if (!discountOn) {
+    Swal.fire({
+      icon: "error",
+      title: "Validation Error",
+      text: "Discount On is required",
+    });
+    return false;
+  }
+
+  if (
+    discountOn === "product" &&
+    !document.getElementById("products").value.trim()
+  ) {
+    Swal.fire({
+      icon: "error",
+      title: "Validation Error",
+      text: "Products is required",
+    });
+    return false;
+  } else if (
+    discountOn === "category" &&
+    !document.getElementById("categories").value.trim()
+  ) {
+    Swal.fire({
+      icon: "error",
+      title: "Validation Error",
+      text: "Categories is required",
+    });
+    return false;
+  }
+
+  var discountType = document.getElementById("discountType").value.trim();
+  if (!discountType) {
+    Swal.fire({
+      icon: "error",
+      title: "Validation Error",
+      text: "Discount Type is required",
+    });
+    return false;
+  }
+
+  var discountValue = document.getElementById("discountValue").value.trim();
+  if (!discountValue || isNaN(parseFloat(discountValue))) {
+    Swal.fire({
+      icon: "error",
+      title: "Validation Error",
+      text: "Discount Value is required and must be a valid number",
+    });
+    return false;
+  }
+
+  var startDate = document.getElementById("startDate").value.trim();
+  var currentDate = new Date().toISOString().split("T")[0];
+  console.log("Start Date:", startDate, "Current Date:", currentDate);
+  if (!startDate || new Date(startDate) < new Date(currentDate)) {
+    Swal.fire({
+      icon: "error",
+      title: "Validation Error",
+      text: "Start Date is required and should not be in the past",
+    });
+    return false;
+  }
+
+  var endDate = document.getElementById("endDate").value.trim();
+  console.log("End Date:", endDate, "Start Date:", startDate);
+  if (!endDate || new Date(endDate) < new Date(startDate)) {
+    Swal.fire({
+      icon: "error",
+      title: "Validation Error",
+      text: "End Date is required and should be after the Start Date",
+    });
+    return false;
+  }
+
+  return true;
+}
+
   </script>
                          
           

@@ -217,151 +217,161 @@
                          </div>
                     </div>
                     <script>
-const couponForm = document.querySelector('#coupon-form');
-const discountTypeSelect = document.getElementById("discountType");
-const maxRedeemableAmountInput = document.getElementById("maxRedeemableAmount");
-const redeemInput = document.getElementById("redeemInput");
-
-// Event listener for discountType change
-discountTypeSelect.addEventListener("change", function () {
-  const selectedDiscountType = discountTypeSelect.value;
-  if (selectedDiscountType === "percentage") {
-    redeemInput.style.display = "block";
-    maxRedeemableAmountInput.removeAttribute("disabled");
-    maxRedeemableAmountInput.setAttribute("required", "required");
-  } else {
-    redeemInput.style.display = "none";
-    maxRedeemableAmountInput.setAttribute("disabled", "disabled");
-    maxRedeemableAmountInput.removeAttribute("required");
-  }
-});
-
-// Ensure correct initial state on page load
-updateMaxRedeemableAmountInput();
-
-function updateMaxRedeemableAmountInput() {
-  const selectedDiscountType = discountTypeSelect.value;
-  if (selectedDiscountType === "percentage") {
-    redeemInput.style.display = "block";
-    maxRedeemableAmountInput.removeAttribute("disabled");
-    maxRedeemableAmountInput.setAttribute("required", "required");
-  } else {
-    redeemInput.style.display = "none";
-    maxRedeemableAmountInput.setAttribute("disabled", "disabled");
-    maxRedeemableAmountInput.removeAttribute("required");
-  }
-}
-
-
-
-couponForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-
-  const formData = {
-    code: document.getElementById('code').value.toUpperCase(),
-    discountType: document.getElementById('discountType').value,
-    discountValue: document.getElementById('discountValue').value,
-    minOrderAmount: document.getElementById('minOrderAmount').value,
-    expirationDate: document.getElementById('expirationDate').value,
-    couponId: document.getElementById('couponId').value,
-  };
-
-  // Ensure none of the number values are negative
-  if (
-    formData.discountValue < 0 ||
-    formData.minOrderAmount < 0
-  ) {
-    // Display error message and prevent form submission
-    alert('Discount value and minimum order amount must be non-negative.');
-    return;
-  }
-
-  const response = await fetch('/admin/saveEditedCoupon', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(formData),
-  });
-
-  // Handle the response as needed
-  if (response.ok) {
-    // Success!
-    Swal.fire({
-                    position: "top-center",
-                    icon: "success",
-                    title: "Coupon edited successfully",
-                    showConfirmButton: false,
-                    timer: 1500,
-                  });
-
-                  setTimeout(() => {
-                    window.location.href = "/admin/couponManagement";
-                  }, 1500);
-  } else {
-    // Error handling
-    alert("An error occurred while saving the coupon. Please try again.");
-  }
-});
-                        // Prevent `e` and `E` in number fields
-                        const preventEAndE = (event) => {
-                          const key = event.key;
-                          if (key === 'e' || key === 'E') {
-                            event.preventDefault();
-                          }
+                    document.addEventListener("DOMContentLoaded", function () {
+                      // Prevent `e` and `E` in number fields
+                      const preventEAndE = (event) => {
+                        const key = event.key;
+                        if (key === 'e' || key === 'E') {
+                          event.preventDefault();
+                        }
+                      };
+                    
+                      // Add event listeners to number fields
+                      const numberFields = document.querySelectorAll('input[type="number"]');
+                      numberFields.forEach((field) => {
+                        field.addEventListener('keydown', preventEAndE);
+                      });
+                    
+                      // Form submission script
+                      const form = document.getElementById('coupon-form');
+                      form.addEventListener('submit', async (event) => {
+                        event.preventDefault();
+                    
+                        // Validate form
+                        if (!validateForm()) {
+                          return;
+                        }
+                    
+                        const formData = {
+                          couponId: document.getElementById('couponId').value,
+                          code: document.getElementById('code').value,
+                          discountType: document.getElementById('discountType').value,
+                          discountValue: document.getElementById('discountValue').value,
+                          minOrderAmount: document.getElementById('minOrderAmount').value,
+                          maxRedeemableAmount: document.getElementById('maxRedeemableAmount').value,
+                          expirationDate: document.getElementById('expirationDate').value,
                         };
-                      
-                        // Add event listeners to number fields
-                        const numberFields = document.querySelectorAll('input[type="number"]');
-                        numberFields.forEach((field) => {
-                          field.addEventListener('keydown', preventEAndE);
-                        });
-                      
-                        // Other standard validation
-                        const form = document.querySelector('form');
-                        form.addEventListener('submit', (event) => {
-                          // Validate required fields
-                          const requiredFields = ['code', 'discountType', 'discountValue', 'expirationDate', 'isActive'];
-                          for (const field of requiredFields) {
-                            const fieldElement = document.querySelector(`input[name="${field}"]`);
-                            if (fieldElement.value === '') {
-                              // Display error message and prevent form submission
-                              event.preventDefault();
-                              fieldElement.setCustomValidity('This field is required.');
-                            }
+                    
+                        // Only include maxRedeemableAmount in formData if discountType is "fixedAmount"
+                        if (formData.discountType === 'fixedAmount') {
+                          formData.maxRedeemableAmount = document.getElementById('maxRedeemableAmount').value;
+                        }
+                    
+                        console.log(formData);
+                    
+                        try {
+                          const response = await fetch("/admin/saveEditedCoupon", {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(formData),
+                          });
+                    
+                          const data = await response.json();
+                    
+                          if (response.ok) {
+                            Swal.fire({
+                              icon: 'success',
+                              title: 'Success!',
+                              text: 'Coupon details have been updated successfully!',
+                            });
+                            setTimeout(() => {
+                              window.location.href = '/admin/couponManagement';
+                            }, 1500);
+                            console.log('Coupon updated successfully:', data);
+                          } else {
+                            Swal.fire({
+                              icon: 'error',
+                              title: 'Error!',
+                              text: data.message || 'An unknown error occurred.',
+                            });
                           }
-                      
-                          // Validate email field
-                          const emailField = document.querySelector('input[type="email"]');
-                          if (emailField) {
-                            const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-                            if (!emailRegex.test(emailField.value)) {
-                              // Display error message and prevent form submission
-                              event.preventDefault();
-                              emailField.setCustomValidity('Please enter a valid email address.');
-                            }
+                        } catch (error) {
+                          console.error('Failed to update coupon:', error);
+                          Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong! Please try again.',
+                          });
+                        }
+                      });
+                    
+                      // Validation script
+                      function validateForm() {
+                        // Validate required fields
+                        const requiredFields = ['code', 'discountType', 'discountValue', 'expirationDate'];
+                        for (const field of requiredFields) {
+                          const fieldElement = document.getElementById(field);
+                          if (fieldElement.value.trim() === '') {
+                            // Display SweetAlert error message and return false
+                            Swal.fire({
+                              icon: 'error',
+                              title: 'Validation Error',
+                              text: `${fieldElement.name} is required.`,
+                            });
+                            return false;
                           }
-                      
-                          // Validate date field
-                          const dateField = document.querySelector('input[type="date"]');
-                          if (dateField) {
-                            const today = new Date();
-                            if (dateField.value < today) {
-                              // Display error message and prevent form submission
-                              event.preventDefault();
-                              dateField.setCustomValidity('Expiration date must be in the future.');
-                            }
+                        }
+                    
+                        // Validate number fields
+                        const maxValueElement = document.getElementById('redeemInput');
+                        if(maxValueElement.style.display==='block'){
+                          if (maxValueElement.value.trim() === '' || fieldElement.value <= 0) {
+                            // Display SweetAlert error message and return false
+                            Swal.fire({
+                              icon: 'error',
+                              title: 'Validation Error',
+                              text: `${maxValueElement.name} must be a positive value.`,
+                            });
+                            return false;
+                          }                          
+                        }
+                        const minOrderElement = document.getElementById('minOrderAmount').value===null?"empty":document.getElementById('minOrderAmount').value.trim();
+                        console.log("====="+minOrderElement)
+                        if(minOrderElement.value!=="empty"){
+                          if (minOrderElement.value=== '' || minOrderElement.value <= 0) {
+                            // Display SweetAlert error message and return false
+                            Swal.fire({
+                              icon: 'error',
+                              title: 'Validation Error',
+                              text: `${minOrderElement.name} must be a positive value.`,
+                            });
+                            return false;
+                          }                          
+                        }
+                        const numberFields = ['discountValue'];
+                        for (const field of numberFields) {
+                          const fieldElement = document.getElementById(field);
+                          if (fieldElement.value.trim() === '' || fieldElement.value <= 0) {
+                            // Display SweetAlert error message and return false
+                            Swal.fire({
+                              icon: 'error',
+                              title: 'Validation Error',
+                              text: `${fieldElement.name} must be a positive value.`,
+                            });
+                            return false;
                           }
-                      
-                          // Validate minimum order amount field
-                          const minOrderAmountField = document.querySelector('input[name="minOrderAmount"]');
-                          if (minOrderAmountField.value < 0) {
-                            // Display error message and prevent form submission
-                            event.preventDefault();
-                            minOrderAmountField.setCustomValidity('Minimum order amount must be a non-negative value.');
-                          }
-                        });
-                      </script>
+                        }
+                    
+                        // Validate expiration date
+                        const expirationDateField = document.getElementById('expirationDate');
+                        const today = new Date().toISOString().split('T')[0];
+                        if (expirationDateField.value < today) {
+                          // Display SweetAlert error message and return false
+                          Swal.fire({
+                            icon: 'error',
+                            title: 'Validation Error',
+                            text: 'Expiration date must be in the future.',
+                          });
+                          return false;
+                        }
+                    
+                        // All validations passed, return true
+                        return true;
+                      }
+                    });
+                    
                       
                     </script>
                 </div>

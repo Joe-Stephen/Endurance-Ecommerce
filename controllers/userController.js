@@ -381,8 +381,8 @@ const getVerifyOtp = async (req, res) => {
         code: otp,
       });
     if (verifyOTP.valid) {
-      const referalCode = uuidv4();
-      console.log("the referalCode  ="+referalCode);
+      const referralCode = uuidv4();
+      console.log("the referralCode  ="+referralCode);
 
       console.log("VERIFIED");
       bcrypt.hash(userData.password, 10, async (error, hash) => {
@@ -576,15 +576,19 @@ const findProduct = async (req, res) => {
   }
 };
 
-const verifyReferalCode = async (req, res) => {
+const verifyReferralCode = async (req, res) => {
   try {
-    const refCode = req.body.referalCode;
+    const refCode = req.body.referralCode;
     const userDoc = await user.findOne({ email: req.user });
-    const codeOwner = await user.findOne({ referalCode: refCode});
+    const codeOwner = await user.findOne({ referralCode: refCode });
 
+    if(userDoc.redeemed===true){
+      return res
+      .status(404)
+      .json({ message: "You have already redeemed a referral code before!" });
+    }
 
-
-    if (!codeOwner||codeOwner._id.equals(userDoc._id)) {
+    if (!codeOwner || codeOwner._id.equals(userDoc._id)) {
       console.log("No user with that code!");
       return res.status(404).json({ message: "Invalid referral code!" });
     }
@@ -598,30 +602,40 @@ const verifyReferalCode = async (req, res) => {
     } else {
       console.log("Not redeemed yet! Adding to wallet ");
 
-      const userWallet = await wallet.updateOne(
-        {userId:userDoc._id},
-        { $inc: { amount: 200 } },
+      // Update user wallet
+      await wallet.updateOne(
+        { userId: userDoc._id },
+        { $inc: { amount: 100 } },
         { new: true }
-        );
-      console.log("User wallet =  " + userWallet.amount);
+      );
+      console.log("User wallet =  " + userDoc.amount);
 
-      const ownerWallet = await wallet.updateOne(
+      // Update owner wallet
+      await wallet.updateOne(
         { userId: codeOwner._id },
         { $inc: { amount: 200 } },
         { new: true }
       );
-      console.log("Owner wallet =  " + ownerWallet.amount);
+      console.log("Owner wallet =  " + codeOwner.amount);
 
-      const pushedToArry = await user.findOneAndUpdate(
-        { referalCode: refCode },
-        { $push: { redeemedUsers: userDoc._id } },
-        { new: true }
+      // Remove redeemed referral code from owner's document
+      await user.updateOne(
+        { referralCode: refCode },
+        { $unset: { referralCode: "" } }
       );
-      console.log("Pushed to array doc =  " + pushedToArry);
 
-      return res
-        .status(200)
-        .json({ message: "Referral code verified successfully!" });
+      // Update user document with hasRedeemed:true
+      await user.updateOne({ _id: userDoc._id }, { $set: { redeemed: true } });
+
+      // Push user ID to owner's redeemedUsers array
+      await user.updateOne(
+        { referralCode: refCode },
+        { $push: { redeemedUsers: userDoc._id } }
+      );
+
+      console.log("Referral code redeemed successfully!");
+
+      return res.status(200).json({ message: "Referral code verified successfully!" });
     }
   } catch (err) {
     console.error(err);
@@ -650,5 +664,5 @@ module.exports = {
   getPhoneNumberChange,
   searchResults,
   getCouponDiscount,
-  verifyReferalCode,
+  verifyReferralCode,
 };

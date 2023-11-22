@@ -29,9 +29,13 @@ const userSchema=new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    referalCode:{
+    referralCode:{
         type:String,
         required:true,
+    },
+    redeemed:{
+        type:Boolean,
+        default:false,
     },
     redeemedUsers:[
         {

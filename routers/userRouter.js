@@ -44,7 +44,7 @@ userRouter.post("/verifyOtpPhoneNumChange", userMiddleware.verifyUser, userContr
 userRouter.post("/verifyOTPnow", userController.getVerifyOtp);
 userRouter.get("/userAccount", userMiddleware.verifyUser, userController.getUserAccount);
 userRouter.post("/editUserDetails", userMiddleware.verifyUser, userController.editUserDetails);
-userRouter.post("/checkReferalcode", userMiddleware.verifyUser, userController.verifyReferalCode);
+userRouter.post("/checkReferalcode", userMiddleware.verifyUser, userController.verifyReferralCode);
 
 
 //address handlers
