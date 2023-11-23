@@ -88,7 +88,4 @@ userRouter.post("/verifyOTPRoute", userPassword.verifyForgotPasswordOtp);
 userRouter.get("/resetPassword/:phoneNumber", userPassword.getResetPassword);
 userRouter.post("/changePassword", userPassword.changePassword);
 
-// test routes
-userRouter.route("/test").get(userController.testmid);
-
 module.exports = userRouter;

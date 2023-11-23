@@ -10,7 +10,7 @@ const order = require("../model/orderModel");
 const returns = require("../model/returnModel");
 const cancels = require("../model/cancelModel");
 const bcrypt = require("bcrypt");
-// const nodemailer = require("nodemailer");
+const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const twilio_account_sid = process.env.twilio_account_sid;
 const twilio_auth_token = process.env.twilio_auth_token;
@@ -23,6 +23,7 @@ const cart = require("../model/cartModel");
 const wishlist = require("../model/wishlistModel");
 const coupon = require("../model/couponModel");
 const banner = require("../model/bannerModel");
+const otpGenerator = require('otp-generator');
 
 const getHomePage = async (req, res) => {
   try {
@@ -134,66 +135,6 @@ const logout = (req, res) => {
   res.redirect("/getLogin");
 };
 
-//code for email sending and verification
-
-// const sendVerifyMail = async (name, email, user_id) => {
-//   try {
-//     console.log(
-//       "The verification mail has been send, please check your inbox for the same."
-//     );
-//     const transporter = nodemailer.createTransport({
-//       host: "smtp.gmail.com",
-//       port: 587,
-//       secure: false,
-//       requireTLS: true,
-//       auth: {
-//         user: "joestephenk10@gmail.com",
-//         pass: "pqch fcmn ruxe hhyt",
-//       },
-//     });
-//     const mailOptions = {
-//       from: "joestephenk10@gmail.com",
-//       to: email,
-//       subject: "Account verification mail",
-//       html:
-//         "<p>Hello " +
-//         name +
-//         ', please click here to <a href="http://127.0.0.1:3000/verify-email?id=' +
-//         user_id +
-//         '"> Verify </a> your mail.</p>',
-//     };
-//     transporter.sendMail(mailOptions, function (error, info) {
-//       if (error) {
-//         console.log(error);
-//       } else {
-//         console.log("Email has been sent: ", info.response);
-//       }
-//       console.log("hia");
-//     });
-//   } catch (err) {
-//     console.log(err.message);
-// res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
-//   }
-// };
-
-// const verifyEmail = async (req, res) => {
-//   try {
-//     const updateInfo = await user.updateOne(
-//       { _id: req.query.id },
-//       { $set: { isVerified: 1 } }
-//     );
-//     console.log(updateInfo);
-//     res.render("page-login-register", {
-//       verified: "Your email has been verified, please login.",
-//     });
-//   } catch (err) {
-//     console.log(err.message);
-// res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
-//   }
-// };
-
-//getting home page
-
 //getting user login page
 const getUserLogin = (req, res) => {
   if (req.cookies.loggedIn) {
@@ -207,34 +148,43 @@ const getUserLogin = (req, res) => {
 const getUserSignup = (req, res) => {
   res.render("page-signup");
 };
-let userData;
 
-//posting user details to the database
+
+const querystring = require('querystring');
+
 const postUserSignup = async (req, res) => {
-  const formData = await user.findOne({
-    email: req.body.email,
-  });
-  if (formData) {
-    res.redirect("/page-signup", {
-      error: "User with this email Already exists! Try with another email.",
-    });
-  } else {
-    res.render("otpVerificationPage");
-    // const userData = await user.findOne({
-    //   username: req.body.username,
-    //   email: req.body.email,
-    // });
-    // if (userData) {
-    //   sendVerifyMail(req.body.username, req.body.email, userData._id);
-    // }
-    // console.log("hai");
+  try {
+    const queryString = req.url.split('?')[1];
 
-    // , {
-    //   subreddit:
-    //     "The verification mail has been send, please check your inbox for the same.",
-    // });
+
+    // Parse the queryString into an object
+    const data = querystring.parse(queryString);
+    
+
+    // Now you can access individual properties
+    console.log(data.username); // john
+    console.log(data.phoneNumber); // 1234567890
+
+    const formData = await user.findOne({
+      email: data.email,
+    });
+
+    if (formData) {
+      res.render("page-signup", {
+        error: "User with this email already exists! Try with another email.",
+      });
+    } else {
+      res.render("otpVerificationPage", { data });
+    }
+  } catch (err) {
+    console.log("An error occurred while loading the verification page: " + err);
+    return res.status(500).render("error-page", {
+      message: "An error happened!",
+      errorMessage: err.message,
+    });
   }
 };
+
 
 // Editing user details
 const editUserDetails = async (req, res) => {
@@ -341,21 +291,19 @@ const postLogin = async (req, res) => {
   }
 };
 
-let phoneNumber;
-
 //displaying otp verification page and sending otp
 const getSendOtp = async (req, res) => {
   try {
     console.log("reached the send otp fun.");
-    phoneNumber = req.body.phoneNumber;
-    userData = req.body;
+    const phoneNumber = req.body.phoneNumber;
+    let userData = req.body;
     console.log(phoneNumber);
     console.log(userData);
     await twilio.verify.v2.services(twilio_serviceId).verifications.create({
       to: `+91${phoneNumber}`,
       channel: "sms",
     });
-    res.json({ phoneNumber: phoneNumber });
+    res.json({ phoneNumber, userData });
   } catch (err) {
     console.error(err);
     return res
@@ -370,10 +318,14 @@ const getSendOtp = async (req, res) => {
 //otp verification
 const getVerifyOtp = async (req, res) => {
   try {
-    console.log(userData);
-    console.log(typeof phoneNumber);
     const otp = req.body.otpCode;
+    const username = req.body.username;
+  const password = req.body.password;
+  const confirm_password = req.body.confirm_password;
+  const email = req.body.email;
+  const phoneNumber = req.body.phoneNumber;
     console.log(otp);
+
     const verifyOTP = await twilio.verify.v2
       .services(twilio_serviceId)
       .verificationChecks.create({
@@ -385,15 +337,17 @@ const getVerifyOtp = async (req, res) => {
       console.log("the referralCode  ="+referralCode);
 
       console.log("VERIFIED");
-      bcrypt.hash(userData.password, 10, async (error, hash) => {
+      bcrypt.hash(password, 10, async (error, hash) => {
         await user.create({
-          username: userData.username,
+          username: username,
           password: hash,
-          email: userData.email,
-          phoneNumber: userData.phoneNumber,
+          email: email,
+          phoneNumber: phoneNumber,
           status: "Unblocked",
           isVerified: 0,
+          referralCode:referralCode,
         });
+        const userData= await user.findOne({email:email});
         await wallet
           .create({
             userId: userData._id,
@@ -421,6 +375,7 @@ const getVerifyOtp = async (req, res) => {
   }
 };
 
+//load the page for changing phone number
 const getPhoneNumberChange = async (req, res) => {
   try {
     console.log("reached the send otp fun.");
@@ -436,6 +391,7 @@ const getPhoneNumberChange = async (req, res) => {
   }
 };
 
+//updating the phone number in the user document
 const phoneNumberChange = async (req, res) => {
   try {
     const newNumber = req.body.phoneNumber;
@@ -478,11 +434,7 @@ const phoneNumberChange = async (req, res) => {
   res.render("product-page", { loggedIn });
 };
 
-// for testing purpose only
-const testmid = (req, res) => {
-  res.render("mail-verification-login");
-};
-
+//getting the coupon discount
 const getCouponDiscount = async (req, res) => {
   try {
     const userData = await user.findOne({ email: req.user });
@@ -541,6 +493,7 @@ const getCouponDiscount = async (req, res) => {
   }
 };
 
+// function for calculating discount
 const calculateDiscount = (discountType, discountValue, grandTotal) => {
   switch (discountType) {
     case "fixedAmount":
@@ -576,6 +529,7 @@ const findProduct = async (req, res) => {
   }
 };
 
+//verifying 
 const verifyReferralCode = async (req, res) => {
   try {
     const refCode = req.body.referralCode;
@@ -649,7 +603,6 @@ const verifyReferralCode = async (req, res) => {
 //exporting functions
 module.exports = {
   findProduct,
-  testmid,
   getVerifyOtp,
   getSendOtp,
   postLogin,

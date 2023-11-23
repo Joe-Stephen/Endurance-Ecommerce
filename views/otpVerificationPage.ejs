@@ -52,6 +52,11 @@
     <div class="container">
       <h1>OTP Code Verification</h1>
       <form id="otpForm" action="/verifyOTPnow" method="post">
+        <input type="hidden" id="username" name="username" value="<%= data.username %>">
+        <input type="hidden" id="password" name="password" value="<%= data.password %>">
+        <input type="hidden" id="confirm_password" name="confirm_password" value="<%= data.confirm_password %>">
+        <input type="hidden" id="email" name="email" value="<%= data.email %>">
+        <input type="hidden" id="phoneNumber" name="phoneNumber" value="<%= data.phoneNumber %>">
         <label for="otpCode">Enter the OTP code sent to your phone:</label>
         <input
           type="number"
@@ -74,7 +79,7 @@
 
 
      <script>
-
+   
 // Get references to the countdown and resend button elements
 const countdownElement = document.getElementById('countdown');
 const resendButton = document.getElementById('resendButton');
@@ -176,12 +181,20 @@ resendButton.addEventListener('click', function () {
   const otpInput = document.getElementById("otp");
   const otpCode = otpInput.value;
 
+  const username = document.getElementById("username").value;
+  console.log(username)
+    const password = document.getElementById("password").value;
+    console.log(username)
+    const confirm_password = document.getElementById("confirm_password").value;
+    const email = document.getElementById("email").value;
+    const phoneNumber = document.getElementById("phoneNumber").value;
+
   fetch("/verifyOTPnow", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: `otpCode=${otpCode}`, // Use correct field name
+    body: `otpCode=${otpCode}&username=${username}&password=${password}&confirm_password=${confirm_password}&email=${email}&phoneNumber=${phoneNumber}`,
   })
   .then((data) => {
   console.log("OTP verified:", data);
@@ -192,10 +205,6 @@ resendButton.addEventListener('click', function () {
       console.error("Error verifying OTP:", error);
     });
 });
-
-
-
-
   //         // const loginForm = document.querySelector('form[action="/signin"]');
   //         // const loginEmailInput = document.getElementById("loginEmail");
   //         // const loginPasswordInput = document.getElementById("loginPassword");

@@ -544,14 +544,7 @@ usernameInput.addEventListener('input', function(event) {
 });
 
 </script>
-
-                                            
-
-
-                      
-                      <script>
-
-
+<script>
 document.addEventListener("DOMContentLoaded", function () {
   const sendOTPButton = document.querySelector(".sendOTPButton");
 
@@ -579,6 +572,10 @@ document.addEventListener("DOMContentLoaded", function () {
       phoneNumber: phoneNumber
     };
 
+    const queryString = Object.keys(data)
+      .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+      .join('&');
+
     fetch("/send_otp", {
       method: "POST",
       headers: {
@@ -596,14 +593,14 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Response from server:", data);
         // Redirect to the OTP verification page
 
-        window.location.href = "/toVerifyPage";
+        window.location.href =  `/toVerifyPage?${queryString}`;
       })
       .catch((error) => {
         console.error("Error sending OTP:", error);
       });
   });
 });
-                      </script>
+</script>
 
                      
               
