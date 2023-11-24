@@ -35,12 +35,10 @@ const getOrderDetails = async (req, res) => {
     res.render("orderDetails", { orderDetails });
   } catch (err) {
     console.log("An error happened while loading the order details! :" + err);
-    return res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -64,7 +62,6 @@ const cartOrder = async (req, res) => {
     let orderProducts = [];
     const categoriesList = await Category.find();
 
-
     userCart.products.forEach((product) => {
       const orderProduct = {
         productId: product.productId._id,
@@ -74,77 +71,94 @@ const cartOrder = async (req, res) => {
           medium: product.sizes.medium,
           large: product.sizes.large,
         },
-            };
-    
+      };
+
       // Initialize variables to store product and category discounts
       let productDiscount = 0;
       let categoryDiscount = 0;
-    
+
       // Check if the product has an active offer
-      if (product.productId.discount && product.productId.discountStatus === "Active") {
-        if (product.productId.offerStart && product.productId.offerEnd &&
+      if (
+        product.productId.discount &&
+        product.productId.discountStatus === "Active"
+      ) {
+        if (
+          product.productId.offerStart &&
+          product.productId.offerEnd &&
           new Date() >= new Date(product.productId.offerStart) &&
-          new Date() <= new Date(product.productId.offerEnd)) {
+          new Date() <= new Date(product.productId.offerEnd)
+        ) {
           if (product.productId.discountType === "percentage") {
-            productDiscount = calculateDiscount(product.productId.discountType, product.productId.discountValue, product.productId.selling_price);
-            console.log("product discount percentage== "+productDiscount);
+            productDiscount = calculateDiscount(
+              product.productId.discountType,
+              product.productId.discountValue,
+              product.productId.selling_price
+            );
+            console.log("product discount percentage== " + productDiscount);
           } else {
             productDiscount = product.productId.discount;
-            console.log("product discount fixed== "+productDiscount);
+            console.log("product discount fixed== " + productDiscount);
           }
         }
       }
-    
+
       const productCategory = product.productId.category;
 
-    
       // Find the corresponding category in the categoriesList
-      const category = categoriesList.find(category => category.name === productCategory);
+      const category = categoriesList.find(
+        (category) => category.name === productCategory
+      );
 
-      console.log("this is the category       ==== "+category);
-    
+      console.log("this is the category       ==== " + category);
+
       // Check if the category has an active offer
       if (category.discount && category.discountStatus === "Active") {
-        if (category.offerStart && category.offerEnd &&
+        if (
+          category.offerStart &&
+          category.offerEnd &&
           new Date() >= new Date(category.offerStart) &&
-          new Date() <= new Date(category.offerEnd)) {
+          new Date() <= new Date(category.offerEnd)
+        ) {
           if (category.discountType === "percentage") {
-            console.log("cat disc type    =="+category.discountType);
-  categoryDiscount = calculateDiscount(category.discountType, category.discount, product.productId.selling_price);
-  let temp=categoryDiscount;
-  categoryDiscount = temp>category.maxRedeemableAmt?category.maxRedeemableAmt:temp;
-            console.log("category discount percentage== "+categoryDiscount);
+            console.log("cat disc type    ==" + category.discountType);
+            categoryDiscount = calculateDiscount(
+              category.discountType,
+              category.discount,
+              product.productId.selling_price
+            );
+            let temp = categoryDiscount;
+            categoryDiscount =
+              temp > category.maxRedeemableAmt
+                ? category.maxRedeemableAmt
+                : temp;
+            console.log("category discount percentage== " + categoryDiscount);
           } else {
             categoryDiscount = category.discount;
-            console.log("category discount percentage== "+category.discount);
+            console.log("category discount percentage== " + category.discount);
           }
         }
       }
-    
+
       // Choose the higher discount between product and category
       const higherDiscount = Math.max(productDiscount, categoryDiscount);
-    
+
       // Calculate the order product price with the chosen discount
       if (higherDiscount > 0) {
         orderProduct.price = product.productId.selling_price - higherDiscount;
       } else {
         orderProduct.price = product.productId.selling_price;
       }
-    
+
       console.log(orderProduct.price);
-    
+
       console.log("Processing product:", orderProduct);
       const userId = userData._id;
       orderTotal += orderProduct.price * orderProduct.quantity;
       orderProducts.push(orderProduct);
     });
 
-
     let insufficientProducts = [];
 
-
-
-    
     for (const prod of orderProducts) {
       try {
         let currentProduct = await product.findById(prod.productId);
@@ -152,26 +166,55 @@ const cartOrder = async (req, res) => {
         console.log("this product = ", currentProduct);
 
         let sizeSmall = prod.sizes.small;
-        console.log("current small = "+currentProduct.sizes.small+" new small = "+sizeSmall);
+        console.log(
+          "current small = " +
+            currentProduct.sizes.small +
+            " new small = " +
+            sizeSmall
+        );
 
         let sizeMedium = prod.sizes.medium;
-                   console.log("current medium = "+currentProduct.sizes.medium+" new medium = "+sizeMedium);
+        console.log(
+          "current medium = " +
+            currentProduct.sizes.medium +
+            " new medium = " +
+            sizeMedium
+        );
 
         let sizeLarge = prod.sizes.large;
-        console.log("current large = "+currentProduct.sizes.large+" new large = "+sizeLarge);
-
+        console.log(
+          "current large = " +
+            currentProduct.sizes.large +
+            " new large = " +
+            sizeLarge
+        );
 
         let shortSizes = [];
         if (currentProduct.sizes.small < sizeSmall) {
-          console.log("current small = "+currentProduct.sizes.small+" new small = "+sizeSmall);
+          console.log(
+            "current small = " +
+              currentProduct.sizes.small +
+              " new small = " +
+              sizeSmall
+          );
           shortSizes.push({ small: sizeSmall });
         }
         if (currentProduct.sizes.medium < sizeMedium) {
-          console.log("current small = "+currentProduct.sizes.medium+" new small = "+sizeMedium);
+          console.log(
+            "current small = " +
+              currentProduct.sizes.medium +
+              " new small = " +
+              sizeMedium
+          );
           shortSizes.push({ medium: sizeMedium });
         }
         if (currentProduct.sizes.large < sizeLarge) {
-          console.log("current small = "+currentProduct.sizes.large+" new small = "+sizeLarge);
+          console.log(
+            "current small = " +
+              currentProduct.sizes.large +
+              " new small = " +
+              sizeLarge
+          );
           shortSizes.push({ large: sizeLarge });
         }
         if (shortSizes.length !== 0) {
@@ -190,22 +233,9 @@ const cartOrder = async (req, res) => {
     if (insufficientProducts.length > 0) {
       return res.status(404).json({ message: "Insufficient stock" });
     }
+
     
-    for (const prod of orderProducts) {
-      try {
-        await product.findByIdAndUpdate(prod.productId, {
-          $inc: {
-            'sizes.small': -prod.sizes.small,
-            'sizes.medium': -prod.sizes.medium,
-            'sizes.large': -prod.sizes.large,
-          },
-        });
-      } catch (err) {
-        console.error("Error updating product stock:", err);
-        return res.status(500).json({ message: "Failed to update product stock. Please try again later." });
-      }
-    }
-    
+
     // Create the order with the updated total amount
     if (couponCode) {
       const couponDoc = await coupon.findOne({ code: couponCode });
@@ -231,27 +261,44 @@ const cartOrder = async (req, res) => {
       console.log("Ordered:", newOrder);
     }
 
+    //updating stock
+    for (const prod of orderProducts) {
+      try {
+        await product.findByIdAndUpdate(prod.productId, {
+          $inc: {
+            "sizes.small": -prod.sizes.small,
+            "sizes.medium": -prod.sizes.medium,
+            "sizes.large": -prod.sizes.large,
+          },
+        });
+      } catch (err) {
+        console.error("Error updating product stock:", err);
+        return res
+          .status(500)
+          .json({
+            message: "Failed to update product stock. Please try again later.",
+          });
+      }
+    }
     // Clear the user's cart after placing the order
     await cart.deleteOne({ userId: userData._id });
 
     res.status(200).json({ message: "Order placed successfully." });
   } catch (err) {
     console.error("An error occurred while placing the order: ", err);
-    return res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
 //function for calculating the discount value in percentage
 const calculateDiscount = (discountType, discountValue, grandTotal) => {
   switch (discountType) {
-    case 'fixedAmount':
+    case "fixedAmount":
       return discountValue;
-    case 'percentage':
+    case "percentage":
       return (discountValue / 100) * grandTotal;
     default:
       return 0;
@@ -279,118 +326,178 @@ const razorpayOrder = async (req, res) => {
       const orderProduct = {
         productId: product.productId._id,
         quantity: product.quantity,
-        size: product.size,
+        sizes: {
+          small: product.sizes.small,
+          medium: product.sizes.medium,
+          large: product.sizes.large,
+        },
       };
       // Initialize variables to store product and category discounts
       let productDiscount = 0;
       let categoryDiscount = 0;
-    
+
       // Check if the product has an active offer
-      if (product.productId.discount && product.productId.discountStatus === "Active") {
-        if (product.productId.offerStart && product.productId.offerEnd &&
+      if (
+        product.productId.discount &&
+        product.productId.discountStatus === "Active"
+      ) {
+        if (
+          product.productId.offerStart &&
+          product.productId.offerEnd &&
           new Date() >= new Date(product.productId.offerStart) &&
-          new Date() <= new Date(product.productId.offerEnd)) {
+          new Date() <= new Date(product.productId.offerEnd)
+        ) {
           if (product.productId.discountType === "percentage") {
-            productDiscount = calculateDiscount(product.productId.discountType, product.productId.discountValue, product.productId.selling_price);
-            console.log("product discount percentage== "+productDiscount);
+            productDiscount = calculateDiscount(
+              product.productId.discountType,
+              product.productId.discountValue,
+              product.productId.selling_price
+            );
+            console.log("product discount percentage== " + productDiscount);
           } else {
             productDiscount = product.productId.discount;
-            console.log("product discount fixed== "+productDiscount);
+            console.log("product discount fixed== " + productDiscount);
           }
         }
       }
-    
+
       const productCategory = product.productId.category;
 
-    
       // Find the corresponding category in the categoriesList
-      const category = categoriesList.find(category => category.name === productCategory);
+      const category = categoriesList.find(
+        (category) => category.name === productCategory
+      );
 
-      console.log("this is the category       ==== "+category);
-    
+      console.log("this is the category       ==== " + category);
+
       // Check if the category has an active offer
       if (category.discount && category.discountStatus === "Active") {
-        if (category.offerStart && category.offerEnd &&
+        if (
+          category.offerStart &&
+          category.offerEnd &&
           new Date() >= new Date(category.offerStart) &&
-          new Date() <= new Date(category.offerEnd)) {
+          new Date() <= new Date(category.offerEnd)
+        ) {
           if (category.discountType === "percentage") {
-            console.log("cat disc type    =="+category.discountType);
-  categoryDiscount = calculateDiscount(category.discountType, category.discount, product.productId.selling_price);
-  let temp=categoryDiscount;
-  categoryDiscount = temp>category.maxRedeemableAmt?category.maxRedeemableAmt:temp;
-            console.log("category discount percentage== "+categoryDiscount);
+            console.log("cat disc type    ==" + category.discountType);
+            categoryDiscount = calculateDiscount(
+              category.discountType,
+              category.discount,
+              product.productId.selling_price
+            );
+            let temp = categoryDiscount;
+            categoryDiscount =
+              temp > category.maxRedeemableAmt
+                ? category.maxRedeemableAmt
+                : temp;
+            console.log("category discount percentage== " + categoryDiscount);
           } else {
             categoryDiscount = category.discount;
-            console.log("category discount percentage== "+category.discount);
+            console.log("category discount percentage== " + category.discount);
           }
         }
       }
-    
+
       // Choose the higher discount between product and category
       const higherDiscount = Math.max(productDiscount, categoryDiscount);
-    
+
       // Calculate the order product price with the chosen discount
       if (higherDiscount > 0) {
         orderProduct.price = product.productId.selling_price - higherDiscount;
       } else {
         orderProduct.price = product.productId.selling_price;
       }
-    
+
       console.log(orderProduct.price);
-    
+
       console.log("Processing product:", orderProduct);
       const userId = userData._id;
       orderTotal += orderProduct.price * orderProduct.quantity;
       orderProducts.push(orderProduct);
     });
 
-
     var options = {
       amount: orderTotal * 100, // Amount in the smallest currency unit
       currency: "INR",
       receipt: "",
     };
+    let insufficientProducts = [];
 
     for (const prod of orderProducts) {
-      let currentProduct = await product.findById(prod.productId);
+      try {
+        let currentProduct = await product.findById(prod.productId);
 
-      console.log("this product =  ", currentProduct);
+        console.log("this product = ", currentProduct);
 
-      let sizeToUpdate = `${prod.size}`;
-
-      console.log("size to update =  ", sizeToUpdate);
-
-      // Access the first element of the sizes array
-      let sizeObject = currentProduct.sizes[0];
-
-      // Access the size property in the sizeObject
-      let currentQuantity = sizeObject[sizeToUpdate];
-
-      console.log("current quantity =  ", currentQuantity);
-
-      if (typeof currentQuantity === "number") {
-        let updatedQuantity = currentQuantity - prod.quantity;
-
-        console.log("updated quantity =  ", updatedQuantity);
-
-        if(updatedQuantity<0){
-         return res.status(404).json({ message: "Insufficient stock" });
-        }
-
-
-        // Update the product sizes using $set to set the updated quantity
-        // Update the product sizes using $set to set the updated quantity
-        await product.updateOne(
-          {
-            _id: prod.productId,
-            "sizes._id": sizeObject._id, // Make sure to include the _id of the sizes array element
-          },
-          { $set: { [`sizes.$.${sizeToUpdate}`]: updatedQuantity } }
+        let sizeSmall = prod.sizes.small;
+        console.log(
+          "current small = " +
+            currentProduct.sizes.small +
+            " new small = " +
+            sizeSmall
         );
-      } else {
-        console.error("Invalid current quantity:", currentQuantity);
+
+        let sizeMedium = prod.sizes.medium;
+        console.log(
+          "current medium = " +
+            currentProduct.sizes.medium +
+            " new medium = " +
+            sizeMedium
+        );
+
+        let sizeLarge = prod.sizes.large;
+        console.log(
+          "current large = " +
+            currentProduct.sizes.large +
+            " new large = " +
+            sizeLarge
+        );
+
+        let shortSizes = [];
+        if (currentProduct.sizes.small < sizeSmall) {
+          console.log(
+            "current small = " +
+              currentProduct.sizes.small +
+              " new small = " +
+              sizeSmall
+          );
+          shortSizes.push({ small: sizeSmall });
+        }
+        if (currentProduct.sizes.medium < sizeMedium) {
+          console.log(
+            "current small = " +
+              currentProduct.sizes.medium +
+              " new small = " +
+              sizeMedium
+          );
+          shortSizes.push({ medium: sizeMedium });
+        }
+        if (currentProduct.sizes.large < sizeLarge) {
+          console.log(
+            "current small = " +
+              currentProduct.sizes.large +
+              " new small = " +
+              sizeLarge
+          );
+          shortSizes.push({ large: sizeLarge });
+        }
+        if (shortSizes.length !== 0) {
+          console.log("Insufficient quantity for the order");
+          insufficientProducts.push(prod.name);
+        }
+      } catch (err) {
+        console.error("Error updating product sizes:", err);
+        return res.status(500).render("error-page", {
+          message: "An error happened !",
+          errorMessage: err.message,
+        });
       }
     }
+
+    if (insufficientProducts.length > 0) {
+      return res.status(404).json({ message: "Insufficient stock" });
+    }
+
 
     // Create the Razorpay order and await its creation
     razorpay.orders.create(options, async function (err, razorOrder) {
@@ -425,6 +532,24 @@ const razorpayOrder = async (req, res) => {
           });
         }
         console.log(razorOrder);
+        for (const prod of orderProducts) {
+          try {
+            await product.findByIdAndUpdate(prod.productId, {
+              $inc: {
+                "sizes.small": -prod.sizes.small,
+                "sizes.medium": -prod.sizes.medium,
+                "sizes.large": -prod.sizes.large,
+              },
+            });
+          } catch (err) {
+            console.error("Error updating product stock:", err);
+            return res
+              .status(500)
+              .json({
+                message: "Failed to update product stock. Please try again later.",
+              });
+          }
+        }
         await cart.deleteOne({ userId: userData._id });
         res
           .status(200)
@@ -433,12 +558,10 @@ const razorpayOrder = async (req, res) => {
     });
   } catch (err) {
     console.error("An error occurred while placing the order: ", err);
-    return res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -466,66 +589,91 @@ const walletOrder = async (req, res) => {
       const orderProduct = {
         productId: product.productId._id,
         quantity: product.quantity,
-        size: product.size,
-      };
+        sizes: {
+          small: product.sizes.small,
+          medium: product.sizes.medium,
+          large: product.sizes.large,
+        },
+            };
 
       // Initialize variables to store product and category discounts
       let productDiscount = 0;
       let categoryDiscount = 0;
-    
+
       // Check if the product has an active offer
-      if (product.productId.discount && product.productId.discountStatus === "Active") {
-        if (product.productId.offerStart && product.productId.offerEnd &&
+      if (
+        product.productId.discount &&
+        product.productId.discountStatus === "Active"
+      ) {
+        if (
+          product.productId.offerStart &&
+          product.productId.offerEnd &&
           new Date() >= new Date(product.productId.offerStart) &&
-          new Date() <= new Date(product.productId.offerEnd)) {
+          new Date() <= new Date(product.productId.offerEnd)
+        ) {
           if (product.productId.discountType === "percentage") {
-            productDiscount = calculateDiscount(product.productId.discountType, product.productId.discountValue, product.productId.selling_price);
-            console.log("product discount percentage== "+productDiscount);
+            productDiscount = calculateDiscount(
+              product.productId.discountType,
+              product.productId.discountValue,
+              product.productId.selling_price
+            );
+            console.log("product discount percentage== " + productDiscount);
           } else {
             productDiscount = product.productId.discount;
-            console.log("product discount fixed== "+productDiscount);
+            console.log("product discount fixed== " + productDiscount);
           }
         }
       }
-    
+
       const productCategory = product.productId.category;
 
-    
       // Find the corresponding category in the categoriesList
-      const category = categoriesList.find(category => category.name === productCategory);
+      const category = categoriesList.find(
+        (category) => category.name === productCategory
+      );
 
-      console.log("this is the category       ==== "+category);
-    
+      console.log("this is the category       ==== " + category);
+
       // Check if the category has an active offer
       if (category.discount && category.discountStatus === "Active") {
-        if (category.offerStart && category.offerEnd &&
+        if (
+          category.offerStart &&
+          category.offerEnd &&
           new Date() >= new Date(category.offerStart) &&
-          new Date() <= new Date(category.offerEnd)) {
+          new Date() <= new Date(category.offerEnd)
+        ) {
           if (category.discountType === "percentage") {
-            console.log("cat disc type    =="+category.discountType);
-  categoryDiscount = calculateDiscount(category.discountType, category.discount, product.productId.selling_price);
-  let temp=categoryDiscount;
-  categoryDiscount = temp>category.maxRedeemableAmt?category.maxRedeemableAmt:temp;
-            console.log("category discount percentage== "+categoryDiscount);
+            console.log("cat disc type    ==" + category.discountType);
+            categoryDiscount = calculateDiscount(
+              category.discountType,
+              category.discount,
+              product.productId.selling_price
+            );
+            let temp = categoryDiscount;
+            categoryDiscount =
+              temp > category.maxRedeemableAmt
+                ? category.maxRedeemableAmt
+                : temp;
+            console.log("category discount percentage== " + categoryDiscount);
           } else {
             categoryDiscount = category.discount;
-            console.log("category discount percentage== "+category.discount);
+            console.log("category discount percentage== " + category.discount);
           }
         }
       }
-    
+
       // Choose the higher discount between product and category
       const higherDiscount = Math.max(productDiscount, categoryDiscount);
-    
+
       // Calculate the order product price with the chosen discount
       if (higherDiscount > 0) {
         orderProduct.price = product.productId.selling_price - higherDiscount;
       } else {
         orderProduct.price = product.productId.selling_price;
       }
-    
+
       console.log(orderProduct.price);
-    
+
       console.log("Processing product:", orderProduct);
       const userId = userData._id;
       orderTotal += orderProduct.price * orderProduct.quantity;
@@ -545,44 +693,83 @@ const walletOrder = async (req, res) => {
       userWallet.amount -= totalAmount;
       await userWallet.save();
 
+      let insufficientProducts = [];
+
       for (const prod of orderProducts) {
-                let currentProduct = await product.findById(prod.productId);
-
-        console.log("this product =  ", currentProduct);
-
-        let sizeToUpdate = `${prod.size}`;
-
-        console.log("size to update =  ", sizeToUpdate);
-
-        // Access the first element of the sizes array
-        let sizeObject = currentProduct.sizes[0];
-
-        // Access the size property in the sizeObject
-        let currentQuantity = sizeObject[sizeToUpdate];
-
-        console.log("current quantity =  ", currentQuantity);
-
-        if (typeof currentQuantity === "number") {
-          let updatedQuantity = currentQuantity - prod.quantity;
-
-          console.log("updated quantity =  ", updatedQuantity);
-
-          if (updatedQuantity < 0) {
-            return res.status(404).json({ message: "Insufficient stock" });
-          }
-
-          // Update the product sizes using $set to set the updated quantity
-          await product.updateOne(
-            {
-              _id: prod.productId,
-              "sizes._id": sizeObject._id, // Make sure to include the _id of the sizes array element
-            },
-            { $set: { [`sizes.$.${sizeToUpdate}`]: updatedQuantity } }
+        try {
+          let currentProduct = await product.findById(prod.productId);
+  
+          console.log("this product = ", currentProduct);
+  
+          let sizeSmall = prod.sizes.small;
+          console.log(
+            "current small = " +
+              currentProduct.sizes.small +
+              " new small = " +
+              sizeSmall
           );
-        } else {
-          console.error("Invalid current quantity:", currentQuantity);
+  
+          let sizeMedium = prod.sizes.medium;
+          console.log(
+            "current medium = " +
+              currentProduct.sizes.medium +
+              " new medium = " +
+              sizeMedium
+          );
+  
+          let sizeLarge = prod.sizes.large;
+          console.log(
+            "current large = " +
+              currentProduct.sizes.large +
+              " new large = " +
+              sizeLarge
+          );
+  
+          let shortSizes = [];
+          if (currentProduct.sizes.small < sizeSmall) {
+            console.log(
+              "current small = " +
+                currentProduct.sizes.small +
+                " new small = " +
+                sizeSmall
+            );
+            shortSizes.push({ small: sizeSmall });
+          }
+          if (currentProduct.sizes.medium < sizeMedium) {
+            console.log(
+              "current small = " +
+                currentProduct.sizes.medium +
+                " new small = " +
+                sizeMedium
+            );
+            shortSizes.push({ medium: sizeMedium });
+          }
+          if (currentProduct.sizes.large < sizeLarge) {
+            console.log(
+              "current small = " +
+                currentProduct.sizes.large +
+                " new small = " +
+                sizeLarge
+            );
+            shortSizes.push({ large: sizeLarge });
+          }
+          if (shortSizes.length !== 0) {
+            console.log("Insufficient quantity for the order");
+            insufficientProducts.push(prod.name);
+          }
+        } catch (err) {
+          console.error("Error updating product sizes:", err);
+          return res.status(500).render("error-page", {
+            message: "An error happened !",
+            errorMessage: err.message,
+          });
         }
       }
+  
+      if (insufficientProducts.length > 0) {
+        return res.status(404).json({ message: "Insufficient stock" });
+      }
+  
 
       if (couponCode) {
         const couponDoc = await coupon.findOne({ code: couponCode });
@@ -608,17 +795,34 @@ const walletOrder = async (req, res) => {
           paymentMethod: "Wallet payment",
         });
       }
+      //updating stock
+    for (const prod of orderProducts) {
+      try {
+        await product.findByIdAndUpdate(prod.productId, {
+          $inc: {
+            "sizes.small": -prod.sizes.small,
+            "sizes.medium": -prod.sizes.medium,
+            "sizes.large": -prod.sizes.large,
+          },
+        });
+      } catch (err) {
+        console.error("Error updating product stock:", err);
+        return res
+          .status(500)
+          .json({
+            message: "Failed to update product stock. Please try again later.",
+          });
+      }
+    }
       await cart.deleteOne({ userId: userData._id });
       res.status(200).json({ message: "Order placed successfully." });
     }
   } catch (err) {
     console.error("An error occurred while placing the order: ", err);
-    return res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -635,12 +839,10 @@ const paymentStatus = async (req, res) => {
       res.redirect("/orderPlaced");
     }
   } catch (err) {
-    res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -723,12 +925,10 @@ const productReturn = async (req, res) => {
     res.redirect("/userAccount");
   } catch (err) {
     console.log("An error happened while processig return! :" + err);
-    return res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -807,12 +1007,10 @@ const productCancel = async (req, res) => {
     res.redirect("/userAccount");
   } catch (err) {
     console.log("An error happened while processig return! :" + err);
-    return res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -827,12 +1025,10 @@ const getInvoicePage = async (req, res) => {
     res.render("invoiceDownloadPage", { orderDocument });
   } catch (err) {
     console.log("An error happened while processig return! :" + err);
-    return res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
