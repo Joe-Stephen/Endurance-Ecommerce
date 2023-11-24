@@ -188,9 +188,9 @@ const postEditProduct = async (req, res) => {
     const updatedPhotos = existingProduct.photos.map((oldPhoto, index) =>
       picPaths[index] ? picPaths[index] : oldPhoto
     );
-    let sizeSmall = 0;
-    let sizeMedium = 0;
-    let sizeLarge = 0;
+    let sizeSmall = existingProduct.sizes.small;
+    let sizeMedium = existingProduct.sizes.medium;
+    let sizeLarge = existingProduct.sizes.large;
     if (req.body.sizeSmall) {
       sizeSmall = req.body.stockSmall;
     }
@@ -200,13 +200,12 @@ const postEditProduct = async (req, res) => {
     if (req.body.sizeLarge) {
       sizeLarge = req.body.stockLarge;
     }
-    const sizes = [
+    const sizes = 
       {
         small: sizeSmall,
         medium: sizeMedium,
         large: sizeLarge,
-      },
-    ];
+      }
     const updatedData = {
       name,
       description,

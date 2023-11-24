@@ -66,21 +66,21 @@ const getCart = async (req, res) => {
         const existingProduct = userCart.products.find(
           (product) => product.productId.toString() === productId
         );
-        
         if (existingProduct) {
           // If the product is in the cart, increase its quantity
+          existingProduct.sizes[selectedSize] += 1;
           existingProduct.quantity += 1;
-          existingProduct.sizes[selectedSize] += 1;    
           console.log("The product is already inside the cart. qty++");
         } else {
           // If the product is not in the cart, add it with a quantity of 1
           userCart.products.push({
             productId: new mongoose.Types.ObjectId(productId),
-            sizes: {
-              [selectedSize]: 1,
-            },
-            quantity: 1,
-          });
+            sizes:{
+              [selectedSize]:1,
+            
+        },
+        quantity:1,
+      });
         }
         // Save the updated cart document
         await userCart.save();
@@ -113,9 +113,23 @@ const getCart = async (req, res) => {
   
       if (action === "increase") {
         productInCart.quantity += 1;
+        if (productInCart.sizes.small > 0) {
+          productInCart.sizes.small += 1;
+        } else if (productInCart.sizes.medium > 0) {
+          productInCart.sizes.medium += 1;
+        } else if (productInCart.sizes.large > 0) {
+          productInCart.sizes.large += 1;
+        }
       } else if (action === "decrease") {
         if (productInCart.quantity > 1) {
           productInCart.quantity -= 1;
+          if (productInCart.sizes.small > 0) {
+            productInCart.sizes.small -= 1;
+          } else if (productInCart.sizes.medium > 0) {
+            productInCart.sizes.medium -= 1;
+          } else if (productInCart.sizes.large > 0) {
+            productInCart.sizes.large -= 1;
+          }
         }
       } else {
         return res.status(400).json({ error: "Invalid action provided" });
@@ -124,11 +138,19 @@ const getCart = async (req, res) => {
       await userCart.save();
   
       // Calculate the updatedSubtotal as a number
-      let updatedSubtotal=0;
-      if(productInCart.productId.discount&&productInCart.productId.discountStatus==="Active"){
-        updatedSubtotal=Number((productInCart.productId.selling_price)-productInCart.productId.discount) * productInCart.quantity;
-            }else{
-              updatedSubtotal=Number(productInCart.productId.selling_price) * productInCart.quantity;
+      let updatedSubtotal = 0;
+      if (
+        productInCart.productId.discount &&
+        productInCart.productId.discountStatus === "Active"
+      ) {
+        updatedSubtotal =
+          Number(
+            productInCart.productId.selling_price -
+              productInCart.productId.discount
+          ) * productInCart.quantity;
+      } else {
+        updatedSubtotal =
+          Number(productInCart.productId.selling_price) * productInCart.quantity;
       }
   
       // Create a response object with the updated quantity and subtotal
@@ -140,7 +162,10 @@ const getCart = async (req, res) => {
       return res.json(response);
     } catch (err) {
       console.log("An error occurred while modifying quantity: " + err);
-      return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
+      return res.status(500).render("error-page", {
+        message: "An error happened !",
+        errorMessage: err.message,
+      });
     }
   };
   
@@ -171,93 +196,108 @@ const getCart = async (req, res) => {
       return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });  }
   };
   
-  //checkout from cart
-  const getCartCheckout = async (req, res) => {
-    try {
-      const coupons = await coupon.find();
-      const loggedIn = req.user ? true : false;
-      const userData = await user.findOne({ email: req.user });
-      const userCart = await cart.findOne({ userId: userData._id }).populate({
-        path: "products.productId",
-        model: "product",
-      });
-  
-      let orderTotal = 0;
-      let orderProducts = [];
-      let insufficientProducts = []; // Keep track of products with insufficient quantity
-  
-      userCart.products.forEach((product) => {
-        const orderProduct = {
-          productId: product.productId._id,
-          name: product.productId.name, // Include the name of the product
-          price: product.productId.selling_price,
-          quantity: product.quantity,
-          size: product.size,
-        };
-        console.log("Processing product:", orderProduct);
-        const userId = userData._id;
-        orderTotal += orderProduct.price * orderProduct.quantity;
-        orderProducts.push(orderProduct);
-      });
-  
-      for (const prod of orderProducts) {
-        try {
-          let currentProduct = await product.findById(prod.productId);
-  
-          console.log("this product =  ", currentProduct);
-  
-          let sizeToUpdate = `${prod.size}`;
-  
-          console.log("size to update =  ", sizeToUpdate);
-  
-          // Access the first element of the sizes array
-          let sizeObject = currentProduct.sizes[0];
-  
-          // Access the size property in the sizeObject
-          let currentQuantity = sizeObject[sizeToUpdate];
-  
-          console.log("current quantity =  ", currentQuantity);
-  
-          if (typeof currentQuantity === 'number' && currentQuantity >= prod.quantity) {
-            let updatedQuantity = currentQuantity - prod.quantity;
-  
-            console.log("updated quantity =  ", updatedQuantity);
-  
-            // Update the product sizes using $set to set the updated quantity
-            await product.updateOne(
-              { _id: currentProduct._id, 'sizes._id': sizeObject._id },
-              { $set: { 'sizes.$.quantity': updatedQuantity } }
-            );
-            console.log("Product sizes updated successfully");
-          } else {
-            console.log("Insufficient quantity for the order");
-            insufficientProducts.push(prod.name); // Add the name of the insufficient product
-          }
-        } catch (err) {
-          console.error("Error updating product sizes:", err);
-          return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
-  
-          // Handle the error
-        }
-      }
-  
-      const userAddress = await address.findOne({ userId: userData._id });
-      if (!userAddress) {
-        res.redirect("/addAddress");
-      } else {
-        if (insufficientProducts.length > 0) {
-          // Render the cart with an error message including insufficient product names
-          res.render("cart", { userCart, loggedIn, subreddit: "Insufficient stock for products: " + insufficientProducts.join(", ") });
-        } else {
-          // Render the checkout page
-          res.render("checkout", { userCart, loggedIn, userAddress, coupons });
-        }
-      }
-    } catch (err) {
-      console.log("An error happened while loading checkout page." + err);
-      return res.status(500).render("error-page", { message: "An error happened !", errorMessage: err.message });
-    }
-  };
+//checkout from cart
+const getCartCheckout = async (req, res) => {
+  try {
+     const coupons = await coupon.find();
+     const loggedIn = req.user ? true : false;
+     const userData = await user.findOne({ email: req.user });
+     const userCart = await cart.findOne({ userId: userData._id }).populate({
+       path: "products.productId",
+       model: "product",
+     });
+ 
+     let orderTotal = 0;
+     let orderProducts = [];
+     let insufficientProducts = []; // Keep track of products with insufficient quantity
+ 
+     userCart.products.forEach((product) => {
+       const orderProduct = {
+         productId: product.productId._id,
+         name: product.productId.name, // Include the name of the product
+         price: product.productId.selling_price,
+         quantity: product.quantity,
+         sizes: {
+           small: product.sizes.small,
+           medium: product.sizes.medium,
+           large: product.sizes.large,
+         },
+       };
+       console.log("Processing product:", orderProduct);
+       const userId = userData._id;
+       orderTotal += orderProduct.price * orderProduct.quantity;
+       orderProducts.push(orderProduct);
+     });
+ 
+     // Move the insufficient products check and cart rendering logic outside the forEach loop
+     for (const prod of orderProducts) {
+       try {
+         let currentProduct = await product.findById(prod.productId);
+ 
+         console.log("this product = ", currentProduct);
+ 
+         let sizeSmall = prod.sizes.small;
+         console.log("current small = "+currentProduct.sizes.small+" new small = "+sizeSmall);
+
+         let sizeMedium = prod.sizes.medium;
+                    console.log("current medium = "+currentProduct.sizes.medium+" new medium = "+sizeMedium);
+
+         let sizeLarge = prod.sizes.large;
+         console.log("current large = "+currentProduct.sizes.large+" new large = "+sizeLarge);
+
+ 
+         let shortSizes = [];
+         if (currentProduct.sizes.small < sizeSmall) {
+           console.log("current small = "+currentProduct.sizes.small+" new small = "+sizeSmall);
+           shortSizes.push({ small: sizeSmall });
+         }
+         if (currentProduct.sizes.medium < sizeMedium) {
+           console.log("current small = "+currentProduct.sizes.medium+" new small = "+sizeMedium);
+           shortSizes.push({ medium: sizeMedium });
+         }
+         if (currentProduct.sizes.large < sizeLarge) {
+           console.log("current small = "+currentProduct.sizes.large+" new small = "+sizeLarge);
+           shortSizes.push({ large: sizeLarge });
+         }
+         if (shortSizes.length !== 0) {
+           console.log("Insufficient quantity for the order");
+           insufficientProducts.push(prod.name);
+         }
+       } catch (err) {
+         console.error("Error updating product sizes:", err);
+         return res.status(500).render("error-page", {
+           message: "An error happened !",
+           errorMessage: err.message,
+         });
+       }
+     }
+ 
+     if (insufficientProducts.length > 0) {
+       // Render the cart with an error message including insufficient product names
+       res.render("cart", {
+         userCart,
+         loggedIn,
+         subreddit:
+           "Insufficient stock for products: " +
+           insufficientProducts.join(", "),
+       });
+     } else {
+       const userAddress = await address.findOne({ userId: userData._id });
+       if (!userAddress) {
+         res.redirect("/addAddress");
+       } else {
+         // Render the checkout page
+         res.render("checkout", { userCart, loggedIn, userAddress, coupons });
+       }
+     }
+  } catch (err) {
+     console.error("Error checking out:", err);
+     return res.status(500).render("error-page", {
+       message: "An error happened !",
+       errorMessage: err.message,
+     });
+  }
+ };
 
 module.exports = {
     getCart,

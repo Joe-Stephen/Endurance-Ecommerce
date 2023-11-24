@@ -38,7 +38,7 @@ const productSchema = new mongoose.Schema({
     photos: {
         type: Array, 
     },
-    sizes: [{
+    sizes:{
         small:{
             type:Number,
             default:0,
@@ -51,7 +51,7 @@ const productSchema = new mongoose.Schema({
             type:Number,
             default:0,
         },
-    }],
+    },
     status: {
         type: String, 
         default:"show",

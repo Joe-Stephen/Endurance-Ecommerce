@@ -229,15 +229,15 @@
                                 </div>
                                 <div class="mb-4">
                                     <label><input type="checkbox" id="sizeS" name="sizeSmall" value="S" onchange="toggleNumberInput('sizeS')"> S</label>
-                                    <input value="<%=editProduct.sizes[0].small%>" type="number" name="stockSmall" id="sizeS_stock" class="small-input" placeholder="Stock" disabled required>
+                                    <input value="<%=editProduct.sizes.small%>" type="number" name="stockSmall" id="sizeS_stock" class="small-input" placeholder="Stock" disabled required>
                                     </div>
                                     <div class="mb-4">
                                     <label><input type="checkbox" id="sizeM" name="sizeMedium" value="M" onchange="toggleNumberInput('sizeM')"> M</label>
-                                    <input value="<%=editProduct.sizes[0].medium%>" type="number" name="stockMedium" id="sizeM_stock" class="small-input" placeholder="Stock" disabled required>
+                                    <input value="<%=editProduct.sizes.medium%>" type="number" name="stockMedium" id="sizeM_stock" class="small-input" placeholder="Stock" disabled required>
                                     </div>
                                     <div class="mb-4">
                                     <label><input type="checkbox" id="sizeL" name="sizeLarge" value="L" onchange="toggleNumberInput('sizeL')"> L</label>
-                                    <input value="<%=editProduct.sizes[0].large%>" type="number" name="stockLarge" id="sizeL_stock" class="small-input" placeholder="Stock" disabled required>
+                                    <input value="<%=editProduct.sizes.large%>" type="number" name="stockLarge" id="sizeL_stock" class="small-input" placeholder="Stock" disabled required>
                                     </div>
                                 <div>
                                     <button type="submit" class="btn btn-md rounded font-sm hover-up">Apply Changes</button>

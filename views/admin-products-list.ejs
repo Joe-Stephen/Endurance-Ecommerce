@@ -255,14 +255,14 @@
                                           <td><%= products[i].brand %></td>
                                           <td><%= products[i].category %></td>
                                           <td>₹<%= products[i].selling_price %></td>
-                                          <td class="<%= products[i].sizes[0].small === 0 ? 'out-of-stock' : '' %>">
-                                            <%= products[i].sizes[0].small === 0 ? 'Out of stock' : products[i].sizes[0].small %>
+                                          <td class="<%= products[i].sizes.small === 0 ? 'out-of-stock' : '' %>">
+                                            <%= products[i].sizes.small === 0 ? 'Out of stock' : products[i].sizes.small %>
                                           </td>
-                                          <td class="<%= products[i].sizes[0].medium === 0 ? 'out-of-stock' : '' %>">
-                                            <%= products[i].sizes[0].medium === 0 ? 'Out of stock' : products[i].sizes[0].medium %>
+                                          <td class="<%= products[i].sizes.medium === 0 ? 'out-of-stock' : '' %>">
+                                            <%= products[i].sizes.medium === 0 ? 'Out of stock' : products[i].sizes.medium %>
                                           </td>
-                                          <td class="<%= products[i].sizes[0].large === 0 ? 'out-of-stock' : '' %>">
-                                            <%= products[i].sizes[0].large === 0 ? 'Out of stock' : products[i].sizes[0].large %>
+                                          <td class="<%= products[i].sizes.large === 0 ? 'out-of-stock' : '' %>">
+                                            <%= products[i].sizes.large === 0 ? 'Out of stock' : products[i].sizes.large %>
                                           </td>
                                           <td>
                                             <div class="button-group">

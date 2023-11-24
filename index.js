@@ -12,9 +12,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Setting default routes
-
-
-
 // Setting folder for serving static files
 app.use(express.static(__dirname + '/public'));
 app.use("/uploads", express.static('uploads'));
