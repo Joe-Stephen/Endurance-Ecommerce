@@ -24,10 +24,20 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
-      size:{
-        type:String,
-        required:true,
-      },
+      sizes:{
+        small:{
+            type:Number,
+            default:0,
+        },
+        medium:{
+            type:Number,
+            default:0,
+        },
+        large:{
+            type:Number,
+            default:0,
+        },
+    },
     },
   ],
   orderDate: {

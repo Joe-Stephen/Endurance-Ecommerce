@@ -69,8 +69,12 @@ const cartOrder = async (req, res) => {
       const orderProduct = {
         productId: product.productId._id,
         quantity: product.quantity,
-        size: product.size,
-      };
+        sizes: {
+          small: product.sizes.small,
+          medium: product.sizes.medium,
+          large: product.sizes.large,
+        },
+            };
     
       // Initialize variables to store product and category discounts
       let productDiscount = 0;
@@ -134,48 +138,74 @@ const cartOrder = async (req, res) => {
       orderTotal += orderProduct.price * orderProduct.quantity;
       orderProducts.push(orderProduct);
     });
+
+
+    let insufficientProducts = [];
+
+
+
     
-
     for (const prod of orderProducts) {
-      let currentProduct = await product.findById(prod.productId);
+      try {
+        let currentProduct = await product.findById(prod.productId);
 
-      console.log("this product =  ", currentProduct);
+        console.log("this product = ", currentProduct);
 
-      let sizeToUpdate = `${prod.size}`;
+        let sizeSmall = prod.sizes.small;
+        console.log("current small = "+currentProduct.sizes.small+" new small = "+sizeSmall);
 
-      console.log("size to update =  ", sizeToUpdate);
+        let sizeMedium = prod.sizes.medium;
+                   console.log("current medium = "+currentProduct.sizes.medium+" new medium = "+sizeMedium);
 
-      // Access the first element of the sizes array
-      let sizeObject = currentProduct.sizes[0];
+        let sizeLarge = prod.sizes.large;
+        console.log("current large = "+currentProduct.sizes.large+" new large = "+sizeLarge);
 
-      // Access the size property in the sizeObject
-      let currentQuantity = sizeObject[sizeToUpdate];
 
-      console.log("current quantity =  ", currentQuantity);
-
-      if (typeof currentQuantity === "number") {
-        let updatedQuantity = currentQuantity - prod.quantity;
-
-        console.log("updated quantity =  ", updatedQuantity);
-        if(updatedQuantity<0){
-          console.log("updated is negative")
-         return res.status(404).json({ message: "Insufficient stock" });
-         console.log("hai from after return");
+        let shortSizes = [];
+        if (currentProduct.sizes.small < sizeSmall) {
+          console.log("current small = "+currentProduct.sizes.small+" new small = "+sizeSmall);
+          shortSizes.push({ small: sizeSmall });
         }
-
-
-        await product.updateOne(
-          {
-            _id: prod.productId,
-            "sizes._id": sizeObject._id,
-          },
-          { $set: { [`sizes.$.${sizeToUpdate}`]: updatedQuantity } }
-        );
-      } else {
-        return res.status(404).json({ message: "Current quantity is invalid!" });
+        if (currentProduct.sizes.medium < sizeMedium) {
+          console.log("current small = "+currentProduct.sizes.medium+" new small = "+sizeMedium);
+          shortSizes.push({ medium: sizeMedium });
+        }
+        if (currentProduct.sizes.large < sizeLarge) {
+          console.log("current small = "+currentProduct.sizes.large+" new small = "+sizeLarge);
+          shortSizes.push({ large: sizeLarge });
+        }
+        if (shortSizes.length !== 0) {
+          console.log("Insufficient quantity for the order");
+          insufficientProducts.push(prod.name);
+        }
+      } catch (err) {
+        console.error("Error updating product sizes:", err);
+        return res.status(500).render("error-page", {
+          message: "An error happened !",
+          errorMessage: err.message,
+        });
       }
     }
 
+    if (insufficientProducts.length > 0) {
+      return res.status(404).json({ message: "Insufficient stock" });
+    }
+    
+    for (const prod of orderProducts) {
+      try {
+        await product.findByIdAndUpdate(prod.productId, {
+          $inc: {
+            'sizes.small': -prod.sizes.small,
+            'sizes.medium': -prod.sizes.medium,
+            'sizes.large': -prod.sizes.large,
+          },
+        });
+      } catch (err) {
+        console.error("Error updating product stock:", err);
+        return res.status(500).json({ message: "Failed to update product stock. Please try again later." });
+      }
+    }
+    
     // Create the order with the updated total amount
     if (couponCode) {
       const couponDoc = await coupon.findOne({ code: couponCode });
