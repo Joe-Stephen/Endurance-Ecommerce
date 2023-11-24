@@ -66,15 +66,19 @@ const getCart = async (req, res) => {
         const existingProduct = userCart.products.find(
           (product) => product.productId.toString() === productId
         );
+        
         if (existingProduct) {
           // If the product is in the cart, increase its quantity
           existingProduct.quantity += 1;
-          console.log("The product is already inside the cart.");
+          existingProduct.sizes[selectedSize] += 1;    
+          console.log("The product is already inside the cart. qty++");
         } else {
           // If the product is not in the cart, add it with a quantity of 1
           userCart.products.push({
             productId: new mongoose.Types.ObjectId(productId),
-            size:selectedSize,
+            sizes: {
+              [selectedSize]: 1,
+            },
             quantity: 1,
           });
         }
