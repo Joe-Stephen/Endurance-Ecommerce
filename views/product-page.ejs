@@ -1532,166 +1532,63 @@
                     </div>
                     <div class="col-12">
                         <div class="row related-products">
-                            <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap small hover-up">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html" tabindex="0">
-                                                <img class="default-img"
-                                                    src="/userAssets/assets/imgs/shop/product-2-1.jpg" alt="">
-                                                <img class="hover-img"
-                                                    src="/userAssets/assets/imgs/shop/product-2-2.jpg" alt="">
-                                            </a>
+                            <div class="row mt-60">
+                                <div class="col-12">
+                                    <h3 class="section-title style-1 mb-30">Related products</h3>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row related-products">
+                                        <% if(!recommendedProducts){ %>
+                                            <h5>No related products found..</h5>
+                                            <% if(recommendedProducts.length===0) %>
+                                            <h5>No related products found..</h5>
+                                            <% }else{ %>
+                                                <% recommendedProducts.forEach((product)=>{%>                                   
+                                        <div class="col-lg-3 col-md-4 col-12 col-sm-6">
+                                            <div class="product-cart-wrap mb-30">
+                                                <div class="product-img-action-wrap">
+                                                    <div class="product-img product-img-zoom">
+                                                        <a href="/product/<%=product._id%>">
+                                                            <img class="product-img default-img" src="/<%= product.photos[0] %>" alt="" />
+                                                            <img class="product-img hover-img" src="/<%= product.photos[0] %>" alt="" />
+                                                          </a>
+                                                    </div>
+                                                    <div class="product-action-1">
+                                                        <a aria-label="Quick view" class="action-btn small hover-up"
+                                                            data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-search"></i></a>
+                                                        <a aria-label="Add To Wishlist"  class="action-btn small hover-up addToWishlist"
+                                                        data-product-id="<%= products._id %>"
+                                                            href="javascript:void(0);" tabindex="0"><i class="fi-rs-heart"></i></a>
+                                                    </div>
+            
+                                                </div>
+                                                <div class="product-content-wrap">
+                                                    <h2><a href="/product/<%=product._id%>" tabindex="0"><%=product.name%></a></h2>
+                                                    <div class="rating-result" title="90%">
+                                                        <span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="product-price">
+                                                        <span>₹<%=product.selling_price%> </span>
+                                                        <span class="old-price">₹<%=product.regular_price%></span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn small hover-up"
-                                                data-bs-toggle="modal" data-bs-target="#quickViewModal
-"><i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn small hover-up"
-                                                href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn small hover-up"
-                                                href="shop-compare.html" tabindex="0"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="hot">Hot</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <h2><a href="shop-product-right.html" tabindex="0">Ulstra Bass
-                                                Headphone</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>$238.85 </span>
-                                            <span class="old-price">$245.8</span>
-                                        </div>
+                                        <% }) %>
+                                        <% } %>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap small hover-up">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html" tabindex="0">
-                                                <img class="default-img"
-                                                    src="/userAssets/assets/imgs/shop/product-3-1.jpg" alt="">
-                                                <img class="hover-img"
-                                                    src="/userAssets/assets/imgs/shop/product-4-2.jpg" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn small hover-up"
-                                                data-bs-toggle="modal" data-bs-target="#quickViewModal
-"><i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn small hover-up"
-                                                href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn small hover-up"
-                                                href="shop-compare.html" tabindex="0"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="sale">-12%</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <h2><a href="shop-product-right.html" tabindex="0">Smart
-                                                Bluetooth Speaker</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>$138.85 </span>
-                                            <span class="old-price">$145.8</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap small hover-up">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html" tabindex="0">
-                                                <img class="default-img"
-                                                    src="/userAssets/assets/imgs/shop/product-4-1.jpg" alt="">
-                                                <img class="hover-img"
-                                                    src="/userAssets/assets/imgs/shop/product-4-2.jpg" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn small hover-up"
-                                                data-bs-toggle="modal" data-bs-target="#quickViewModal
-"><i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn small hover-up"
-                                                href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn small hover-up"
-                                                href="shop-compare.html" tabindex="0"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="new">New</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <h2><a href="shop-product-right.html" tabindex="0">HomeSpeak
-                                                12UEA Goole</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>$738.85 </span>
-                                            <span class="old-price">$1245.8</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap small hover-up mb-0">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html" tabindex="0">
-                                                <img class="default-img"
-                                                    src="/userAssets/assets/imgs/shop/product-5-1.jpg" alt="">
-                                                <img class="hover-img"
-                                                    src="/userAssets/assets/imgs/shop/product-3-2.jpg" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn small hover-up"
-                                                data-bs-toggle="modal" data-bs-target="#quickViewModal
-"><i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn small hover-up"
-                                                href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn small hover-up"
-                                                href="shop-compare.html" tabindex="0"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="hot">Hot</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <h2><a href="shop-product-right.html" tabindex="0">Dadua Camera
-                                                4K 2022EF</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>$89.8 </span>
-                                            <span class="old-price">$98.8</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
                 <div class="banner-img banner-big wow fadeIn f-none animated mt-50">
-                    <img class="border-radius-10" src="/userAssets/assets/imgs/banner/banner-4.png" alt="">
+                    <img class="border-radius-10" src="/banner10Scott.jpg" alt="">
                     <div class="banner-text">
-                        <h4 class="mb-15 mt-40">Repair Services</h4>
-                        <h2 class="fw-600 mb-20">We're an Apple <br>Authorised Service Provider</h2>
+                        <h4 class="mb-15 mt-40">Official Partner</h4>
+                        <h2 class="fw-600 mb-20">We're a SCOTT <br>Authorised Service Provider</h2>
                     </div>
                 </div>
             </div>
@@ -1701,32 +1598,7 @@
         </section>
     </main>
     <footer class="main">
-        <section class="newsletter p-30 text-white wow fadeIn animated">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-lg-7 mb-md-3 mb-lg-0">
-                        <div class="row align-items-center">
-                            <div class="col flex-horizontal-center">
-                                <img class="icon-email" src="/userAssets/assets/imgs/theme/icons/icon-email.svg" alt="">
-                                <h4 class="font-size-20 mb-0 ml-3">Sign up to Newsletter</h4>
-                            </div>
-                            <div class="col my-4 my-md-0 des">
-                                <h5 class="font-size-15 ml-4 mb-0">...and receive <strong>$25 coupon for first
-                                        shopping.</strong></h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-5">
-                        <!-- Subscribe Form -->
-                        <form class="form-subcriber d-flex wow fadeIn animated">
-                            <input type="email" class="form-control bg-white font-small" placeholder="Enter your email">
-                            <button class="btn bg-dark text-white" type="submit">Subscribe</button>
-                        </form>
-                        <!-- End Subscribe Form -->
-                    </div>
-                </div>
-            </div>
-        </section>
+
         <section class="section-padding footer-mid">
             <div class="container pt-15 pb-20">
                 <div class="row">

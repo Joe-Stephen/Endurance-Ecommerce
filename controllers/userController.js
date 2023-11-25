@@ -491,13 +491,14 @@ const findProduct = async (req, res) => {
     const productId = req.params.productId;
     // Fetch the product details based on the productId
     const products = await product.findById(productId);
+    const recommendedProducts= await product.find({category:products.category, brand:products.brand});
     // console.log(products)
     if (!products) {
       // Handle the case when the product is not found
       return res.send("Product not found");
     }
     // Render the "product-page" template and pass the product details
-    res.render("product-page", { products });
+    res.render("product-page", { products, recommendedProducts });
   } catch (err) {
     console.error(err);
     return res.status(500).render("error-page", {
