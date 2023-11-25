@@ -1,6 +1,6 @@
 require("dotenv").config();
 const user = require("../model/userModel");
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 const address = require("../model/addressModel");
 const razorpay = require("../razorPay");
 const razorPay_key_id = process.env.razorPay_key_id;
@@ -23,7 +23,7 @@ const cart = require("../model/cartModel");
 const wishlist = require("../model/wishlistModel");
 const coupon = require("../model/couponModel");
 const banner = require("../model/bannerModel");
-const otpGenerator = require('otp-generator');
+const otpGenerator = require("otp-generator");
 
 const getHomePage = async (req, res) => {
   try {
@@ -49,12 +49,10 @@ const getHomePage = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.render("error-page");
-    res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -84,12 +82,10 @@ const searchResults = async (req, res) => {
     res.render("index-4", { result, products, loggedIn, totalPages, page });
   } catch (err) {
     console.log(err);
-    res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -117,12 +113,10 @@ const getUserAccount = async (req, res) => {
     });
   } catch (err) {
     console.log("An error happened in fetching user dashboard " + err);
-    res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -149,17 +143,14 @@ const getUserSignup = (req, res) => {
   res.render("page-signup");
 };
 
-
-const querystring = require('querystring');
+const querystring = require("querystring");
 
 const postUserSignup = async (req, res) => {
   try {
-    const queryString = req.url.split('?')[1];
-
+    const queryString = req.url.split("?")[1];
 
     // Parse the queryString into an object
     const data = querystring.parse(queryString);
-    
 
     // Now you can access individual properties
     console.log(data.username); // john
@@ -177,14 +168,15 @@ const postUserSignup = async (req, res) => {
       res.render("otpVerificationPage", { data });
     }
   } catch (err) {
-    console.log("An error occurred while loading the verification page: " + err);
+    console.log(
+      "An error occurred while loading the verification page: " + err
+    );
     return res.status(500).render("error-page", {
       message: "An error happened!",
       errorMessage: err.message,
     });
   }
 };
-
 
 // Editing user details
 const editUserDetails = async (req, res) => {
@@ -231,12 +223,10 @@ const editUserDetails = async (req, res) => {
     }
   } catch (err) {
     console.log("An error occurred while updating the user details: " + err);
-    return res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -277,12 +267,10 @@ const postLogin = async (req, res) => {
               res.redirect("/");
             } catch (err) {
               console.error(err);
-              return res
-                .status(500)
-                .render("error-page", {
-                  message: "An error happened !",
-                  errorMessage: err.message,
-                });
+              return res.status(500).render("error-page", {
+                message: "An error happened !",
+                errorMessage: err.message,
+              });
             }
           }
         });
@@ -306,12 +294,10 @@ const getSendOtp = async (req, res) => {
     res.json({ phoneNumber, userData });
   } catch (err) {
     console.error(err);
-    return res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -320,10 +306,10 @@ const getVerifyOtp = async (req, res) => {
   try {
     const otp = req.body.otpCode;
     const username = req.body.username;
-  const password = req.body.password;
-  const confirm_password = req.body.confirm_password;
-  const email = req.body.email;
-  const phoneNumber = req.body.phoneNumber;
+    const password = req.body.password;
+    const confirm_password = req.body.confirm_password;
+    const email = req.body.email;
+    const phoneNumber = req.body.phoneNumber;
     console.log(otp);
 
     const verifyOTP = await twilio.verify.v2
@@ -334,7 +320,7 @@ const getVerifyOtp = async (req, res) => {
       });
     if (verifyOTP.valid) {
       const referralCode = uuidv4();
-      console.log("the referralCode  ="+referralCode);
+      console.log("the referralCode  =" + referralCode);
 
       console.log("VERIFIED");
       bcrypt.hash(password, 10, async (error, hash) => {
@@ -345,9 +331,9 @@ const getVerifyOtp = async (req, res) => {
           phoneNumber: phoneNumber,
           status: "Unblocked",
           isVerified: 0,
-          referralCode:referralCode,
+          referralCode: referralCode,
         });
-        const userData= await user.findOne({email:email});
+        const userData = await user.findOne({ email: email });
         await wallet
           .create({
             userId: userData._id,
@@ -366,12 +352,10 @@ const getVerifyOtp = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    return res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -418,12 +402,10 @@ const phoneNumberChange = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    return res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -484,12 +466,10 @@ const getCouponDiscount = async (req, res) => {
     });
   } catch (err) {
     console.error("An error occurred while calculating the discount!", err);
-    return res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
@@ -520,26 +500,24 @@ const findProduct = async (req, res) => {
     res.render("product-page", { products });
   } catch (err) {
     console.error(err);
-    return res
-      .status(500)
-      .render("error-page", {
-        message: "An error happened !",
-        errorMessage: err.message,
-      });
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
   }
 };
 
-//verifying 
+//verifying
 const verifyReferralCode = async (req, res) => {
   try {
     const refCode = req.body.referralCode;
     const userDoc = await user.findOne({ email: req.user });
     const codeOwner = await user.findOne({ referralCode: refCode });
 
-    if(userDoc.redeemed===true){
+    if (userDoc.redeemed === true) {
       return res
-      .status(404)
-      .json({ message: "You have already redeemed a referral code before!" });
+        .status(404)
+        .json({ message: "You have already redeemed a referral code before!" });
     }
 
     if (!codeOwner || codeOwner._id.equals(userDoc._id)) {
@@ -589,7 +567,9 @@ const verifyReferralCode = async (req, res) => {
 
       console.log("Referral code redeemed successfully!");
 
-      return res.status(200).json({ message: "Referral code verified successfully!" });
+      return res
+        .status(200)
+        .json({ message: "Referral code verified successfully!" });
     }
   } catch (err) {
     console.error(err);

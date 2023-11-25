@@ -46,7 +46,6 @@ userRouter.get("/userAccount", userMiddleware.verifyUser, userController.getUser
 userRouter.post("/editUserDetails", userMiddleware.verifyUser, userController.editUserDetails);
 userRouter.post("/checkReferalcode", userMiddleware.verifyUser, userController.verifyReferralCode);
 
-
 //address handlers
 userRouter.get("/addAddress", userMiddleware.verifyUser, userAddress.getAddAddress);
 userRouter.post("/postAddress", userMiddleware.verifyUser, userAddress.postAddAddress);
@@ -71,6 +70,7 @@ userRouter.get("/getInvoicePage", userMiddleware.verifyUser, userOrder.getInvoic
 //cart
 userRouter.get("/cart", userMiddleware.verifyUser, userCart.getCart);
 userRouter.post("/addToCart", userMiddleware.verifyUser, userCart.addToCartController);
+userRouter.post("/productPageAddToCart", userMiddleware.verifyUser, userCart.productPageAddToCart);
 userRouter.post("/cartQtyChange", userMiddleware.verifyUser, userCart.postCartQty);
 userRouter.delete("/removeProductFromCart/:productId", userMiddleware.verifyUser, userCart.removeProductFromCart);
 userRouter.get("/checkoutFromCart", userMiddleware.verifyUser, userCart.getCartCheckout);
