@@ -193,8 +193,8 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Revenue</h6>
-                                <span>$13,456.5</span>
+                                <h6 class="mb-1 card-title">Total Sales</h6>
+                                <span>₹<%=statistics.totalSales[0].totalAmount.toLocaleString()%></span>
                                 <span class="text-sm">
                                     Shipping fees are not included
                                 </span>
@@ -207,9 +207,9 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Orders</h6> <span>53.668</span>
+                                <h6 class="mb-1 card-title">Orders</h6> <span><%=statistics.totalOrders%></span>
                                 <span class="text-sm">
-                                    Excluding orders in transit
+                                    All orders till now
                                 </span>
                             </div>
                         </article>
@@ -220,9 +220,9 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-qr_code"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Products</h6> <span>9.856</span>
+                                <h6 class="mb-1 card-title">Products</h6> <span><%=statistics.totalProducts%></span>
                                 <span class="text-sm">
-                                    In 19 Categories
+                                    In <%=statistics.totalCategories%> Categories 
                                 </span>
                             </div>
                         </article>

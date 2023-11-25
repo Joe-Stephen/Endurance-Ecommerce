@@ -4,7 +4,9 @@ const category = require("../model/categoryModel");
 const product = require("../model/productModel");
 const order = require("../model/orderModel");
 const user = require("../model/userModel");
+const Category = require("../model/categoryModel");
 const multer = require("multer");
+
 
 //error page loading
 const getErrorPage = (req, res) => {
@@ -32,6 +34,28 @@ const postAdminDashboard = async (req, res) => {
     path: "userId",
     model: user,
   });
+  const totalSales= await order.aggregate([
+    {
+      $match: {
+        paymentStatus: "Success",
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalAmount: { $sum: "$totalAmount" },
+      },
+    },
+  ]);
+  const totalOrders= await order.find();
+  const totalProducts= await product.find();
+  const totalCategories= await Category.find();
+  const statistics={
+    totalSales,
+    totalOrders:totalOrders.length,
+    totalProducts:totalProducts.length,
+    totalCategories:totalCategories.length,
+  }
   if (!admindata) {
     res.render("admin-login-page", { error: "This email is not registered" });
   } else {
@@ -45,7 +69,7 @@ const postAdminDashboard = async (req, res) => {
           req.body.email == admindata.email &&
           req.body.password == admindata.password
         ) {
-          res.render("admin-dashboard", { orderDetails });
+          res.render("admin-dashboard", { orderDetails, statistics });
         }
       }
     } else {
