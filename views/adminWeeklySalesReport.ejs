@@ -1,0 +1,122 @@
+<!-- views/dailySalesReport.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weekly Sales Report</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: "Arial", sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+            margin: 20px;
+        }
+
+
+        h4 {
+            color: #007bff;
+        }
+
+        div {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        @media print {
+        #print-button {
+            display: none;
+        }
+    }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-between align-items-center">
+            <div class="col-md-6">
+                <h1><strong>ENDURANCE</strong> </h1>
+                <h4>Weekly Sales Report</h4>
+            </div>
+            <div class="col-md-6 text-md-right">
+                <button id="print-button" class="btn btn-primary">Print report</button>
+            </div>
+        </div>
+
+        <!-- Display date, total orders, and total sales -->
+        <div class="mb-4">
+            <p>Date: <%= formattedDateRange %></p>
+            <p>Total Orders: <%= totalOrders %></p>
+            <p>Total Sales: ₹<%= totalSales.toLocaleString() %>.00</p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Order ID</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <!-- Add more columns as needed -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <% weeklySales.forEach(order => { %> <% order.products.forEach(product =>
+                    { %>
+                    <tr>
+                        <td><%= order.orderDate.toLocaleDateString() %></td>
+                        <td><%= order._id %></td>
+                        <td><%= product.productId.name %></td>
+                        <td>₹<%= product.price.toLocaleString() %>.00</td>
+                        <td><%= product.quantity %></td>
+                    </tr>
+                    <% }); %> <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function printInvoice(event){
+            window.print()
+        }
+       document.getElementById("print-button").addEventListener('click',printInvoice);
+        
+        </script>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <!-- Include any necessary JavaScript scripts or external scripts here -->
+</body>
+
+</html>

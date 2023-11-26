@@ -225,6 +225,121 @@ const postUserStatus = async (req, res) => {
   }
 };
 
+//rendering sales report - daily
+const getDailySalesReport = async (req, res)=>{
+  try{
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Set time to the beginning of the day
+
+    const nextDate = new Date(currentDate);
+    nextDate.setDate(nextDate.getDate() + 1); // Get the next day
+
+    const dailySales = await order.find({
+      orderDate: { $gte: currentDate, $lt: nextDate },
+    })
+    .populate('userId')
+    .populate('products.productId');
+
+    // Calculate total orders and total sales
+    const totalOrders = dailySales.length;
+    const totalSales = dailySales.reduce((total, order) => total + order.totalAmount, 0);
+
+    // Format date as required
+    const formattedDate = currentDate.toDateString();+
+
+    console.log("totalSales  =="+totalSales)
+
+    res.render('adminDailySalesReport', { dailySales, formattedDate, totalOrders, totalSales });
+
+   } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .render("error-page", {
+        message: "An error happened !",
+        errorMessage: err.message,
+      });
+  }
+}
+
+//rendering sales report - weekly
+const getWeeklySalesReport = async (req, res) => {
+  try {
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Set time to the beginning of the day
+
+    const oneWeekAgo = new Date(currentDate);
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); // Get the date from one week ago
+
+    // Find orders within the past week
+    const weeklySales = await order
+      .find({
+        orderDate: { $gte: oneWeekAgo, $lt: currentDate },
+      })
+      .populate('userId')
+      .populate('products.productId');
+
+    // Calculate total orders and total sales for the week
+    const totalOrders = weeklySales.length;
+    const totalSales = weeklySales.reduce((total, order) => total + order.totalAmount, 0);
+
+    // Format date range as required
+    const formattedDateRange = `${oneWeekAgo.toDateString()} to ${currentDate.toDateString()}`;
+
+    console.log("totalSales for the past week =", totalSales);
+
+    res.render('adminWeeklySalesReport', { weeklySales, formattedDateRange, totalOrders, totalSales });
+
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .render('error-page', {
+        message: 'An error happened!',
+        errorMessage: err.message,
+      });
+  }
+};
+
+//rendering sales report - weekly
+const getMonthlySalesReport = async (req, res) => {
+  try {
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Set time to the beginning of the day
+
+    const oneMonthAgo = new Date(currentDate);
+    oneMonthAgo.setDate(oneMonthAgo.getDate() - 30); // Get the date from one week ago
+
+    // Find orders within the past week
+    const monthlySales = await order
+      .find({
+        orderDate: { $gte: oneMonthAgo, $lt: currentDate },
+      })
+      .populate('userId')
+      .populate('products.productId');
+
+    // Calculate total orders and total sales for the week
+    const totalOrders = monthlySales.length;
+    const totalSales = monthlySales.reduce((total, order) => total + order.totalAmount, 0);
+
+    // Format date range as required
+    const formattedDateRange = `${oneMonthAgo.toDateString()} to ${currentDate.toDateString()}`;
+
+    console.log("totalSales for the past month =", totalSales);
+
+    res.render('adminMonthlySalesReport', { monthlySales, formattedDateRange, totalOrders, totalSales });
+
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .render('error-page', {
+        message: 'An error happened!',
+        errorMessage: err.message,
+      });
+  }
+};
+
 module.exports = {
   getTransactions,
   postUserStatus,
@@ -232,4 +347,7 @@ module.exports = {
   postAdminDashboard,
   getAdminLogin,
   getErrorPage,
+  getDailySalesReport,
+  getWeeklySalesReport,
+  getMonthlySalesReport,
 };

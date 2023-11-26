@@ -76,6 +76,13 @@ adminRouter.post("/update-discount-status/:discountId", discountManagement.toggl
 adminRouter.get("/getEditDiscount", discountManagement.getEditDiscount);
 adminRouter.post("/saveEditedDiscount", discountManagement.saveEditedDiscount);
 
+// sales report
+adminRouter.get("/salesReport/daily", adminController.getDailySalesReport);
+adminRouter.get("/salesReport/weekly", adminController.getWeeklySalesReport);
+adminRouter.get("/salesReport/monthly", adminController.getMonthlySalesReport);
+
+
+
 
 
 
