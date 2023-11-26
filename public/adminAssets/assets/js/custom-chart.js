@@ -20,7 +20,7 @@
                         data: [18, 17, 4, 3, 2, 20, 25, 31, 25, 22, 20, 9]
                     },
                     {
-                        label: 'Visitors',
+                        label: 'Cancels',
                         tension: 0.3,
                         fill: true,
                         backgroundColor: 'rgba(4, 209, 130, 0.2)',
@@ -28,7 +28,7 @@
                         data: [40, 20, 17, 9, 23, 35, 39, 30, 34, 25, 27, 17]
                     },
                     {
-                        label: 'Products',
+                        label: 'Returns',
                         tension: 0.3,
                         fill: true,
                         backgroundColor: 'rgba(380, 200, 230, 0.2)',

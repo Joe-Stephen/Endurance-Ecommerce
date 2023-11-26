@@ -56,6 +56,41 @@ const postAdminDashboard = async (req, res) => {
     totalProducts:totalProducts.length,
     totalCategories:totalCategories.length,
   }
+// Server-side aggregation
+const orderData = await order.aggregate([
+  {
+    $group: {
+      _id: { $month: '$orderDate' },
+      count: { $sum: 1 },
+    },
+  },
+  {
+    $project: {
+      _id: 1,
+      count: { $ifNull: ['$count', 0] },
+    },
+  },
+]);
+
+// Starting month is November (index 10 in JavaScript Date object)
+const startingMonth = 10;
+
+// Create an array of labels covering the entire range
+const labels = Array.from({ length: 12 }, (_, index) => (index + startingMonth) % 12 + 1);
+
+// Fill in zeroes for missing months
+const filledOrderData = labels.map((month) => {
+  const existingMonth = orderData.find((data) => data._id === month);
+  return { _id: month, count: existingMonth ? existingMonth.count : 0 };
+});
+
+const chartFeeder = {
+  orderData: filledOrderData,
+};
+  
+  
+  console.log('Order Data:', orderData);
+
   if (!admindata) {
     res.render("admin-login-page", { error: "This email is not registered" });
   } else {
@@ -69,7 +104,7 @@ const postAdminDashboard = async (req, res) => {
           req.body.email == admindata.email &&
           req.body.password == admindata.password
         ) {
-          res.render("admin-dashboard", { orderDetails, statistics });
+          res.render("admin-dashboard", { orderDetails, statistics, chartFeeder: JSON.stringify(chartFeeder) });
         }
       }
     } else {
