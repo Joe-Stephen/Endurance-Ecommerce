@@ -262,10 +262,14 @@
                                 // Retrieve chartFeeder data from the hidden input field
                                 var chartFeederData = $('#chartFeederData').val();
                                 var chartFeeder = JSON.parse(chartFeederData);
+                                console.log(chartFeeder);
                         
                                 /* Sale statistics Chart */
                                 if (chartFeeder && chartFeeder.orderData) {
                                     var orderData = chartFeeder.orderData;
+                                    var cancelData = chartFeeder.cancelData;
+                                    var returnData = chartFeeder.returnData;
+
                         
                                     var ctx = document.getElementById('salesStatsChart1').getContext('2d');
                                     var chart = new Chart(ctx, {
@@ -279,7 +283,24 @@
                                                 backgroundColor: 'rgba(44, 120, 220, 0.2)',
                                                 borderColor: 'rgba(44, 120, 220)',
                                                 data: orderData.map(item => item.count),
-                                            }]
+
+                                            },
+                                            {
+                        label: 'Cancels',
+                        tension: 0.3,
+                        fill: true,
+                        backgroundColor: 'rgba(4, 209, 130, 0.2)',
+                        borderColor: 'rgb(4, 209, 130)',
+                        data: cancelData.map(item => item.count),
+                    },
+                    {
+                        label: 'Returns',
+                        tension: 0.3,
+                        fill: true,
+                        backgroundColor: 'rgba(380, 200, 230, 0.2)',
+                        borderColor: 'rgb(380, 200, 230)',
+                        data: returnData.map(item => item.count),
+                    }]
                                         },
                                         options: {
                                             plugins: {

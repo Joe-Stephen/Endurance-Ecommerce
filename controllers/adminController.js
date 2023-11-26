@@ -3,6 +3,9 @@ const coupon = require("../model/couponModel");
 const category = require("../model/categoryModel");
 const product = require("../model/productModel");
 const order = require("../model/orderModel");
+const cancels = require("../model/cancelModel");
+const returns = require("../model/returnModel");
+
 const user = require("../model/userModel");
 const Category = require("../model/categoryModel");
 const multer = require("multer");
@@ -56,40 +59,88 @@ const postAdminDashboard = async (req, res) => {
     totalProducts:totalProducts.length,
     totalCategories:totalCategories.length,
   }
-// Server-side aggregation
-const orderData = await order.aggregate([
-  {
-    $group: {
-      _id: { $month: '$orderDate' },
-      count: { $sum: 1 },
+  const cancelData = await cancels.aggregate([
+    {
+      $group: {
+        _id: { $month: '$cancelDate' },
+        count: { $sum: 1 },
+      },
     },
-  },
-  {
-    $project: {
-      _id: 1,
-      count: { $ifNull: ['$count', 0] },
+    {
+      $project: {
+        _id: 1,
+        count: { $ifNull: ['$count', 0] },
+      },
     },
-  },
-]);
-
-// Starting month is November (index 10 in JavaScript Date object)
-const startingMonth = 10;
-
-// Create an array of labels covering the entire range
-const labels = Array.from({ length: 12 }, (_, index) => (index + startingMonth) % 12 + 1);
-
-// Fill in zeroes for missing months
-const filledOrderData = labels.map((month) => {
-  const existingMonth = orderData.find((data) => data._id === month);
-  return { _id: month, count: existingMonth ? existingMonth.count : 0 };
-});
-
-const chartFeeder = {
-  orderData: filledOrderData,
-};
+    {
+      $sort: {
+        _id: 1,
+      },
+    },
+  ]);
+  const returnData = await returns.aggregate([
+    {
+      $group: {
+        _id: { $month: '$returnDate' },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        count: { $ifNull: ['$count', 0] },
+      },
+    },
+    {
+      $sort: {
+        _id: 1,
+      },
+    },
+  ]);
+  const orderData = await order.aggregate([
+    {
+      $group: {
+        _id: { $month: '$orderDate' },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        count: { $ifNull: ['$count', 0] },
+      },
+    },
+  ]);
   
+  // Assuming you already have orderData, fill in zeroes for missing months for cancels and returns
+  const filledOrderData =  fillDataWithZeroes(orderData);
+  const filledCancelData = fillDataWithZeroes(cancelData);
+  const filledReturnData = fillDataWithZeroes(returnData);
   
-  console.log('Order Data:', orderData);
+  // Combine all the data to be sent to the client
+  
+  function fillDataWithZeroes(data) {
+    const labels = Array.from({ length: 12 }, (_, index) => index + 1);
+    return labels.map((month) => {
+      const existingMonth = data.find((item) => item._id === month);
+      return { _id: month, count: existingMonth ? existingMonth.count : 0 };
+    });
+  }
+  
+  // Starting month is November (index 10 in JavaScript Date object)
+  const startingMonth = 10;
+  
+  // Create an array of labels covering the entire range
+  const labels = Array.from({ length: 12 }, (_, index) => (index + startingMonth) % 12 + 1);
+
+  const chartFeeder = {
+    orderData: filledOrderData,
+    cancelData: filledCancelData,
+    returnData: filledReturnData,
+  };
+  
+
+
 
   if (!admindata) {
     res.render("admin-login-page", { error: "This email is not registered" });
@@ -104,6 +155,9 @@ const chartFeeder = {
           req.body.email == admindata.email &&
           req.body.password == admindata.password
         ) {
+          console.log('Order Data:', orderData);
+          console.log('cancel Data:', cancelData);
+          console.log('return Data:', returnData);
           res.render("admin-dashboard", { orderDetails, statistics, chartFeeder: JSON.stringify(chartFeeder) });
         }
       }
