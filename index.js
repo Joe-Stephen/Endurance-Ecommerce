@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const dburl = "mongodb://127.0.0.1:27017/endurance";
+const dburl = "mongodb+srv://JoeStephen:Joekkuttan123@cluster0.7yxiar6.mongodb.net/";
 const express = require("express");
 const app = express();
 const db = mongoose.connect(dburl);

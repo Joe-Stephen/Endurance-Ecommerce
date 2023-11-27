@@ -124,7 +124,7 @@ const getUserAccount = async (req, res) => {
 const logout = (req, res) => {
   // console.log(req.user)
   // console.log(req.cookies.token)
-  res.clearCookie("token");
+  res.clearCookie("userToken");
   res.clearCookie("loggedIn");
   res.redirect("/getLogin");
 };
@@ -261,7 +261,7 @@ const postLogin = async (req, res) => {
             try {
               email = req.body.email;
               const token = jwt.sign(email, secretKey);
-              res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000 });
+              res.cookie("userToken", token, { maxAge: 24 * 60 * 60 * 1000 });
               res.cookie("loggedIn", true, { maxAge: 24 * 60 * 60 * 1000 });
               userEmail = verifyStatus.email;
               res.redirect("/");

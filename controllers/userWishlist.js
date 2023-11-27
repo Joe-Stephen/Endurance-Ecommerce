@@ -43,8 +43,8 @@ const getWishlist= async (req, res)=>{
   const addToWishlist = async (req, res) => {
     try {
       const loggedIn = req.user ? true : false;
-      const userData = await user.findOne({ email: req.user });
       const productId = req.body.productId;
+      const userData = await user.findOne({ email: req.user });
       let userWishlist = await wishlist
         .findOne({ userId: userData._id });
   

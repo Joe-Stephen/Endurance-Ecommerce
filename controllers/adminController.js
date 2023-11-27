@@ -5,6 +5,9 @@ const product = require("../model/productModel");
 const order = require("../model/orderModel");
 const cancels = require("../model/cancelModel");
 const returns = require("../model/returnModel");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const secretKey = process.env.JWT_SECRET;
 
 const user = require("../model/userModel");
 const Category = require("../model/categoryModel");
@@ -27,11 +30,150 @@ const getErrorPage = (req, res) => {
 };
 
 const getAdminLogin = (req, res) => {
-  res.render("admin-login-page");
+  try{
+
+    res.render("admin-login-page");
+  } catch (err) {
+    console.error(err);
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
+  }
+};
+
+//admin logout
+const getAdminLogout= (req, res) => {
+  // console.log(req.user)
+  // console.log(req.cookies.token)
+  res.clearCookie("adminToken");
+  res.clearCookie("loggedIn");
+  res.redirect("/admin");
+};
+
+//rendering admin dashboard
+const getAdminDashboard = async (req, res)=>{
+  try{
+
+
+    const orderDetails = await order.find().populate({
+      path: "userId",
+      model: user,
+    });
+    const totalSales= await order.aggregate([
+      {
+        $match: {
+          paymentStatus: "Success",
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: "$totalAmount" },
+        },
+      },
+    ]);
+    const totalOrders= await order.find();
+    const totalProducts= await product.find();
+    const totalCategories= await Category.find();
+    const statistics={
+      totalSales,
+      totalOrders:totalOrders.length,
+      totalProducts:totalProducts.length,
+      totalCategories:totalCategories.length,
+    }
+    const cancelData = await cancels.aggregate([
+      {
+        $group: {
+          _id: { $month: '$cancelDate' },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          count: { $ifNull: ['$count', 0] },
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+    ]);
+    const returnData = await returns.aggregate([
+      {
+        $group: {
+          _id: { $month: '$returnDate' },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          count: { $ifNull: ['$count', 0] },
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+    ]);
+    const orderData = await order.aggregate([
+      {
+        $group: {
+          _id: { $month: '$orderDate' },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          count: { $ifNull: ['$count', 0] },
+        },
+      },
+    ]);
+    
+    // Assuming you already have orderData, fill in zeroes for missing months for cancels and returns
+    const filledOrderData =  fillDataWithZeroes(orderData);
+    const filledCancelData = fillDataWithZeroes(cancelData);
+    const filledReturnData = fillDataWithZeroes(returnData);
+    
+    // Combine all the data to be sent to the client
+    
+    function fillDataWithZeroes(data) {
+      const labels = Array.from({ length: 12 }, (_, index) => index + 1);
+      return labels.map((month) => {
+        const existingMonth = data.find((item) => item._id === month);
+        return { _id: month, count: existingMonth ? existingMonth.count : 0 };
+      });
+    }
+    
+    // Starting month is November (index 10 in JavaScript Date object)
+    const startingMonth = 10;
+    
+    // Create an array of labels covering the entire range
+    const labels = Array.from({ length: 12 }, (_, index) => (index + startingMonth) % 12 + 1);
+  
+    const chartFeeder = {
+      orderData: filledOrderData,
+      cancelData: filledCancelData,
+      returnData: filledReturnData,
+    };
+    res.render("admin-dashboard", { orderDetails, statistics, chartFeeder: JSON.stringify(chartFeeder) });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).render("error-page", {
+      message: "An error happened !",
+      errorMessage: err.message,
+    });
+}
 };
 
 //chechking deatils and login admin
 const postAdminDashboard = async (req, res) => {
+  try{
   const admindata = await admin.findOne({ email: req.body.email });
   const orderDetails = await order.find().populate({
     path: "userId",
@@ -138,33 +280,51 @@ const postAdminDashboard = async (req, res) => {
     cancelData: filledCancelData,
     returnData: filledReturnData,
   };
-  
-
-
-
   if (!admindata) {
-    res.render("admin-login-page", { error: "This email is not registered" });
+    res.render("admin-login-page", { error: "This is not the registered email!" });
   } else {
     if (admindata) {
       if (req.body.email !== admindata.email) {
         res.render("admin-login-page", { error: "Incorrect email" });
-      } else if (req.body.password !== admindata.password) {
-        res.render("admin-login-page", { error: "Incorrect password" });
       } else {
-        if (
-          req.body.email == admindata.email &&
-          req.body.password == admindata.password
-        ) {
-          console.log('Order Data:', orderData);
-          console.log('cancel Data:', cancelData);
-          console.log('return Data:', returnData);
-          res.render("admin-dashboard", { orderDetails, statistics, chartFeeder: JSON.stringify(chartFeeder) });
-        }
-      }
+
+        const password = req.body.password;
+        console.log(password);
+        bcrypt.compare(password, admindata.password, (err, result) => {
+          console.log(result);
+          if (result !== true) {
+            res.render("admin-login-page", {
+              error: "Incorrect password!",
+            });
+          } else if (req.body.email === admindata.email && result == true) {
+            try {
+              email = req.body.email;
+              const token = jwt.sign(email, secretKey);
+              res.cookie("adminToken", token, { maxAge: 24 * 60 * 60 * 1000 });
+              res.cookie("adminLoggedIn", true, { maxAge: 24 * 60 * 60 * 1000 });
+              adminEmail = admindata.email;
+              res.render("admin-dashboard", { orderDetails, statistics, chartFeeder: JSON.stringify(chartFeeder) });
+            } catch (err) {
+              console.error(err);
+              return res.status(500).render("error-page", {
+                message: "An error happened !",
+                errorMessage: err.message,
+              });
+            }
+          }
+        });
+      };
     } else {
       res.redirect("/admin-login-page");
     }
   }
+} catch (err) {
+  console.error(err);
+  return res.status(500).render("error-page", {
+    message: "An error happened !",
+    errorMessage: err.message,
+  });
+}
 };
 
 //get users list
@@ -344,8 +504,10 @@ module.exports = {
   getTransactions,
   postUserStatus,
   getUsers,
+  getAdminDashboard,
   postAdminDashboard,
   getAdminLogin,
+  getAdminLogout,
   getErrorPage,
   getDailySalesReport,
   getWeeklySalesReport,
