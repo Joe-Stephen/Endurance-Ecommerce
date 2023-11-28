@@ -35,7 +35,7 @@ userRouter.get("/sort-priceRange/:priceRange", userFilterAndSort.sortPriceRange)
 userRouter.get("/sortByBrand", userFilterAndSort.sortByBrand);
 
 //search product
-userRouter.get("/searchHome", userMiddleware.verifyUser, userController.searchResults);
+userRouter.get("/searchHome", userController.searchResults);
 
 userRouter.get("/toVerifyPage", userController.postUserSignup);
 userRouter.post("/send_otp", userController.getSendOtp);
