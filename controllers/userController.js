@@ -494,6 +494,8 @@ const calculateDiscount = (discountType, discountValue, grandTotal) => {
 //finding product
 const findProduct = async (req, res) => {
   try {
+    const loggedIn = req.user ? true : false;
+
     const productId = req.params.productId;
     // Fetch the product details based on the productId
     const products = await product.findById(productId);
@@ -504,7 +506,7 @@ const findProduct = async (req, res) => {
       return res.send("Product not found");
     }
     // Render the "product-page" template and pass the product details
-    res.render("product-page", { products, recommendedProducts });
+    res.render("product-page", { products, recommendedProducts, loggedIn });
   } catch (err) {
     console.error(err);
     return res.status(500).render("error-page", {

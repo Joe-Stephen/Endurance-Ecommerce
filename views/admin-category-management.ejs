@@ -270,7 +270,7 @@
         <div class="content-header">
           <div>
             <h2 class="content-title card-title">Category Management</h2>
-            <p>Add, edit or delete a category</p>
+            <p>Add or edit a category</p>
           </div>
           <h5 class="font-sm" style="color: red"><%=locals.error%></h5>
           <h5 class="font-sm" style="color: rgb(19, 162, 14)">
@@ -368,17 +368,17 @@
                         <td class="text-end">
                           <div class="dropdown">
                             <div>
-                              <a
+                              <!-- <a
                                 class="dropdown-item"
                                 href="/admin/view-category/<%= category._id %>"
                                 >View products</a
-                              >
+                              > -->
                               <a
                                 class="dropdown-item"
                                 href="/admin/edit-category/<%= category._id %>"
                                 >Edit category</a
                               >
-                              <a class="dropdown-item text-danger delete-category-link" href="#" data-category-id="<%= category._id %>">Delete category</a>
+                              <!-- <a class="dropdown-item text-danger delete-category-link" href="#" data-category-id="<%= category._id %>">Delete category</a> -->
 
                             </div>
                           </div>
