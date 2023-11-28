@@ -437,11 +437,11 @@
                                                                                             <ul>
                                                                                                 <%
                                                                                                     order.products.forEach((product)=>
-                                                                                                    { %>
-                                                                                                    <li>•<%= product.productId.name
+                                                                                                    { if(product!=null){ %>
+                                                                                                    <li>•<%= product.productId?.name
                                                                                                             %>
                                                                                                     </li>
-                                                                                                    <% }); %>
+                                                                                                    <% }}); %>
                                                                                             </ul>
                                                                                         </td>
                                                                                         <td

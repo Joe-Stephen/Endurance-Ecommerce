@@ -280,8 +280,9 @@ const getCartCheckout = async (req, res) => {
     let orderTotal = 0;
     let orderProducts = [];
     let insufficientProducts = []; // Keep track of products with insufficient quantity
-
+    
     userCart.products.forEach((product) => {
+      console.log("ariyo"+product.productId.selling_price);
       const orderProduct = {
         productId: product.productId._id,
         name: product.productId.name, // Include the name of the product

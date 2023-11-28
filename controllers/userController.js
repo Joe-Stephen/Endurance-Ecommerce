@@ -104,6 +104,12 @@ const getUserAccount = async (req, res) => {
         model: "product",
       });
 
+      // orders.products.forEach((product)=>{
+      //   console.log("the product is = "+product.name)
+      // })
+      console.log("the orders is = "+orders[0].products[0].productId.name)
+
+
     res.render("userDashboard", {
       userData,
       userAddress,

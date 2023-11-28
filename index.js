@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const dburl = "mongodb+srv://JoeStephen:Joekkuttan123@cluster0.7yxiar6.mongodb.net/";
+const dburl = "mongodb+srv://JoeStephen:Joekkuttan123@cluster0.7yxiar6.mongodb.net/test";
 const express = require("express");
 const app = express();
 const db = mongoose.connect(dburl);

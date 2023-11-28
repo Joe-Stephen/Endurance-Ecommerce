@@ -343,6 +343,9 @@
                               <h5 class="product-name">
                                 <%= product.productId.name %>
                               </h5>
+                              
+                              <%console.log("this is the name:="+product.productId.name)%>
+
                             </td>
                             <td class="price" data-title="Price">
                               <% if (product.productId.discountStatus==="Active" ) { %>
@@ -356,7 +359,6 @@
                                         <% } %>
                             </td>
                             <td class="text-center" data-title="Stock">
-                              <!-- Modify the HTML to include a data attribute for the product index -->
                               <a href="javascript:void(0);" class="qty-up" data-product-id="<%= product._id %>">
                                 <i class="fi-rs-angle-small-up"></i>
                               </a>
