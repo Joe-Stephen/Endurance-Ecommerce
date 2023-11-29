@@ -341,7 +341,7 @@
                                                                                             <ul>
                                                                                                 <%
                                                                                                     order.products.forEach((product)=>
-                                                                                                    { if(product!=null){ %>
+                                                                                                    { if(order.products.length!==0&&product!=null){ %>
                                                                                                     <li>•<%= product?.productId?.name
                                                                                                             %>
                                                                                                     </li>
@@ -395,7 +395,7 @@
             <br><br>
         </section>
         <section id="transaction-history">
-            <h5>Transaction History</h5>
+            <h5>Your Wallet Payments</h5>
             <table>
                 <thead>
                     <tr>
@@ -422,10 +422,6 @@
   <% } %>
 </tbody>
             </table>
-        </section>
-
-        <section id="add-funds">
-            <button type="button" class="btn btn-primary btn-sm">Add Funds</button>
         </section>
                                         </div>
                                     </div>

@@ -237,9 +237,6 @@ const cartOrder = async (req, res) => {
       }
     }
 
-    if (blockedState.length > 0) {
-      return res.status(404).json({ blocked: "Some products are blocked" });
-    }
 
     if (insufficientProducts.length > 0) {
       return res.status(404).json({ message: "Insufficient stock" });

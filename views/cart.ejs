@@ -298,7 +298,7 @@
 
                             </td>
                             <td class="price" data-title="Price">
-                              <% if (product.productId.discountStatus==="Active" ) { %>
+                              <% if (product.productId.discountStatus&&product.productId.discountStatus==="Active" ) { %>
                                 <% if (product.productId.offerStart && product.productId.offerEnd && new Date()>= new
                                   Date(product.productId.offerStart) && new Date() <= new
                                     Date(product.productId.offerEnd)) { %>

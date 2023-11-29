@@ -62,6 +62,13 @@ const getOrderDetails = async (req, res) => {
 //editing order status
 const editOrderStatus = async (req, res) => {
   try {
+    const orderStatusValue=req.body.orderStatus;
+    if(orderStatusValue==="Delivered"){
+      await order.updateOne(
+        { _id: req.body.orderId },
+        { $set: { orderStatus: req.body.orderStatus, paymentStatus:"Success" } }
+      );
+    }
     await order.updateOne(
       { _id: req.body.orderId },
       { $set: { orderStatus: req.body.orderStatus } }

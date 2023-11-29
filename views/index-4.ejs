@@ -183,38 +183,6 @@
             </div>
             <div class="col-md-6 col-sm-12 col-xs-12">
               <div class="detail-info">
-                <h3 class="title-detail mt-30">
-                  Colorful Pattern Shirts HD450
-                </h3>
-                <div class="product-detail-rating">
-                  <div class="pro-details-brand">
-                    <span>
-                      Brands:
-                      <a href="shop-grid-right.html">Bootstrap</a></span>
-                  </div>
-                  <div class="product-rate-cover text-end">
-                    <div class="product-rate d-inline-block">
-                      <div class="product-rating" style="width: 90%"></div>
-                    </div>
-                    <span class="font-small ml-5 text-muted">
-                      (25 reviews)</span>
-                  </div>
-                </div>
-                <div class="clearfix product-price-cover">
-                  <div class="product-price primary-color float-left">
-                    <ins><span class="text-brand">$120.00</span></ins>
-                    <ins><span class="old-price font-md ml-15">$200.00</span></ins>
-                    <span class="save-price font-md color3 ml-15">25% Off</span>
-                  </div>
-                </div>
-                <div class="bt-1 border-color-1 mt-15 mb-15"></div>
-                <div class="short-desc mb-30">
-                  <p class="font-sm">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Aliquam rem officia, corrupti reiciendis minima nisi
-                    modi,!
-                  </p>
-                </div>
 
                 <div class="attr-detail attr-color mb-15">
                   <strong class="mr-10">Color</strong>
@@ -240,16 +208,6 @@
                     <li>
                       <a href="#" data-color="Purple"><span class="product-color-purple"></span></a>
                     </li>
-                  </ul>
-                </div>
-                <div class="attr-detail attr-size">
-                  <strong class="mr-10">Size</strong>
-                  <ul class="list-filter size-filter font-small">
-                    <li><a href="#">S</a></li>
-                    <li class="active"><a href="#">M</a></li>
-                    <li><a href="#">L</a></li>
-                    <li><a href="#">XL</a></li>
-                    <li><a href="#">XXL</a></li>
                   </ul>
                 </div>
                 <div class="bt-1 border-color-1 mt-30 mb-30"></div>
@@ -416,7 +374,7 @@
                     <a class="active" href="/">Home <i class=""></i></a>
                   </li>
                   <li>
-                    <a href="/">Shop <i class=""></i></a>
+                    <a href="#productSection">Shop <i class=""></i></a>
                   </li>
 
                 </ul>
@@ -479,7 +437,7 @@
             <a class="categori-button-active-2" href="#">
               <span class="fi-rs-apps"></span> Browse Categories
             </a>
-            <div class="categori-dropdown-wrap categori-dropdown-active-small">
+            <div class="categori-dropdown-wrap categori-dropdown-active-small" >
               <ul class="categories">
                 <li><a href="/" class="" data-category="All">All</a></li>
                 <li>
@@ -630,7 +588,7 @@
           <div class="container">
             <div class="row">
               <div class="col-lg-3">
-                <div class="widget-category mb-30">
+                <div class="widget-category mb-30" id="productSection">
                   <h5 class="section-title style-1 mb-30 wow fadeIn animated">
                     Category
                   </h5>
@@ -754,11 +712,7 @@
                                     <%= product.name %>
                                   </a>
                                 </h2>
-                                <div class="rating-result" title="90%">
-                                  <span>
-                                    <span>90%</span>
-                                  </span>
-                                </div>
+                       
                                 <div class="product-price">
                                   <% if (product.discountStatus==="Active" ) { %>
                                     <% if (product.offerStart && product.offerEnd && new Date()>= new
@@ -771,6 +725,8 @@
                                           <% } %>
                                             <% } else { %>
                                               <span>₹<%= product.selling_price %></span>
+                                              <span class="old-price">₹<%= product.regular_price %></span>
+
                                               <% } %>
                                 </div>
 
