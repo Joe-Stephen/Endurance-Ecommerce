@@ -548,6 +548,9 @@
                   <h4>Your Orders</h4>
                 </div>
                 <div class="table-responsive order_table text-center">
+                  <%if(!userCart||userCart.products.length===0){%>
+                    <h5>There are no items in the cart..</h5>     
+                    <% }else{%>             
                   <table class="table shopping-summery text-center clean">
                     <thead>
                       <tr class="main-heading">
@@ -630,6 +633,7 @@
                       <% }); %>
                     </tbody>
                   </table>
+                  <%}%>
 
                   <form id="coupon-form">
                     <div class="grand-total">
@@ -869,6 +873,12 @@
                       name="userCart"
                       id="userCart"
                     />
+                    <input
+                      type="hidden"
+                      value="<%=userData%>"
+                      name="userCart"
+                      id="userData"
+                    />
                     <div class="form-group">
                       <label for="selected_address"
                         >Select Delivery Address:</label
@@ -1022,6 +1032,7 @@ razorpayButton.addEventListener("click", async function (event) {
   const selectedAddress = document.getElementById("selected_address").value;
   const userCart = document.getElementById("userCart").value;
   const couponCode = document.getElementById("couponCode").value; // Get the coupon code
+  const userData = document.getElementById("userData").value;
 
   const requestBody = {
     selected_address: selectedAddress,
@@ -1051,7 +1062,7 @@ razorpayButton.addEventListener("click", async function (event) {
           key: "rzp_test_hF6WGmggeA2qso",
           amount: amount,
           currency: "INR",
-          name: "Joe",
+          name: userData.name,
           description: "Test Transaction",
           image: "",
           order_id: orderId,
@@ -1066,9 +1077,9 @@ razorpayButton.addEventListener("click", async function (event) {
             window.location.href = `/paymentStatus?orderId=${data.razorOrder.id}&status=Success`;
           },
           prefill: {
-            name: "Joe",
-            email: "joestephenk10@example.com",
-            contact: "9207149607",
+            name: userData.name,
+            email: userData.email,
+            contact: userData.phoneNumber,
           },
           notes: {
             address: "Razorpay Corporate Office",

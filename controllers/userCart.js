@@ -386,7 +386,7 @@ const getCartCheckout = async (req, res) => {
         res.redirect("/addAddress");
       } else {
         // Render the checkout page
-        res.render("checkout", { userCart, loggedIn, userAddress, coupons });
+        res.render("checkout", { userCart, loggedIn, userAddress, coupons, userData });
       }
     }
   } catch (err) {
