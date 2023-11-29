@@ -158,6 +158,7 @@ const cartOrder = async (req, res) => {
     });
 
     let insufficientProducts = [];
+    let blockedState=[];
 
     for (const prod of orderProducts) {
       try {
@@ -190,6 +191,10 @@ const cartOrder = async (req, res) => {
         );
 
         let shortSizes = [];
+        
+        if (currentProduct.status==="hide"){
+          blockedState.push(currentProduct);
+        }
         if (currentProduct.sizes.small < sizeSmall) {
           console.log(
             "current small = " +
@@ -228,6 +233,10 @@ const cartOrder = async (req, res) => {
           errorMessage: err.message,
         });
       }
+    }
+
+    if (blockedState.length > 0) {
+      return res.status(404).json({ message: "Some products are blocked" });
     }
 
     if (insufficientProducts.length > 0) {
