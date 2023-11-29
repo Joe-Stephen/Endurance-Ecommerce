@@ -82,11 +82,6 @@
                     <a class="menu-link" href="/admin/admin-user-management"> <i class="icon material-icons md-person"></i>
                         <span class="text">Users</span>
                     </a>
-                    <div class="submenu">
-                        <a href="page-account-login.html">User management</a>
-                        <!-- <a href="page-account-register.html">User registration</a>
-                        <a href="page-error-404.html">Error 404</a> -->
-                    </div>
                 </li>               
             </ul>
             <hr>
@@ -166,7 +161,7 @@
                                 <h6 class="mb-1 card-title">Total Sales</h6>
                                 <span>₹<%=statistics.totalSales[0].totalAmount.toLocaleString()%></span>
                                 <span class="text-sm">
-                                    Shipping fees are not included
+                                    No delivery charges.
                                 </span>
                             </div>
                         </article>
@@ -179,7 +174,7 @@
                             <div class="text">
                                 <h6 class="mb-1 card-title">Orders</h6> <span><%=statistics.totalOrders%></span>
                                 <span class="text-sm">
-                                    All orders till now
+                                    All orders till now.
                                 </span>
                             </div>
                         </article>
@@ -192,7 +187,7 @@
                             <div class="text">
                                 <h6 class="mb-1 card-title">Products</h6> <span><%=statistics.totalProducts%></span>
                                 <span class="text-sm">
-                                    In <%=statistics.totalCategories%> Categories 
+                                    In <%=statistics.totalCategories%> Categories. 
                                 </span>
                             </div>
                         </article>
@@ -203,9 +198,9 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Monthly Earning</h6> <span>$6,982</span>
+                                <h6 class="mb-1 card-title">Total users</h6> <span><%=statistics.totalUsers%></span>
                                 <span class="text-sm">
-                                    Based in your local time.
+                                    Based on accounts.
                                 </span>
                             </div>
                         </article>

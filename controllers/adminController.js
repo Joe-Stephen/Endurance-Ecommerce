@@ -54,8 +54,6 @@ const getAdminLogout= (req, res) => {
 //rendering admin dashboard
 const getAdminDashboard = async (req, res)=>{
   try{
-
-
     const orderDetails = await order.find().populate({
       path: "userId",
       model: user,
@@ -76,11 +74,13 @@ const getAdminDashboard = async (req, res)=>{
     const totalOrders= await order.find();
     const totalProducts= await product.find();
     const totalCategories= await Category.find();
+    const users= await user.find()
     const statistics={
       totalSales,
       totalOrders:totalOrders.length,
       totalProducts:totalProducts.length,
       totalCategories:totalCategories.length,
+      totalUsers:users.length,
     }
     const cancelData = await cancels.aggregate([
       {
@@ -195,11 +195,13 @@ const postAdminDashboard = async (req, res) => {
   const totalOrders= await order.find();
   const totalProducts= await product.find();
   const totalCategories= await Category.find();
+  const users= await user.find()
   const statistics={
     totalSales,
     totalOrders:totalOrders.length,
     totalProducts:totalProducts.length,
     totalCategories:totalCategories.length,
+    totalUsers:users.length,
   }
   const cancelData = await cancels.aggregate([
     {

@@ -437,7 +437,7 @@
             <a class="categori-button-active-2" href="#">
               <span class="fi-rs-apps"></span> Browse Categories
             </a>
-            <div class="categori-dropdown-wrap categori-dropdown-active-small" >
+            <div class="categori-dropdown-wrap categori-dropdown-active-small">
               <ul class="categories">
                 <li><a href="/" class="" data-category="All">All</a></li>
                 <li>
@@ -650,7 +650,7 @@
                 <div class="tab-header">
                   <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                      <button class="nav-link active"><a href="/">ALL</a></button>
+                      <button class="nav-link "><a href="/">ALL</a></button>
                     </li>
                     <li class="nav-item" role="presentation">
                       <button class="nav-link"><a href="/sortByBrand?brand=Scott">SCOTT</a></button>
@@ -662,9 +662,6 @@
                       <button class="nav-link"><a href="/sortByBrand?brand=Marin">MARIN</a></button>
                     </li>
                   </ul>
-
-                  <a href="#" class="view-more d-none d-md-flex">View More<i
-                      class="fi-rs-angle-double-small-right"></i></a>
                 </div>
                 <!--End nav-tabs-->
                 <div class="tab-content wow fadeIn animated" id="myTabContent">
@@ -712,7 +709,7 @@
                                     <%= product.name %>
                                   </a>
                                 </h2>
-                       
+
                                 <div class="product-price">
                                   <% if (product.discountStatus==="Active" ) { %>
                                     <% if (product.offerStart && product.offerEnd && new Date()>= new
