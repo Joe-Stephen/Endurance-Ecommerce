@@ -63,6 +63,9 @@ const cartOrder = async (req, res) => {
     const categoriesList = await Category.find();
 
     userCart.products.forEach((product) => {
+      if (product.productId.status==="hide"){
+        return res.status(404).json({ message: "Some products are blocked" });
+      }
       const orderProduct = {
         productId: product.productId._id,
         quantity: product.quantity,
@@ -158,13 +161,14 @@ const cartOrder = async (req, res) => {
     });
 
     let insufficientProducts = [];
-    let blockedState=[];
 
     for (const prod of orderProducts) {
       try {
         let currentProduct = await product.findById(prod.productId);
 
         console.log("this product = ", currentProduct);
+
+
 
         let sizeSmall = prod.sizes.small;
         console.log(
@@ -192,9 +196,7 @@ const cartOrder = async (req, res) => {
 
         let shortSizes = [];
         
-        if (currentProduct.status==="hide"){
-          blockedState.push(currentProduct);
-        }
+
         if (currentProduct.sizes.small < sizeSmall) {
           console.log(
             "current small = " +
@@ -236,7 +238,7 @@ const cartOrder = async (req, res) => {
     }
 
     if (blockedState.length > 0) {
-      return res.status(404).json({ message: "Some products are blocked" });
+      return res.status(404).json({ blocked: "Some products are blocked" });
     }
 
     if (insufficientProducts.length > 0) {
@@ -328,6 +330,9 @@ const razorpayOrder = async (req, res) => {
     let orderProducts = [];
 
     userCart.products.forEach((product) => {
+      if (product.productId.status==="hide"){
+        return res.status(404).json({ message: "Some products are blocked" });
+      }
       const orderProduct = {
         productId: product.productId._id,
         quantity: product.quantity,
@@ -589,6 +594,9 @@ const walletOrder = async (req, res) => {
     let orderProducts = [];
 
     userCart.products.forEach((product) => {
+      if (product.productId.status==="hide"){
+        return res.status(404).json({ message: "Some products are blocked" });
+      }
       const orderProduct = {
         productId: product.productId._id,
         quantity: product.quantity,

@@ -102,6 +102,7 @@ const filterByEndurance = async (req, res) => {
 // Low to High with pagination
 const sortLowToHigh = async (req, res) => {
   try {
+    const banners = await banner.find();
     const page = parseInt(req.query.page) || 1; // Default to page 1 if pageNo is not provided
     const no_of_docs_each_page = 6;
     const skip = (page - 1) * no_of_docs_each_page;
@@ -119,7 +120,7 @@ const sortLowToHigh = async (req, res) => {
       .skip(skip)
       .limit(no_of_docs_each_page);
 
-    res.render("index-4", { products, loggedIn, totalPages, page });
+    res.render("index-4", { products, loggedIn, totalPages, page, banners });
   } catch (err) {
     console.log("An error occurred while applying filter! " + err);
     res
@@ -134,6 +135,7 @@ const sortLowToHigh = async (req, res) => {
 // High to Low with pagination
 const sortHighToLow = async (req, res) => {
   try {
+    const banners = await banner.find();
     const page = parseInt(req.query.page) || 1; // Default to page 1 if pageNo is not provided
     const no_of_docs_each_page = 6;
     const skip = (page - 1) * no_of_docs_each_page;
@@ -151,7 +153,7 @@ const sortHighToLow = async (req, res) => {
       .skip(skip)
       .limit(no_of_docs_each_page);
 
-    res.render("index-4", { products, loggedIn, totalPages, page });
+    res.render("index-4", { products, loggedIn, totalPages, page, banners });
   } catch (err) {
     console.log("An error occurred while applying filter! " + err);
     res
@@ -166,6 +168,7 @@ const sortHighToLow = async (req, res) => {
 //price range sort
 const sortPriceRange = async (req, res) => {
   try {
+    const banners = await banner.find();
     const page = req.query.page || 1;
     const no_of_docs_each_page = 6;
     const skip = (page - 1) * no_of_docs_each_page;
@@ -186,7 +189,7 @@ const sortPriceRange = async (req, res) => {
       })
       .skip(skip)
       .limit(no_of_docs_each_page);
-    res.render("index-4", { products, loggedIn, page, totalPages });
+    res.render("index-4", { products, loggedIn, page, totalPages, banners });
   } catch (err) {
     console.log(
       "An error occured while sorting according to price range! " + err

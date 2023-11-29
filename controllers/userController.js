@@ -59,6 +59,7 @@ const getHomePage = async (req, res) => {
 //search results in the home page
 const searchResults = async (req, res) => {
   try {
+    const banners = await banner.find();
     const page = req.query.page ?? 1; // Default to page 1 if pageNo is not provided
     const no_of_docs_each_page = 6;
     console.log(page);
@@ -79,7 +80,7 @@ const searchResults = async (req, res) => {
     } else {
       result = "We found these...";
     }
-    res.render("index-4", { result, products, loggedIn, totalPages, page });
+    res.render("index-4", { result, products, loggedIn, totalPages, page, banners });
   } catch (err) {
     console.log(err);
     res.status(500).render("error-page", {
