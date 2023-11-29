@@ -86,15 +86,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% monthlySales.forEach(order => { %> <% order.products.forEach(product =>
+                    <% monthlySales.forEach(order => { %> <% order?.products?.forEach(product =>
                     { %>
+                        <%if(product!==null){%>
+
                     <tr>
                         <td><%= order.orderDate.toLocaleDateString() %></td>
                         <td><%= order._id %></td>
-                        <td><%= product.productId.name %></td>
+                        <td><%= product.productId?.name %></td>
                         <td>₹<%= product.price.toLocaleString() %>.00</td>
                         <td><%= product.quantity %></td>
                     </tr>
+                    <%}%>
                     <% }); %> <% }); %>
                 </tbody>
             </table>
