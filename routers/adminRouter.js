@@ -39,6 +39,7 @@ adminRouter.get("/admin-add-product", adminMiddleware.verifyAdmin, productManage
 adminRouter.post("/add-product", adminMiddleware.verifyAdmin, multerMiddleware.array("photo"), productManagement.postAddProduct);
 adminRouter.post("/product/:productId", adminMiddleware.verifyAdmin, productManagement.postProductStatus);
 adminRouter.get("/edit-product", adminMiddleware.verifyAdmin, productManagement.getEditProduct);
+adminRouter.delete('/deletePhoto/:productId', adminMiddleware.verifyAdmin, productManagement.deleteProductPhoto);
 adminRouter.post("/post-edit-product/:productId", adminMiddleware.verifyAdmin, multerMiddleware.array("photo"), productManagement.postEditProduct);
 adminRouter.delete("/delete-product/:productId", adminMiddleware.verifyAdmin, productManagement.deleteProduct);
 

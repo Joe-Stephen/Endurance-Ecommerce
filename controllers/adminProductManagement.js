@@ -170,9 +170,45 @@ const getEditProduct = async (req, res) => {
   }
 };
 
+const deleteProductPhoto = async (req, res) => {
+  try {
+    console.log("function called!");
+    const productId = req.params.productId;
+    const index = req.query.index;
+    console.log("index==" + index);
+    console.log("id ==" + productId);
+
+    // Find the product by ID
+    const editProduct = await product.findById(productId);
+
+    if (!editProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Ensure the index is within the bounds of the photos array
+    if (index < 0 || index >= editProduct.photos.length) {
+      return res.status(400).json({ message: 'Invalid photo index' });
+    }
+
+    // Remove the photo at the specified index
+    editProduct.photos.splice(index, 1);
+
+    // Save the updated product
+    await editProduct.save();
+
+    // Respond with a success status code
+    res.sendStatus(200);
+  } catch (error) {
+    console.error('Error deleting photo:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+
 //saving edited details into the db
 const postEditProduct = async (req, res) => {
   try {
+    console.log("hello from post edit");
     const editId = req.params.productId;
     const existingProduct = await product.findById(editId);
     const { name, description, regular_price, selling_price, category, brand } =
@@ -183,11 +219,20 @@ const postEditProduct = async (req, res) => {
       name: element.filename,
       path: element.path,
     }));
-    const picPaths = newPhotos.map((photo) => photo.path);
+    let updatedPhotos=[];
+    if(existingProduct.photos.length==0){
+      console.log("entered the 0 photos case!");
+      newPhotos.forEach((pic)=>{
+        updatedPhotos.push(pic.path)
+      });
+    }else{
+       picPaths = newPhotos.map((photo) => photo.path);
     // Include old photos that weren't edited
-    const updatedPhotos = existingProduct.photos.map((oldPhoto, index) =>
+     updatedPhotos = existingProduct.photos.map((oldPhoto, index) =>
       picPaths[index] ? picPaths[index] : oldPhoto
     );
+    }
+    
     let sizeSmall = existingProduct.sizes.small;
     let sizeMedium = existingProduct.sizes.medium;
     let sizeLarge = existingProduct.sizes.large;
@@ -263,6 +308,7 @@ module.exports = {
   postAddProduct,
   postProductStatus,
   getEditProduct,
+  deleteProductPhoto,
   postEditProduct,
   deleteProduct,
 };

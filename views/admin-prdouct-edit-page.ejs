@@ -199,28 +199,65 @@
                     </div> <!-- card end// -->
 
                 </div>
+
                 <div class="col-lg-3">
                     <div class="card mb-4">
                         <div class="card-header">
                             <h4>Media</h4>
                         </div>
-                            <div class="card-body">
-                                <div class="input-upload">
-                                    <img src="/<%= editProduct.photos[0] %>" alt="">
-                                    <input class="form-control" type="file" name="photo">
-                                </div>
-                                <div class="input-upload">
-                                    <img src="/<%= editProduct.photos[1] %>" alt="">
-                                    <input class="form-control" type="file" name="photo">
-                                </div>
-                                <div class="input-upload">
-                                    <img src="/<%= editProduct.photos[2] %>" alt="">
-                                    <input class="form-control" type="file" name="photo">
-                                </div>
+                        <div class="card-body">
+                            <% if(editProduct.photos.length>0){ %>
+                               
+                                <% for (let j=0; j<editProduct.photos.length; j++){ %>
+                            <div class="input-upload">
+                                <img src="/<%= editProduct.photos[j] %>" alt="">
+                                <input class="form-control" type="file" name="photo">
+                                <a style="background-color: red; margin-top: 2px;" href="#"
+                                    class="button-link" onclick="deleteProductPhoto('<%= editProduct._id %>', '<%=j%>')">Delete Photo</a>
                             </div>
-                        </div> <!-- card end// -->
+                            <% }}else{ %>
+                                <h5>You can select multiple images at once</h5>
+                                <div class="input-upload">
+                                   <input type="file" name="photo" accept="image/*" multiple required>
+                                </div>
+                                <br>
+                                <% } %>
+                        </div>
+                    </div> <!-- card end// -->
                 </div>
             </form>
+                
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+           
+            <script>
+                function deleteProductPhoto(productId, index) {
+                    // Send a DELETE request to the server
+                    console.log(productId, index);
+                    fetch(`/admin/deletePhoto/${productId}?index=${index}`, {
+    method: "DELETE",
+})
+                    .then(response => {
+                        if (response.ok) {
+                            // window.location.href="/admin/admin-products-list";
+                            window.location.reload()
+                        } else {
+                            // Handle error
+                            alert("An error else case")
+                            console.error('Error deleting photo:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        alert("An error else case"+error)
+
+                        console.error('Error deleting photo:', error);
+                    });
+                }
+            </script>
+
+
+                           
+            
+
             <script>
                 function toggleNumberInput(size) {
                     const checkbox = document.getElementById(size);
@@ -234,6 +271,7 @@
                     }
                 }
             </script>
+     
             </div>
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">
